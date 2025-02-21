@@ -9,9 +9,27 @@ namespace CourseMapping.Domain
     internal class Unit
     {
         // Properties
-        public string Name { get; set; }
+        public string Name { get; }
         public string Description { get; set; }
-        public string Code { get; set; }
-        public int Level { get; set; }
+        public string Code { get; }
+        public int Level { get; }
+
+        public Unit(string name, string code, string description, int level)
+        {
+            Name = name;
+            Code = code;
+            Description = description;
+            Level = level;
+        }
+
+        public void UpdateDescription(string description)
+        {
+            Description = description;
+        }
+
+        public string GetDescription()
+        {
+            return Description;
+        }
     }
 }
