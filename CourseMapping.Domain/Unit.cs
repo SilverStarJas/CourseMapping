@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CourseMapping.Domain
 {
-    internal class Unit
+    public class Unit
     {
         // Properties
         public string Name { get; }
@@ -25,11 +25,6 @@ namespace CourseMapping.Domain
         public void UpdateDescription(string description)
         {
             Description = description;
-        }
-
-        public string GetDescription()
-        {
-            return Description;
         }
     }
 }

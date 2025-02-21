@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CourseMapping.Domain
 {
-    internal class University
+    public class University
     {
         // Properties
         public string Name { get; }
@@ -24,11 +24,6 @@ namespace CourseMapping.Domain
         public void AddCourse(Course newCourse)
         {
             Courses.Add(newCourse);
-        }
-
-        public List<Course> GetCourses() 
-        {
-            return Courses;
         }
     }
 }

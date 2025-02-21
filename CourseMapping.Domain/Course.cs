@@ -6,14 +6,13 @@ using System.Threading.Tasks;
 
 namespace CourseMapping.Domain
 {
-    internal class Course
+    public class Course
     {
         // Properties
         public string Name { get; } 
-
         public string Description { get; set; }
         public string Code { get; }
-        public List<Unit> Units { get; }
+        public List<Unit> Units { get; set; }
 
         public Course(string name, string description, string code)
         {
@@ -24,13 +23,9 @@ namespace CourseMapping.Domain
         }
 
         public void AddUnit(Unit unit) 
-        { 
-            Units.Add(unit);
-        }
-
-        public List<Unit> GetUnits() 
         {
-            return Units;
+            if (Units.Count < 3)
+                Units.Add(unit);
         }
     }
 }
