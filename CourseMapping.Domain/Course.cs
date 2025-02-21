@@ -26,6 +26,8 @@ namespace CourseMapping.Domain
         {
             if (Units.Count < 3)
                 Units.Add(unit);
+            else
+                throw new InvalidOperationException("Up to three units allowed");
         }
     }
 }
