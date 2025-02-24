@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CourseMapping.Domain
 {
-    public class Unit
+    public class Subject
     {
         // Properties
         public string Name { get; }
@@ -14,12 +14,20 @@ namespace CourseMapping.Domain
         public string Code { get; }
         public int Level { get; }
 
-        public Unit(string name, string code, string description, int level)
+        public Subject(string name, string code, string description, int level)
         {
             Name = name;
             Code = code;
             Description = description;
-            Level = level;
+            
+            if (level >= 1 && level <= 5)
+            {
+                Level = level;
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException("Subject level must be between 1 and 5.");
+            }
         }
 
         public void UpdateDescription(string description)

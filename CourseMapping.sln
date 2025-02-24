@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{4A866A79
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseMapping.Domain.Tests.UnitTests", "CourseMapping.Domain.Tests.UnitTests\CourseMapping.Domain.Tests.UnitTests.csproj", "{9130D16C-E4D0-40A0-9D7C-2D2A160F7F76}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseMapping.Web", "CourseMapping.Web\CourseMapping.Web.csproj", "{FDF705CE-34EC-44A5-B9AD-74FB169F27F5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,10 @@ Global
 		{9130D16C-E4D0-40A0-9D7C-2D2A160F7F76}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9130D16C-E4D0-40A0-9D7C-2D2A160F7F76}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9130D16C-E4D0-40A0-9D7C-2D2A160F7F76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDF705CE-34EC-44A5-B9AD-74FB169F27F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDF705CE-34EC-44A5-B9AD-74FB169F27F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDF705CE-34EC-44A5-B9AD-74FB169F27F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDF705CE-34EC-44A5-B9AD-74FB169F27F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

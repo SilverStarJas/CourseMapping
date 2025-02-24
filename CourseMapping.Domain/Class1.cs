@@ -9,12 +9,12 @@ public class Class1
 
         monash.AddCourse(engineering);
 
-        var algorithms = new Unit("Algorithms", "FIT2004", "Introduction to algorithms", 2);
-        var abc = new Unit("ABC", "ABC1234", "Test unit", 1);
+        var algorithms = new Subject("Algorithms", "FIT2004", "Introduction to algorithms", 2);
+        var abc = new Subject("ABC", "ABC1234", "Test unit", 1);
 
-        engineering.AddUnit(algorithms);
-        engineering.AddUnit(abc);
+        engineering.AddSubjects(algorithms);
+        engineering.AddSubjects(abc);
 
-        var engineeringUnits = engineering.Units;
+        var engineeringUnits = engineering.Subjects;
     }
 }

@@ -12,22 +12,22 @@ namespace CourseMapping.Domain
         public string Name { get; } 
         public string Description { get; set; }
         public string Code { get; }
-        public List<Unit> Units { get; set; }
+        public List<Subject> Subjects { get; set; }
 
         public Course(string name, string description, string code)
         {
             Name = name;
             Description = description;
             Code = code;
-            Units = [];
+            Subjects = [];
         }
 
-        public void AddUnit(Unit unit) 
+        public void AddSubjects(Subject unit) 
         {
-            if (Units.Count < 3)
-                Units.Add(unit);
+            if (Subjects.Count < 3)
+                Subjects.Add(unit);
             else
-                throw new InvalidOperationException("Up to three units allowed");
+                throw new InvalidOperationException("Up to three subjects allowed.");
         }
     }
 }

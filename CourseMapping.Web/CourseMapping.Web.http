@@ -1,0 +1,6 @@
+@CourseMapping.Web_HostAddress = http://localhost:5155
+
+GET {{CourseMapping.Web_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
