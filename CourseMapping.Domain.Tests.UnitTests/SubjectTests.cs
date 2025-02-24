@@ -43,6 +43,19 @@
 
             Assert.Equal("Subject level must be between 1 and 5.", exception.ParamName);
         }
+
+        [Fact]
+        public void UpdateDescription_WhenGivenValidSubject_SuccessfullyUpdated()
+        {
+            // Arrange
+            var mno = new Subject("MNO", "MNO7890", "Update description test", 2);
+
+            // Act
+            mno.UpdateDescription("Testing that the description is successful");
+
+            // Assert
+            Assert.Equal("Testing that the description is successful", mno.Description);
+        }
     }
 }
 
