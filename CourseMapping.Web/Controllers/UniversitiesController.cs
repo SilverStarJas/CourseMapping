@@ -7,39 +7,39 @@ namespace CourseMapping.Web.Controllers
     [Route("v1/universities")]
     public class UniversitiesController : ControllerBase
     {
-        [HttpGet]
+        [HttpGet()]
         public ActionResult<UniversityDto> GetUniversity(int universityId)
         {
-            var university = new UniversityDto();
+            var university = new UniversityDto { Id = universityId, Name = "Example University", Country = "Example Country" };
             return Ok(university);
         }
         
         [HttpPost]
         public ActionResult<UniversityDto> CreateUniversity(
             int universityId,
-            string countryName,
-            string universityName,
             [FromBody] UniversityDto university)
         {
-            if (universityId.ToString() == null)
+            if (university == null)
             {
-                return BadRequest("University ID required.");
-            } 
-            {
-                return BadRequest("University must have an ID.");
+                return BadRequest("University data is required.");
             }
 
-            if (string.IsNullOrEmpty(countryName))
+            if (university.Id != universityId)
             {
-                return BadRequest("Country name is required.");
+                return BadRequest("University IDs in route and body do not match.");
             }
 
-            if (string.IsNullOrEmpty(universityName))
+            if (string.IsNullOrWhiteSpace(university.Name))
             {
                 return BadRequest("University name is required.");
             }
 
-            return CreatedAtAction(nameof(GetUniversity), new { universityName = university.Name }, university);
+            if (string.IsNullOrWhiteSpace(university.Country))
+            {
+                return BadRequest("University country is required.");
+            }
+
+            return CreatedAtAction(nameof(GetUniversity), new { universityId = university.Id }, university);
         }
     }
 }

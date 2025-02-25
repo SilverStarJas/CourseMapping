@@ -1,10 +1,12 @@
-﻿namespace CourseMapping.Web.Models
+﻿using CourseMapping.Web.Models;
+using Microsoft.AspNetCore.Mvc;
+
+namespace CourseMapping.Web.Models
 {
     public class UniversityDto
     {
-        public int Id { get; }
-        public string Name { get; }
-        public string Country { get; }
-        public List<CourseDto> Courses { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Country { get; set; }
     }
 }
