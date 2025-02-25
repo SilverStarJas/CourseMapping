@@ -9,7 +9,7 @@
             var abc = new Subject("ABC", "ABC1234", "Test unit", 1);
 
             // Assert 
-            Assert.InRange<int>(abc.Level, 1, 5);
+            Assert.InRange(abc.Level, 1, 5);
         }
 
         [Fact]
@@ -19,7 +19,7 @@
             var def = new Subject("DEF", "DEF5678", "Second year test", 5);
 
             // Assert 
-            Assert.InRange<int>(def.Level, 1, 5);
+            Assert.InRange(def.Level, 1, 5);
         }
 
         [Fact]

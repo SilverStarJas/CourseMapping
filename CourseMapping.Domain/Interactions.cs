@@ -1,8 +1,8 @@
 ﻿namespace CourseMapping.Domain;
 
-public class Class1
+public class Interactions
 {
-    public void createCourse()
+    public void CreateCourse()
     {
         var monash = new University("Monash", "Australia");
         var engineering = new Course("Engineering", "Four year course for Engineering", "ENG3000");
@@ -15,6 +15,6 @@ public class Class1
         engineering.AddSubjects(algorithms);
         engineering.AddSubjects(abc);
 
-        var engineeringUnits = engineering.Subjects;
+        // var engineeringUnits = engineering.Subjects;
     }
 }
