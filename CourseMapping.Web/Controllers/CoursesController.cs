@@ -41,14 +41,14 @@ namespace CourseMapping.Web.Controllers
             return CreatedAtAction(nameof(GetCourse), new { universityId, courseCode = course.Code }, course);
         }
         
-        [HttpGet("{courseCode}")]
-        public ActionResult<Course> GetCourse(int universityId, string courseCode)
+        [HttpGet]
+        public ActionResult<Course> GetCourse(int universityId)
         {
-            var course = courses.FirstOrDefault(c => c.Code == courseCode);
+            // var course = courses.FirstOrDefault();
 
-            if (course == null)
+            if (courses == null)
             {
-                return NotFound("Course not found.");
+                return NotFound("Courses not found.");
             }
             
             return Ok(courses);
