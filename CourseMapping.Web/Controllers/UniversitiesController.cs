@@ -1,4 +1,4 @@
-﻿using CourseMapping.Web.Models;
+﻿using CourseMapping.Domain;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CourseMapping.Web.Controllers
@@ -7,17 +7,14 @@ namespace CourseMapping.Web.Controllers
     [Route("v1/universities")]
     public class UniversitiesController : ControllerBase
     {
-        [HttpGet()]
-        public ActionResult<UniversityDto> GetUniversity(int universityId)
-        {
-            var university = new UniversityDto { Id = universityId, Name = "Example University", Country = "Example Country" };
-            return Ok(university);
-        }
+        private static List<University> universities = new List<University>();
         
         [HttpPost]
-        public ActionResult<UniversityDto> CreateUniversity(
+        public ActionResult<University> CreateUniversity(
             int universityId,
-            [FromBody] UniversityDto university)
+            string universityName,
+            string universityCountry,
+            [FromBody] University university)
         {
             if (university == null)
             {
@@ -38,8 +35,21 @@ namespace CourseMapping.Web.Controllers
             {
                 return BadRequest("University country is required.");
             }
-
+            
+            universities.Add(university);
             return CreatedAtAction(nameof(GetUniversity), new { universityId = university.Id }, university);
+        }
+        
+        [HttpGet("{universityId}")]
+        public ActionResult<University> GetUniversity(int universityId)
+        {
+            var university = universities.FirstOrDefault(u => u.Id == universityId);
+            if (university == null)
+            {
+                return NotFound("University not found.");
+            }
+            
+            return Ok(university);
         }
     }
 }

@@ -9,9 +9,9 @@ namespace CourseMapping.Domain
     public class Course
     {
         // Properties
+        public string Code { get; }
         public string Name { get; } 
         public string Description { get; set; }
-        public string Code { get; }
         public List<Subject> Subjects { get; set; }
 
         public Course(string name, string description, string code)
