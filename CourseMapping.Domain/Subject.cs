@@ -9,15 +9,15 @@ namespace CourseMapping.Domain
     public class Subject
     {
         // Properties
+        public string Code { get; }
         public string Name { get; }
         public string Description { get; set; }
-        public string Code { get; }
         public int Level { get; }
 
-        public Subject(string name, string code, string description, int level)
+        public Subject(string code, string name, string description, int level)
         {
-            Name = name;
             Code = code;
+            Name = name;
             Description = description;
             
             if (level >= 1 && level <= 5)

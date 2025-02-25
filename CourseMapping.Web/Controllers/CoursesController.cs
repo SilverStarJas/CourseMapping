@@ -17,24 +17,14 @@ namespace CourseMapping.Web.Controllers
             string courseDescription,
             [FromBody] Course course)
         {
-            if (universityId == null)
+            if (universityId == null || courseCode == null || courseName == null || courseDescription == null)
             {
-                return BadRequest("University ID is required.");
+                return BadRequest("Missing information.");
             }
             
             if (course.Code != courseCode)
             {
                 return BadRequest("Course codes in route and body do not match.");
-            }
-            
-            if (string.IsNullOrWhiteSpace(course.Name))
-            {
-                return BadRequest("Course name is required.");
-            }
-
-            if (string.IsNullOrWhiteSpace(course.Description))
-            {
-                return BadRequest("Course description is required.");
             }
             
             courses.Add(course);
@@ -44,8 +34,6 @@ namespace CourseMapping.Web.Controllers
         [HttpGet]
         public ActionResult<Course> GetCourse(int universityId)
         {
-            // var course = courses.FirstOrDefault();
-
             if (courses == null)
             {
                 return NotFound("Courses not found.");

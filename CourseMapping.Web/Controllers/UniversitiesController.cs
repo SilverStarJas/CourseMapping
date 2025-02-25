@@ -16,24 +16,14 @@ namespace CourseMapping.Web.Controllers
             string universityCountry,
             [FromBody] University university)
         {
-            if (university == null)
+            if (universityId == null || universityName == null || universityCountry == null)
             {
-                return BadRequest("University data is required.");
+                return BadRequest("Missing information.");
             }
 
             if (university.Id != universityId)
             {
                 return BadRequest("University IDs in route and body do not match.");
-            }
-
-            if (string.IsNullOrWhiteSpace(university.Name))
-            {
-                return BadRequest("University name is required.");
-            }
-
-            if (string.IsNullOrWhiteSpace(university.Country))
-            {
-                return BadRequest("University country is required.");
             }
             
             universities.Add(university);
