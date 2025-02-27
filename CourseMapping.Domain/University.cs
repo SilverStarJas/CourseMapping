@@ -9,7 +9,7 @@ namespace CourseMapping.Domain
     public class University
     {
         // Properties
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; }
         public string Country { get; }
         public List<Course> Courses { get; }

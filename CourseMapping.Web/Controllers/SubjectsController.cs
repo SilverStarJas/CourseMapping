@@ -8,7 +8,7 @@ namespace CourseMapping.Web.Controllers
     [Route("v1/universities/{universityId}/courses/{courseId}")]
     public class SubjectsController : ControllerBase
     {
-        private static List<Subject> subjects = new List<Subject>();
+        private static List<Subject> _subjects = new List<Subject>();
 
         [HttpPost]
         public ActionResult<Subject> CreateSubject(
@@ -29,19 +29,19 @@ namespace CourseMapping.Web.Controllers
                 return BadRequest("Subject codes in route and body do not match.");
             }
             
-            subjects.Add(subject);
+            _subjects.Add(subject);
             return CreatedAtAction(nameof(CreateSubject), new { courseCode, subjectCode = subject.Code }, subject);
         }
 
         [HttpGet]
         public ActionResult<Subject> GetSubject(string courseId)
         {
-            if (subjects == null)
+            if (_subjects == null)
             {
                 return NotFound("Subjects not found.");
             }
 
-            return Ok(subjects);
+            return Ok(_subjects);
         }
     }
 }
