@@ -1,4 +1,5 @@
 ﻿using CourseMapping.Domain;
+using CourseMapping.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CourseMapping.Web.Controllers
@@ -7,25 +8,44 @@ namespace CourseMapping.Web.Controllers
     [Route("v1/universities/{universityId}/courses")]
     public class CoursesController : ControllerBase
     {
-        private static List<Course> _courses = new List<Course>();
-        
-        [HttpPost]
-        public ActionResult<Course> CreateCourse(
-            [FromBody] Course course)
+        private static Dictionary<Guid, List<CourseDto>> _universityCourses = new Dictionary<Guid, List<CourseDto>>();
+
+        [HttpGet(Name = "GetCourse")]
+        public ActionResult<CourseDto> GetCourse(Guid universityId)
         {
-            _courses.Add(course);
-            return CreatedAtAction(nameof(GetCourse), new { courseCode = course.Code }, course);
-        }
-        
-        [HttpGet]
-        public ActionResult<Course> GetCourse(int universityId)
-        {
-            if (_courses == null)
+            if (!_universityCourses.ContainsKey(universityId))
             {
-                return NotFound("Courses not found.");
+                return NotFound("University not found.");
             }
-            
-            return Ok(_courses);
+
+            var courses = _universityCourses[universityId];
+
+            return Ok(courses);
+        }
+
+        [HttpPost]
+        public ActionResult<CourseDto> CreateCourse(
+            Guid universityId, 
+            [FromBody] CourseCreationDto course)
+        {
+            if (!_universityCourses.ContainsKey(universityId))
+            {
+                _universityCourses[universityId] = new List<CourseDto>();
+            }
+
+            var courses = _universityCourses[universityId];
+            var courseCode = (course.Name[0] + (courses.Count + 1).ToString()).ToUpper();
+
+            var finalCourse = new CourseDto()
+            {
+                Code = courseCode,
+                Name = course.Name,
+                Description = course.Description
+            };
+
+            courses.Add(finalCourse);
+            return CreatedAtRoute("GetCourse", new { universityId = universityId, courseCode = finalCourse.Code },
+                finalCourse);
         }
     }
 }

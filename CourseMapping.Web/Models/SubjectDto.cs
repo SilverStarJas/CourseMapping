@@ -2,9 +2,9 @@
 {
     public class SubjectDto
     {
-        public string Name { get; }
+        public string Code { get; set; }
+        public string Name { get; set; }
         public string Description { get; set; }
-        public string Code { get; }
-        public int Level { get; }
+        public int Level { get; set; }
     }
 }

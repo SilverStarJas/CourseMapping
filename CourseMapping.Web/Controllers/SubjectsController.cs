@@ -1,47 +1,53 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Runtime.Intrinsics;
 using CourseMapping.Domain;
+using CourseMapping.Web.Models;
 
 namespace CourseMapping.Web.Controllers
 {
     [ApiController]
-    [Route("v1/universities/{universityId}/courses/{courseId}")]
+    [Route("v1/universities/{universityId}/courses/{courseCode}/subjects")]
     public class SubjectsController : ControllerBase
     {
-        private static List<Subject> _subjects = new List<Subject>();
+        private static Dictionary<string, List<SubjectDto>> _courseSubjects = new Dictionary<string, List<SubjectDto>>();
 
-        [HttpPost]
-        public ActionResult<Subject> CreateSubject(
-            string courseCode,
-            string subjectCode,
-            string subjectName,
-            string subjectDescription,
-            int subjectLevel,
-            [FromBody] Subject subject)
+        [HttpGet(Name = "GetSubjects")]
+        public ActionResult<SubjectDto> GetSubjects(Guid universityId, string courseCode)
         {
-            if (courseCode == null || subjectCode == null || subjectName == null || subjectDescription == null || subjectLevel == null)
+            if (!_courseSubjects.ContainsKey(courseCode))
             {
-                return BadRequest("Missing information.");
+                return NotFound("Course not found.");
             }
             
-            if (subject.Code != subjectCode)
-            {
-                return BadRequest("Subject codes in route and body do not match.");
-            }
+            var subjects = _courseSubjects[courseCode];
             
-            _subjects.Add(subject);
-            return CreatedAtAction(nameof(CreateSubject), new { courseCode, subjectCode = subject.Code }, subject);
+            return Ok(subjects);
         }
 
-        [HttpGet]
-        public ActionResult<Subject> GetSubject(string courseId)
+        [HttpPost]
+        public ActionResult<SubjectDto> CreateSubject(
+            Guid universityId,
+            string courseCode,
+            [FromBody] SubjectCreationDto subject)
         {
-            if (_subjects == null)
+            if (!_courseSubjects.ContainsKey(courseCode))
             {
-                return NotFound("Subjects not found.");
+                _courseSubjects.Add(courseCode, new List<SubjectDto>());
             }
+            
+            var subjects = _courseSubjects[courseCode];
+            var subjectCode = (subject.Name.Substring(0,3) + (subjects.Count + 1).ToString()).ToUpper();
 
-            return Ok(_subjects);
+            var finalSubject = new SubjectDto
+            {
+                Code = subjectCode,
+                Name = subject.Name,
+                Description = subject.Description,
+                Level = subject.Level
+            };
+            
+            subjects.Add(finalSubject);
+            return CreatedAtRoute("GetSubjects", new { universityId, courseCode, subjectCode }, finalSubject);
         }
     }
 }
