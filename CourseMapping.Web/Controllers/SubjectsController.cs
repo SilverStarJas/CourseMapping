@@ -36,8 +36,19 @@ namespace CourseMapping.Web.Controllers
             }
             
             var subjects = _courseSubjects[courseCode];
+
+            if (subjects.Count >= 3)
+            {
+                return BadRequest("Maximum number of subjects already reached (3).");
+            }
+            
             var subjectCode = (subject.Name.Substring(0,3) + (subjects.Count + 1).ToString()).ToUpper();
 
+            if (subject.Level < 1 || subject.Level > 5)
+            {
+                return BadRequest("Invalid subject level. Must be between 1 and 5.");
+            }
+            
             var finalSubject = new SubjectDto
             {
                 Code = subjectCode,
