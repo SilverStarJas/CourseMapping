@@ -9,8 +9,6 @@ namespace CourseMapping.Web.Controllers;
 [Route("v1/universities/{universityId}/courses")]
 public class CoursesController : ControllerBase
 {
-    //private static Dictionary<Guid, List<CourseDto>> _universityCourses = new Dictionary<Guid, List<CourseDto>>();
-
     private readonly IUniversityRepository _universityRepository;
 
     public CoursesController(IUniversityRepository universityRepository)
@@ -19,24 +17,15 @@ public class CoursesController : ControllerBase
     }
 
     [HttpGet(Name = "GetCourses")]
-    public ActionResult<List<CourseDto>> GetCourses(Guid universityId)
+    public ActionResult<List<CourseResponse>> GetCourses(Guid universityId)
     {
-        //     if (!_universityCourses.ContainsKey(universityId))
-        //     {
-        //         return NotFound("University not found.");
-        //     }
-        //
-        //     var courses = _universityCourses[universityId];
-        //
-        //     return Ok(courses);
-
         var university = _universityRepository.GetById(universityId);
         if (university is null)
-            return BadRequest();
+            return NotFound("University not found.");
 
         var courses = university.Courses;
 
-        var response = courses.Select(c => new CourseDto
+        var response = courses.Select(c => new CourseResponse
         {
             Code = c.Code,
             Name = c.Name,
@@ -47,35 +36,16 @@ public class CoursesController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult<CourseDto> CreateCourse(
+    public ActionResult<CourseResponse> CreateCourse(
         Guid universityId,
-        [FromBody] CourseCreationDto request)
+        [FromBody] CreateNewCourseRequest newCourseRequest)
     {
-        // if (!_universityCourses.ContainsKey(universityId))
-        // {
-        //     _universityCourses[universityId] = new List<CourseDto>();
-        // }
-        //
-        // var courses = _universityCourses[universityId];
-        // var courseCode = (course.Name[0] + (courses.Count + 1).ToString()).ToUpper();
-        //
-        // var finalCourse = new CourseDto()
-        // {
-        //     Code = courseCode,
-        //     Name = course.Name,
-        //     Description = course.Description
-        // };
-        //
-        // courses.Add(finalCourse);
-        // return CreatedAtRoute("GetCourse", new { universityId = universityId, courseCode = finalCourse.Code },
-        //     finalCourse);
-
         var university = _universityRepository.GetById(universityId);
         if (university is null)
-            return BadRequest();
+            return NotFound("University not found.");
 
         var courseCode = _universityRepository.GetNextCourseId();
-        var newCourse = new Course(request.Name, request.Description, courseCode);
+        var newCourse = new Course(courseCode, newCourseRequest.Name, newCourseRequest.Description);
 
         university.AddCourse(newCourse);
 

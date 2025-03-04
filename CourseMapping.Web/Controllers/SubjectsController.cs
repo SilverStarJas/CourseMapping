@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Runtime.Intrinsics;
 using CourseMapping.Domain;
+using CourseMapping.Infrastructure.Persistence.Abstraction;
 using CourseMapping.Web.Models;
 
 namespace CourseMapping.Web.Controllers
@@ -9,55 +10,52 @@ namespace CourseMapping.Web.Controllers
     [Route("v1/universities/{universityId}/courses/{courseCode}/subjects")]
     public class SubjectsController : ControllerBase
     {
-        private static Dictionary<string, List<SubjectDto>> _courseSubjects = new Dictionary<string, List<SubjectDto>>();
+        private readonly ICourseRepository _courseRepository;
 
-        [HttpGet(Name = "GetSubjects")]
-        public ActionResult<SubjectDto> GetSubjects(Guid universityId, string courseCode)
+        public SubjectsController(ICourseRepository courseRepository)
         {
-            if (!_courseSubjects.ContainsKey(courseCode))
+            _courseRepository = courseRepository;
+        }
+        
+        [HttpGet(Name = "GetSubjects")]
+        public ActionResult<SubjectResponse> GetSubjects(string courseCode)
+        {
+            var course = _courseRepository.GetCourseByCode(courseCode);
+            if (course is null)
             {
                 return NotFound("Course not found.");
             }
             
-            var subjects = _courseSubjects[courseCode];
+            var subjects = course.Subjects;
+
+            var response = subjects.Select(s => new SubjectResponse
+            {
+                Code = s.Code,
+                Name = s.Name,
+                Description = s.Description
+            });
             
-            return Ok(subjects);
+            return Ok(response);
         }
 
         [HttpPost]
-        public ActionResult<SubjectDto> CreateSubject(
+        public ActionResult<SubjectResponse> CreateSubject(
             Guid universityId,
             string courseCode,
-            [FromBody] SubjectCreationDto subject)
+            [FromBody] CreateNewSubjectRequest newSubjectRequest)
         {
-            if (!_courseSubjects.ContainsKey(courseCode))
+            var course = _courseRepository.GetCourseByCode(courseCode);
+            if (course is null)
             {
-                _courseSubjects.Add(courseCode, new List<SubjectDto>());
+                return NotFound("Course not found.");
             }
             
-            var subjects = _courseSubjects[courseCode];
-
-            if (subjects.Count >= 3)
-            {
-                return BadRequest("Maximum number of subjects already reached (3).");
-            }
+            var subjectCode = _courseRepository.GetNextSubjectCode();
+            var newSubject = new Subject(subjectCode, newSubjectRequest.Name, newSubjectRequest.Description, newSubjectRequest.Level);
             
-            if (subject.Level < 1 || subject.Level > 5)
-            {
-                return BadRequest("Invalid subject level. Must be between 1 and 5.");
-            }
+            course.AddSubjects(newSubject);
             
-            var subjectCode = (subject.Name.Substring(0,3) + (subjects.Count + 1).ToString()).ToUpper();
-            var finalSubject = new SubjectDto
-            {
-                Code = subjectCode,
-                Name = subject.Name,
-                Description = subject.Description,
-                Level = subject.Level
-            };
-            
-            subjects.Add(finalSubject);
-            return CreatedAtRoute("GetSubjects", new { universityId, courseCode, subjectCode }, finalSubject);
+            return CreatedAtRoute("GetSubjects", new {courseCode = courseCode, subjectCode = newSubject.Code}, newSubject);
         }
     }
 }

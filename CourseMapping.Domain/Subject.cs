@@ -13,7 +13,8 @@ namespace CourseMapping.Domain
         public string Name { get; }
         public string Description { get; set; }
         public int Level { get; }
-
+        
+        // Constructor
         public Subject(string code, string name, string description, int level)
         {
             Code = code;

@@ -14,11 +14,12 @@ namespace CourseMapping.Domain
         public string Description { get; set; }
         public List<Subject> Subjects { get; set; }
 
-        public Course(string name, string description, string code)
+        // Constructor
+        public Course(string code, string name, string description)
         {
+            Code = code;
             Name = name;
             Description = description;
-            Code = code;
             Subjects = [];
         }
 
