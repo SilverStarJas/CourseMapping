@@ -26,19 +26,18 @@ namespace CourseMapping.Web.Controllers
                 return NotFound("University not found.");
             }
             
-            // var subjects = course.Subjects;
-            //
-            // var response = subjects.Select(s => new SubjectResponse
-            // {
-            //     Code = s.Code,
-            //     Name = s.Name,
-            //     Description = s.Description,
-            //     Level = s.Level
-            // });
-            //
-            // return Ok(response);
+            var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
+            var subjects = course.Subjects;
 
-            return null;
+            var response = subjects.Select(s => new SubjectResponse
+            {
+                Code = s.Code,
+                Name = s.Name,
+                Description = s.Description,
+                Level = s.Level
+            });
+            
+            return Ok(response);
         }
 
         [HttpPost]
