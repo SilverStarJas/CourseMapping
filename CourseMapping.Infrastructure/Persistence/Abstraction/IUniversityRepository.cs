@@ -11,4 +11,6 @@ public interface IUniversityRepository
     void Delete(University university);
 
     string GetNextCourseCode();
+    
+    string GetNextSubjectCode();
 }

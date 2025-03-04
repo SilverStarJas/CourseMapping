@@ -25,8 +25,13 @@ namespace CourseMapping.Web.Controllers
             {
                 return NotFound("University not found.");
             }
-            
+
             var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
+            if (course is null)
+            {
+                return NotFound("Course not found.");
+            }
+            
             var subjects = course.Subjects;
 
             var response = subjects.Select(s => new SubjectResponse
@@ -46,7 +51,24 @@ namespace CourseMapping.Web.Controllers
             string courseCode,
             [FromBody] CreateNewSubjectRequest newSubjectRequest)
         {
-            return null;
+            var university = _universityRepository.GetById(universityId);
+            if (university is null)
+            {
+                return NotFound("University not found.");
+            }
+            
+            var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
+            if (course is null)
+            {
+                return NotFound("Course not found.");
+            }
+
+            var subjectCode = _universityRepository.GetNextSubjectCode();
+            var newSubject = new Subject(subjectCode, newSubjectRequest.Name, newSubjectRequest.Description, newSubjectRequest.Level);
+            
+            course.AddSubject(newSubject);
+            
+            return CreatedAtRoute("GetSubjects", new {universityId = universityId, courseCode = courseCode, subjectCode = newSubject.Code}, newSubject);
         }
     }
 }
