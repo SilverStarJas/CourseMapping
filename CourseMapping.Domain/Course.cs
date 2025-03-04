@@ -23,7 +23,7 @@ namespace CourseMapping.Domain
             Subjects = [];
         }
 
-        public void AddSubjects(Subject unit) 
+        public void AddSubject(Subject unit) 
         {
             if (Subjects.Count < 3)
                 Subjects.Add(unit);

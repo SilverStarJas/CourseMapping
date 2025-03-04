@@ -44,11 +44,11 @@ public class CoursesController : ControllerBase
         if (university is null)
             return NotFound("University not found.");
 
-        var courseCode = _universityRepository.GetNextCourseId();
+        var courseCode = _universityRepository.GetNextCourseCode();
         var newCourse = new Course(courseCode, newCourseRequest.Name, newCourseRequest.Description);
-
+        
         university.AddCourse(newCourse);
 
-        return CreatedAtRoute("GetCourse", new { universityId = universityId, courseCode = newCourse.Code }, newCourse);
+        return CreatedAtRoute("GetCourses", new { universityId = universityId, courseCode = newCourse.Code }, newCourse);
     }
 }

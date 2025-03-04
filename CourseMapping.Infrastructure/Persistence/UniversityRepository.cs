@@ -6,7 +6,6 @@ namespace CourseMapping.Infrastructure.Persistence;
 public class UniversityRepository : IUniversityRepository
 {
     private readonly List<University> _universities = [];
-
     public University? GetById(Guid id)
     {
         return _universities.FirstOrDefault(u => u.Id == id);
@@ -22,8 +21,13 @@ public class UniversityRepository : IUniversityRepository
         _universities.Remove(university);
     }
 
-    public string GetNextCourseId()
+    public string GetNextCourseCode()
     {
         return $"C-{Random.Shared.Next(1000)}";
+    }
+
+    public string GetNextSubjectCode()
+    {
+        return $"S-{Random.Shared.Next(2000)}";
     }
 }

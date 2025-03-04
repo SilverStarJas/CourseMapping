@@ -10,32 +10,35 @@ namespace CourseMapping.Web.Controllers
     [Route("v1/universities/{universityId}/courses/{courseCode}/subjects")]
     public class SubjectsController : ControllerBase
     {
-        private readonly ICourseRepository _courseRepository;
+        private readonly IUniversityRepository _universityRepository;
 
-        public SubjectsController(ICourseRepository courseRepository)
+        public SubjectsController(IUniversityRepository universityRepository)
         {
-            _courseRepository = courseRepository;
+            _universityRepository = universityRepository;
         }
         
         [HttpGet(Name = "GetSubjects")]
-        public ActionResult<SubjectResponse> GetSubjects(string courseCode)
+        public ActionResult<SubjectResponse> GetSubjects(Guid universityId, string courseCode)
         {
-            var course = _courseRepository.GetCourseByCode(courseCode);
-            if (course is null)
+            var university = _universityRepository.GetById(universityId);
+            if (university is null)
             {
-                return NotFound("Course not found.");
+                return NotFound("University not found.");
             }
             
-            var subjects = course.Subjects;
+            // var subjects = course.Subjects;
+            //
+            // var response = subjects.Select(s => new SubjectResponse
+            // {
+            //     Code = s.Code,
+            //     Name = s.Name,
+            //     Description = s.Description,
+            //     Level = s.Level
+            // });
+            //
+            // return Ok(response);
 
-            var response = subjects.Select(s => new SubjectResponse
-            {
-                Code = s.Code,
-                Name = s.Name,
-                Description = s.Description
-            });
-            
-            return Ok(response);
+            return null;
         }
 
         [HttpPost]
@@ -44,18 +47,7 @@ namespace CourseMapping.Web.Controllers
             string courseCode,
             [FromBody] CreateNewSubjectRequest newSubjectRequest)
         {
-            var course = _courseRepository.GetCourseByCode(courseCode);
-            if (course is null)
-            {
-                return NotFound("Course not found.");
-            }
-            
-            var subjectCode = _courseRepository.GetNextSubjectCode();
-            var newSubject = new Subject(subjectCode, newSubjectRequest.Name, newSubjectRequest.Description, newSubjectRequest.Level);
-            
-            course.AddSubjects(newSubject);
-            
-            return CreatedAtRoute("GetSubjects", new {courseCode = courseCode, subjectCode = newSubject.Code}, newSubject);
+            return null;
         }
     }
 }

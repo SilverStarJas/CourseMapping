@@ -10,7 +10,7 @@ namespace CourseMapping.Domain.Tests.UnitTests
             Subject abc = new Subject("ABC", "ABC1234", "Test unit", 1);
 
             // Act
-            engineering.AddSubjects(abc);
+            engineering.AddSubject(abc);
 
             // Assert
             Assert.Single(engineering.Subjects);
@@ -26,9 +26,9 @@ namespace CourseMapping.Domain.Tests.UnitTests
             Subject databases = new Subject("Databases", "FIT3171", "Introduction to Databases", 3);
 
             // Act
-            engineering.AddSubjects(abc);
-            engineering.AddSubjects(algorithms);
-            engineering.AddSubjects(databases);
+            engineering.AddSubject(abc);
+            engineering.AddSubject(algorithms);
+            engineering.AddSubject(databases);
 
             // Assert
             Assert.Equal(3, engineering.Subjects.Count);
@@ -44,12 +44,12 @@ namespace CourseMapping.Domain.Tests.UnitTests
             Subject databases = new Subject("Databases", "FIT3171", "Introduction to Databases", 3);
             Subject fourth = new Subject("Test", "FITTest", "Test unit", 4);
 
-            engineering.AddSubjects(abc);
-            engineering.AddSubjects(algorithms);
-            engineering.AddSubjects(databases);
+            engineering.AddSubject(abc);
+            engineering.AddSubject(algorithms);
+            engineering.AddSubject(databases);
 
             // Act and Assert
-            var exception = Assert.Throws<InvalidOperationException>(() => engineering.AddSubjects(fourth));
+            var exception = Assert.Throws<InvalidOperationException>(() => engineering.AddSubject(fourth));
 
             Assert.Equal("Up to three subjects allowed.", exception.Message);
 
