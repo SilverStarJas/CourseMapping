@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseMapping.Domain.Tests.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseMapping.Web", "CourseMapping.Web\CourseMapping.Web.csproj", "{FDF705CE-34EC-44A5-B9AD-74FB169F27F5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseMapping.Infrastructure", "CourseMapping.Infrastructure\CourseMapping.Infrastructure.csproj", "{F467DC56-2478-4B80-83A6-6CCD3D420475}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,10 @@ Global
 		{FDF705CE-34EC-44A5-B9AD-74FB169F27F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FDF705CE-34EC-44A5-B9AD-74FB169F27F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FDF705CE-34EC-44A5-B9AD-74FB169F27F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F467DC56-2478-4B80-83A6-6CCD3D420475}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F467DC56-2478-4B80-83A6-6CCD3D420475}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F467DC56-2478-4B80-83A6-6CCD3D420475}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F467DC56-2478-4B80-83A6-6CCD3D420475}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
