@@ -9,14 +9,15 @@ namespace CourseMapping.Domain
     public class University
     {
         // Properties
-        public Guid Id { get; set; }
+        public Guid Id { get; }
         public string Name { get; }
         public string Country { get; }
         public List<Course> Courses { get; }
 
         // Constructor
-        public University(string name, string country)
+        public University(Guid id, string name, string country)
         {
+            Id = id;
             Name = name;
             Country = country;
             Courses = [];

@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CourseMapping.Domain\CourseMapping.Domain.csproj" />
+    <ProjectReference Include="..\CourseMapping.Infrastructure\CourseMapping.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
