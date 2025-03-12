@@ -5,20 +5,21 @@ namespace CourseMapping.Infrastructure.Persistence;
 
 public class UniversityRepository : IUniversityRepository
 {
-    private readonly List<University> _universities = [];
+    // private readonly List<University> _universities = [];
+    private readonly ApplicationDbContext _dbContext;
     public University? GetById(Guid id)
     {
-        return _universities.FirstOrDefault(u => u.Id == id);
+        return _dbContext.FirstOrDefault(u => u.Id == id);
     }
 
     public void Add(University university)
     {
-        _universities.Add(university);
+        _dbContext.Add(university);
     }
 
     public void Delete(University university)
     {
-        _universities.Remove(university);
+        _dbContext.Remove(university);
     }
 
     public string GetNextCourseCode()
