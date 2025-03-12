@@ -7,10 +7,15 @@ public class UniversityRepository : IUniversityRepository
 {
     // private readonly List<University> _universities = [];
     private readonly ApplicationDbContext _dbContext;
-    
+
+    public UniversityRepository(ApplicationDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+        
     public University? GetById(Guid id)
     {
-        return _dbContext.FirstOrDefault(u => u.Id == id);
+        return _dbContext.Universities.FirstOrDefault(u => u.Id == id);
     }
 
     public void Add(University university)
