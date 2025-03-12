@@ -14,6 +14,10 @@ namespace CourseMapping.Domain
         public string Description { get; set; }
         public int Level { get; }
         
+        // Foreign key and reference navigation to parent class
+        public string? CourseCode { get; set; }
+        public Course? Course { get; set; }
+        
         // Constructor
         public Subject(string code, string name, string description, int level)
         {
