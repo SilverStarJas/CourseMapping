@@ -50,6 +50,7 @@ public class CoursesController : ControllerBase
         
         university.AddCourse(newCourse);
 
+        // Save to db and update University to track change in relationship
         var dbContext = (ApplicationDbContext)_universityRepository.GetDbContext();
         dbContext.Courses.Add(newCourse);
         dbContext.Universities.Update(university);

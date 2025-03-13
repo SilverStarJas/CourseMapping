@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Runtime.Intrinsics;
-using CourseMapping.Domain;
+﻿using CourseMapping.Domain;
+using CourseMapping.Infrastructure;
 using CourseMapping.Infrastructure.Persistence.Abstraction;
 using CourseMapping.Web.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CourseMapping.Web.Controllers
 {
@@ -67,6 +67,13 @@ namespace CourseMapping.Web.Controllers
             var newSubject = new Subject(subjectCode, newSubjectRequest.Name, newSubjectRequest.Description, newSubjectRequest.Level);
             
             course.AddSubject(newSubject);
+            
+            // Save to db and update Course to track change in relationship
+            var dbContext = (ApplicationDbContext)_universityRepository.GetDbContext();
+            dbContext.Subjects.Add(newSubject);
+            dbContext.Courses.Update(course);
+            dbContext.SaveChanges();
+
             
             return CreatedAtRoute("GetSubjects", new {universityId = universityId, courseCode = courseCode, subjectCode = newSubject.Code}, newSubject);
         }
