@@ -1,4 +1,5 @@
 ﻿using CourseMapping.Domain;
+using CourseMapping.Infrastructure;
 using CourseMapping.Infrastructure.Persistence.Abstraction;
 using CourseMapping.Web.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -48,6 +49,11 @@ public class CoursesController : ControllerBase
         var newCourse = new Course(courseCode, newCourseRequest.Name, newCourseRequest.Description);
         
         university.AddCourse(newCourse);
+
+        var dbContext = (ApplicationDbContext)_universityRepository.GetDbContext();
+        dbContext.Courses.Add(newCourse);
+        dbContext.Universities.Update(university);
+        dbContext.SaveChanges();
 
         return CreatedAtRoute("GetCourses", new { universityId = universityId, courseCode = newCourse.Code }, newCourse);
     }

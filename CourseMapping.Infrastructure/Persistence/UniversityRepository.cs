@@ -1,6 +1,7 @@
 using CourseMapping.Domain;
 using CourseMapping.Infrastructure.Persistence.Abstraction;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace CourseMapping.Infrastructure.Persistence;
 
@@ -39,5 +40,10 @@ public class UniversityRepository : IUniversityRepository
     public string GetNextSubjectCode()
     {
         return $"S-{Random.Shared.Next(2000)}";
+    }
+
+    public DbContext GetDbContext()
+    {
+        return _dbContext;
     }
 }

@@ -1,4 +1,5 @@
 using CourseMapping.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace CourseMapping.Infrastructure.Persistence.Abstraction;
 
@@ -13,4 +14,6 @@ public interface IUniversityRepository
     string GetNextCourseCode();
     
     string GetNextSubjectCode();
+    
+    DbContext GetDbContext();
 }
