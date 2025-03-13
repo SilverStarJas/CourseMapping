@@ -1,5 +1,6 @@
 using CourseMapping.Domain;
 using CourseMapping.Infrastructure.Persistence.Abstraction;
+using System.Linq;
 
 namespace CourseMapping.Infrastructure.Persistence;
 
@@ -17,7 +18,7 @@ public class UniversityRepository : IUniversityRepository
     {
         return _dbContext.Universities.FirstOrDefault(u => u.Id == id);
     }
-
+   
     public void Add(University university)
     {
         _dbContext.Add(university);

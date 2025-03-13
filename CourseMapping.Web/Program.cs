@@ -1,5 +1,7 @@
+using CourseMapping.Infrastructure;
 using CourseMapping.Infrastructure.Persistence;
 using CourseMapping.Infrastructure.Persistence.Abstraction;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +12,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<IUniversityRepository, UniversityRepository>();
+builder.Services.AddTransient<IUniversityRepository, UniversityRepository>();
+builder.Services.AddDbContext<ApplicationDbContext>();
 
 var app = builder.Build();
 
