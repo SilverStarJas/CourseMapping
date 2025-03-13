@@ -18,15 +18,17 @@ public class UniversityRepository : IUniversityRepository
     {
         return _dbContext.Universities.FirstOrDefault(u => u.Id == id);
     }
-   
+    
     public void Add(University university)
     {
         _dbContext.Add(university);
+        _dbContext.SaveChanges();
     }
 
     public void Delete(University university)
     {
         _dbContext.Remove(university);
+        _dbContext.SaveChanges();
     }
 
     public string GetNextCourseCode()
