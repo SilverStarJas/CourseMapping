@@ -19,17 +19,20 @@ public class UniversityRepository : IUniversityRepository
     {
         return _dbContext.Universities.FirstOrDefault(u => u.Id == id);
     }
+
+    public Course? GetCourseByUniversityId(Guid id)
+    {
+        return _dbContext.Courses.FirstOrDefault(c => c.UniversityId == id);
+    }
     
     public void Add(University university)
     {
         _dbContext.Add(university);
-        _dbContext.SaveChanges();
     }
 
     public void Delete(University university)
     {
         _dbContext.Remove(university);
-        _dbContext.SaveChanges();
     }
 
     public string GetNextCourseCode()
@@ -40,5 +43,10 @@ public class UniversityRepository : IUniversityRepository
     public string GetNextSubjectCode()
     {
         return $"S-{Random.Shared.Next(2000)}";
+    }
+
+    public void SaveChanges()
+    {
+        _dbContext.SaveChanges();
     }
 }

@@ -67,6 +67,7 @@ namespace CourseMapping.Web.Controllers
             var newSubject = new Subject(subjectCode, newSubjectRequest.Name, newSubjectRequest.Description, newSubjectRequest.Level);
             
             course.AddSubject(newSubject);
+            _universityRepository.SaveChanges();
             
             var subjectResponse = new SubjectResponse
             {
@@ -75,7 +76,7 @@ namespace CourseMapping.Web.Controllers
                 Description = newSubject.Description
             };
             
-            return CreatedAtRoute("GetSubjects", new {universityId = universityId, courseCode = courseCode, subjectCode = newSubject.Code}, newSubject);
+            return CreatedAtRoute("GetSubjects", new {universityId = universityId, courseCode = courseCode, subjectCode = newSubject.Code}, subjectResponse);
         }
     }
 }

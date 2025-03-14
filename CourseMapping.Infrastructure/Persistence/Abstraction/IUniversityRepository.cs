@@ -7,6 +7,8 @@ public interface IUniversityRepository
 {
     University? GetById(Guid id);
 
+    public Course? GetCourseByUniversityId(Guid id);
+
     void Add(University university);
 
     void Delete(University university);
@@ -14,4 +16,6 @@ public interface IUniversityRepository
     string GetNextCourseCode();
     
     string GetNextSubjectCode();
+    
+    void SaveChanges();
 }
