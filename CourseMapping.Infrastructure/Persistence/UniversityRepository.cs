@@ -20,9 +20,14 @@ public class UniversityRepository : IUniversityRepository
         return _dbContext.Universities.FirstOrDefault(u => u.Id == id);
     }
 
-    public Course? GetCourseByUniversityId(Guid id)
+    public List<Course>? GetCourses(Guid universityId)
     {
-        return _dbContext.Courses.FirstOrDefault(c => c.UniversityId == id);
+        return _dbContext.Courses.Where(c => c.UniversityId == universityId).ToList();
+    }
+
+    public List<Subject>? GetSubjects(Guid universityId, string courseCode)
+    {
+        return _dbContext.Subjects.Where(s => s.CourseCode == courseCode).ToList();
     }
     
     public void Add(University university)

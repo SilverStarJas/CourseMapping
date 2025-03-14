@@ -24,7 +24,7 @@ public class CoursesController : ControllerBase
         if (university is null)
             return NotFound("University not found.");
 
-        var courses = university.Courses;
+        var courses = _universityRepository.GetCourses(universityId);
 
         var response = courses.Select(c => new CourseResponse
         {

@@ -32,7 +32,7 @@ namespace CourseMapping.Web.Controllers
                 return NotFound("Course not found.");
             }
             
-            var subjects = course.Subjects;
+            var subjects = _universityRepository.GetSubjects(universityId, courseCode);
 
             var response = subjects.Select(s => new SubjectResponse
             {
