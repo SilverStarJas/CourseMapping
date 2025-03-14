@@ -14,6 +14,4 @@ public interface IUniversityRepository
     string GetNextCourseCode();
     
     string GetNextSubjectCode();
-    
-    DbContext GetDbContext();
 }

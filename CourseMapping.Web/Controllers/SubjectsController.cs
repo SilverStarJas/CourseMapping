@@ -68,12 +68,12 @@ namespace CourseMapping.Web.Controllers
             
             course.AddSubject(newSubject);
             
-            // Save to db and update Course to track change in relationship
-            var dbContext = (ApplicationDbContext)_universityRepository.GetDbContext();
-            dbContext.Subjects.Add(newSubject);
-            dbContext.Courses.Update(course);
-            dbContext.SaveChanges();
-
+            var subjectResponse = new SubjectResponse
+            {
+                Code = newSubject.Code,
+                Name = newSubject.Name,
+                Description = newSubject.Description
+            };
             
             return CreatedAtRoute("GetSubjects", new {universityId = universityId, courseCode = courseCode, subjectCode = newSubject.Code}, newSubject);
         }

@@ -49,12 +49,13 @@ public class CoursesController : ControllerBase
         var newCourse = new Course(courseCode, newCourseRequest.Name, newCourseRequest.Description);
         
         university.AddCourse(newCourse);
-
-        // Save to db and update University to track change in relationship
-        var dbContext = (ApplicationDbContext)_universityRepository.GetDbContext();
-        dbContext.Courses.Add(newCourse);
-        dbContext.Universities.Update(university);
-        dbContext.SaveChanges();
+        
+        var courseResponse = new CourseResponse
+        {
+            Code = newCourse.Code,
+            Name = newCourse.Name,
+            Description = newCourse.Description
+        };
 
         return CreatedAtRoute("GetCourses", new { universityId = universityId, courseCode = newCourse.Code }, newCourse);
     }

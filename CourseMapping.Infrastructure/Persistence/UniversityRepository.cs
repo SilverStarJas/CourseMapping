@@ -41,9 +41,4 @@ public class UniversityRepository : IUniversityRepository
     {
         return $"S-{Random.Shared.Next(2000)}";
     }
-
-    public DbContext GetDbContext()
-    {
-        return _dbContext;
-    }
 }
