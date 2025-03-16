@@ -25,9 +25,18 @@ public class UniversityRepository : IUniversityRepository
         return _dbContext.Courses.Where(c => c.UniversityId == universityId).ToList();
     }
 
+    public Course? GetCourseByCode(Guid universityId, string courseCode)
+    {
+        return _dbContext.Courses.FirstOrDefault(c => c.UniversityId == universityId && c.Code == courseCode);
+    }
+
     public List<Subject>? GetSubjects(Guid universityId, string courseCode)
     {
-        return _dbContext.Subjects.Where(s => s.CourseCode == courseCode).ToList();
+        var course = _dbContext.Courses
+            .Include(c => c.Subjects)
+            .FirstOrDefault(c => c.UniversityId == universityId && c.Code == courseCode);
+        
+        return course.Subjects.ToList();
     }
     
     public void Add(University university)

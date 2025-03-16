@@ -26,7 +26,7 @@ namespace CourseMapping.Web.Controllers
                 return NotFound("University not found.");
             }
 
-            var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
+            var course = _universityRepository.GetCourseByCode(universityId, courseCode);
             if (course is null)
             {
                 return NotFound("Course not found.");
@@ -57,7 +57,7 @@ namespace CourseMapping.Web.Controllers
                 return NotFound("University not found.");
             }
             
-            var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
+            var course = _universityRepository.GetCourseByCode(universityId, courseCode);
             if (course is null)
             {
                 return NotFound("Course not found.");
