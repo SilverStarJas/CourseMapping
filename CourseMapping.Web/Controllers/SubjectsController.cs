@@ -73,7 +73,8 @@ namespace CourseMapping.Web.Controllers
             {
                 Code = newSubject.Code,
                 Name = newSubject.Name,
-                Description = newSubject.Description
+                Description = newSubject.Description,
+                Level = newSubject.Level
             };
             
             return CreatedAtRoute("GetSubjects", new {universityId = universityId, courseCode = courseCode, subjectCode = newSubject.Code}, subjectResponse);
