@@ -17,38 +17,38 @@ public class ApplicationDbContext : DbContext
         modelBuilder
             .Entity<Subject>()
             .HasKey(s => s.Code)
-            .HasName("subjectCode");
+            .HasName("subject_code");
 
         modelBuilder
             .Entity<Subject>()
             .Property(s => s.Name)
-            .HasColumnName("SubjectName");
+            .HasColumnName("subject_name");
         
         modelBuilder
             .Entity<Subject>()
             .Property(s => s.Description)
-            .HasColumnName("SubjectDescription");
+            .HasColumnName("subject_description");
         
         modelBuilder
             .Entity<Subject>()
             .Property(s => s.Level)
-            .HasColumnName("SubjectLevel");
+            .HasColumnName("subject_level");
         
         // Course
         modelBuilder
             .Entity<Course>()
             .HasKey(c => c.Code)
-            .HasName("courseCode");
+            .HasName("course_code");
         
         modelBuilder
             .Entity<Course>()
             .Property(s => s.Name)
-            .HasColumnName("CourseName");
+            .HasColumnName("course_name");
         
         modelBuilder
             .Entity<Course>()
             .Property(c => c.Description)
-            .HasColumnName("CourseDescription");
+            .HasColumnName("course_description");
 
         modelBuilder
             .Entity<Course>()
@@ -60,17 +60,17 @@ public class ApplicationDbContext : DbContext
         modelBuilder
             .Entity<University>()
             .HasKey(u => u.Id)
-            .HasName("universityId");
+            .HasName("university_id");
         
         modelBuilder
             .Entity<University>()
             .Property(u => u.Name)
-            .HasColumnName("UniversityName");
+            .HasColumnName("university_name");
         
         modelBuilder
             .Entity<University>()
             .Property(u => u.Country)
-            .HasColumnName("UniversityCountry");
+            .HasColumnName("university_country");
 
         modelBuilder
             .Entity<University>()
