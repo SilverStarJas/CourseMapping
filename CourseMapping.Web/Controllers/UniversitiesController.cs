@@ -4,6 +4,7 @@ using CourseMapping.Infrastructure.Persistence;
 using CourseMapping.Infrastructure.Persistence.Abstraction;
 using CourseMapping.Web.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Migrations.Operations;
 
 namespace CourseMapping.Web.Controllers;
 
@@ -35,7 +36,7 @@ public class UniversitiesController : ControllerBase
         return Ok(response);
     }
 
-    [HttpPost]
+    [HttpPost(Name = "AddUniversity")]
     public ActionResult<UniversityResponse> CreateUniversity([FromBody] CreateNewUniversityRequest newUniversityRequest)
     {
         // Generate and set an ID for the created University
@@ -47,5 +48,22 @@ public class UniversitiesController : ControllerBase
         _universityRepository.SaveChanges();
         
         return CreatedAtRoute("GetUniversity", new { universityId = newUniversity.Id }, newUniversity);
+    }
+
+    [HttpPut("{universityId}", Name = "UpdateUniversity")]
+    public ActionResult<UniversityResponse> UpdateUniversity(Guid universityId,
+        [FromBody] CreateNewUniversityRequest newUniversityRequest)
+    {
+        var university = _universityRepository.GetById(universityId);
+        if (university is null)
+            return NotFound("University not found.");
+        
+        university.Name = newUniversityRequest.Name;
+        university.Country = newUniversityRequest.Country;
+        
+        _universityRepository.SaveChanges();
+
+        // return CreatedAtRoute("GetUniversity", new { universityId = university.Id }, university);
+        return NoContent();
     }
 }

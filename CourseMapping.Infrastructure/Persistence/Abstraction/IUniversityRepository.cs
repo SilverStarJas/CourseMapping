@@ -13,6 +13,8 @@ public interface IUniversityRepository
     
     public List<Subject>? GetSubjects(Guid universityId, string courseCode);
 
+    public Subject? GetSubjectByCode(Guid universityId, string courseCode, string subjectCode);
+
     void Add(University university);
 
     void Delete(University university);

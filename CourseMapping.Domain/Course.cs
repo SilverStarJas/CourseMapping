@@ -10,7 +10,7 @@ namespace CourseMapping.Domain
     {
         // Properties
         public string Code { get; }
-        public string Name { get; } 
+        public string Name { get; set; } 
         public string Description { get; set; }
         public List<Subject> Subjects { get; set; }
         

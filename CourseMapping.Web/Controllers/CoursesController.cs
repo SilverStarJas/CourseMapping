@@ -36,7 +36,7 @@ public class CoursesController : ControllerBase
         return Ok(response);
     }
 
-    [HttpPost]
+    [HttpPost(Name = "AddCourse")]
     public ActionResult<CourseResponse> CreateCourse(
         Guid universityId,
         [FromBody] CreateNewCourseRequest newCourseRequest)
@@ -59,5 +59,23 @@ public class CoursesController : ControllerBase
         };
     
         return CreatedAtRoute("GetCourses", new { universityId = universityId, courseCode = newCourse.Code }, courseResponse);
+    }
+
+    [HttpPut("{courseCode}", Name = "UpdateCourse")]
+    public ActionResult<CourseResponse> UpdateCourse(
+        Guid universityId,
+        string courseCode,
+        [FromBody] CreateNewCourseRequest newCourseRequest)
+    {
+        var course = _universityRepository.GetCourseByCode(universityId, courseCode); 
+        if (course is null)
+            return NotFound("Course not found.");
+
+        course.Name = newCourseRequest.Name;
+        course.Description = newCourseRequest.Description;
+        
+        _universityRepository.SaveChanges();
+
+        return NoContent();
     }
 }

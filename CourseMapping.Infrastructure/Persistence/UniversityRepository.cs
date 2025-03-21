@@ -7,7 +7,6 @@ namespace CourseMapping.Infrastructure.Persistence;
 
 public class UniversityRepository : IUniversityRepository
 {
-    // private readonly List<University> _universities = [];
     private readonly ApplicationDbContext _dbContext;
 
     public UniversityRepository(ApplicationDbContext dbContext)
@@ -37,6 +36,12 @@ public class UniversityRepository : IUniversityRepository
             .FirstOrDefault(c => c.UniversityId == universityId && c.Code == courseCode);
         
         return course.Subjects.ToList();
+    }
+
+    public Subject? GetSubjectByCode(Guid universityId, string courseCode, string subjectCode)
+    {
+        var course = GetCourseByCode(universityId, courseCode);
+        return course.Subjects.FirstOrDefault(subject => subject.Code == subjectCode);
     }
     
     public void Add(University university)

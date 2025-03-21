@@ -79,5 +79,35 @@ namespace CourseMapping.Web.Controllers
             
             return CreatedAtRoute("GetSubjects", new {universityId = universityId, courseCode = courseCode, subjectCode = newSubject.Code}, subjectResponse);
         }
+
+        [HttpPut("{subjectCode}", Name = "UpdateSubject")]
+        public ActionResult<SubjectResponse> UpdateSubject(
+            Guid universityId,
+            string courseCode,
+            string subjectCode,
+            [FromBody] CreateNewSubjectRequest newSubjectRequest)
+        {
+            var university = _universityRepository.GetById(universityId);
+            if (university is null)
+            {
+                return NotFound("University not found.");
+            }
+            
+            var course = _universityRepository.GetCourseByCode(universityId, courseCode);
+            if (course is null)
+            {
+                return NotFound("Course not found.");
+            }
+            
+            var subject = _universityRepository.GetSubjectByCode(universityId, courseCode, subjectCode);
+            
+            subject.Name = newSubjectRequest.Name;
+            subject.Description = newSubjectRequest.Description;
+            subject.Level = newSubjectRequest.Level;
+            
+            _universityRepository.SaveChanges();
+            
+            return NoContent();
+        }
     }
 }
