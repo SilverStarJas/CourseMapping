@@ -40,8 +40,13 @@ public class UniversityRepository : IUniversityRepository
 
     public Subject? GetSubjectByCode(Guid universityId, string courseCode, string subjectCode)
     {
-        var course = GetCourseByCode(universityId, courseCode);
-        return course.Subjects.FirstOrDefault(subject => subject.Code == subjectCode);
+        return _dbContext.Subjects
+            .Include(s => s.Course)
+            .ThenInclude(c => c.University)
+            .FirstOrDefault(s =>
+                s.Code == subjectCode &&
+                s.Course.Code == courseCode &&
+                s.Course.University.Id == universityId);
     }
     
     public void Add(University university)
