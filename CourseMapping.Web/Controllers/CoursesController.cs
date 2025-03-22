@@ -63,8 +63,7 @@ public class CoursesController : ControllerBase
 
     [HttpPut("{courseCode}", Name = "UpdateCourse")]
     public ActionResult<CourseResponse> UpdateCourse(
-        Guid universityId,
-        string courseCode,
+        Guid universityId, string courseCode,
         [FromBody] CreateNewCourseRequest newCourseRequest)
     {
         var course = _universityRepository.GetCourseByCode(universityId, courseCode); 
@@ -76,6 +75,20 @@ public class CoursesController : ControllerBase
         
         _universityRepository.SaveChanges();
 
+        return NoContent();
+    }
+
+    [HttpDelete("{courseCode}", Name = "DeleteCourse")]
+    public ActionResult<CourseResponse> DeleteCourse(
+        Guid universityId, string courseCode)
+    {
+        var course = _universityRepository.GetCourseByCode(universityId, courseCode); 
+        if (course is null)
+            return NotFound("Course not found.");
+        
+        _universityRepository.DeleteCourse(course);
+        _universityRepository.SaveChanges();
+        
         return NoContent();
     }
 }

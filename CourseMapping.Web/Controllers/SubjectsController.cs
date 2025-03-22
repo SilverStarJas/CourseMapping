@@ -47,8 +47,7 @@ namespace CourseMapping.Web.Controllers
 
         [HttpPost]
         public ActionResult<SubjectResponse> CreateSubject(
-            Guid universityId,
-            string courseCode,
+            Guid universityId, string courseCode,
             [FromBody] CreateNewSubjectRequest newSubjectRequest)
         {
             var university = _universityRepository.GetById(universityId);
@@ -79,12 +78,12 @@ namespace CourseMapping.Web.Controllers
             
             return CreatedAtRoute("GetSubjects", new {universityId = universityId, courseCode = courseCode, subjectCode = newSubject.Code}, subjectResponse);
         }
+        
+        // TODO: Fix PUT and DELETE 
 
         [HttpPut("{subjectCode}", Name = "UpdateSubject")]
         public ActionResult<SubjectResponse> UpdateSubject(
-            Guid universityId,
-            string courseCode,
-            string subjectCode,
+            Guid universityId, string courseCode, string subjectCode,
             [FromBody] CreateNewSubjectRequest newSubjectRequest)
         {
             var university = _universityRepository.GetById(universityId);
@@ -105,6 +104,20 @@ namespace CourseMapping.Web.Controllers
             subject.Description = newSubjectRequest.Description;
             subject.Level = newSubjectRequest.Level;
             
+            _universityRepository.SaveChanges();
+            
+            return NoContent();
+        }
+
+        [HttpDelete("{subjectCode}", Name = "DeleteSubject")]
+        public ActionResult<SubjectResponse> DeleteSubject(
+            Guid universityId, string courseCode, string subjectCode)
+        {
+            var subject = _universityRepository.GetSubjectByCode(universityId, courseCode, subjectCode);
+            if (subject is null)
+                return NotFound("Subject not found.");
+            
+            _universityRepository.DeleteSubject(subject);
             _universityRepository.SaveChanges();
             
             return NoContent();

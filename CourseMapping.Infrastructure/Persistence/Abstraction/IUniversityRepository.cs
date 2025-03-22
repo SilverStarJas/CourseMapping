@@ -15,10 +15,14 @@ public interface IUniversityRepository
 
     public Subject? GetSubjectByCode(Guid universityId, string courseCode, string subjectCode);
 
-    void Add(University university);
+    public void Add(University university);
 
-    void Delete(University university);
-
+    public void DeleteUniversity(University university);
+    
+    public void DeleteCourse(Course course);
+    
+    public void DeleteSubject(Subject subject);
+    
     string GetNextCourseCode();
     
     string GetNextSubjectCode();

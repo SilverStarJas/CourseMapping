@@ -49,9 +49,19 @@ public class UniversityRepository : IUniversityRepository
         _dbContext.Add(university);
     }
 
-    public void Delete(University university)
+    public void DeleteUniversity(University university)
     {
         _dbContext.Remove(university);
+    }
+
+    public void DeleteCourse(Course course)
+    {
+        _dbContext.Remove(course);
+    }
+
+    public void DeleteSubject(Subject subject)
+    {
+        _dbContext.Remove(subject);
     }
 
     public string GetNextCourseCode()

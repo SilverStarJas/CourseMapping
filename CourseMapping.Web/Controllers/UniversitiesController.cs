@@ -51,7 +51,8 @@ public class UniversitiesController : ControllerBase
     }
 
     [HttpPut("{universityId}", Name = "UpdateUniversity")]
-    public ActionResult<UniversityResponse> UpdateUniversity(Guid universityId,
+    public ActionResult<UniversityResponse> UpdateUniversity(
+        Guid universityId,
         [FromBody] CreateNewUniversityRequest newUniversityRequest)
     {
         var university = _universityRepository.GetById(universityId);
@@ -63,7 +64,20 @@ public class UniversitiesController : ControllerBase
         
         _universityRepository.SaveChanges();
 
-        // return CreatedAtRoute("GetUniversity", new { universityId = university.Id }, university);
         return NoContent();
     }
+
+    [HttpDelete("{universityId}", Name = "DeleteUniversity")]
+    public ActionResult<UniversityResponse> DeleteUniversity(Guid universityId)
+    {
+        var university = _universityRepository.GetById(universityId);
+        if (university is null)
+            return NotFound("University not found.");
+        
+        _universityRepository.DeleteUniversity(university);
+        _universityRepository.SaveChanges();
+        
+        return NoContent();
+    }
+    
 }
