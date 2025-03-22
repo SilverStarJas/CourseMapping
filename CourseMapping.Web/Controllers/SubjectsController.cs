@@ -52,15 +52,11 @@ namespace CourseMapping.Web.Controllers
         {
             var university = _universityRepository.GetById(universityId);
             if (university is null)
-            {
                 return NotFound("University not found.");
-            }
             
             var course = _universityRepository.GetCourseByCode(universityId, courseCode);
             if (course is null)
-            {
                 return NotFound("Course not found.");
-            }
 
             var subjectCode = _universityRepository.GetNextSubjectCode();
             var newSubject = new Subject(subjectCode, newSubjectRequest.Name, newSubjectRequest.Description, newSubjectRequest.Level);
@@ -88,18 +84,17 @@ namespace CourseMapping.Web.Controllers
         {
             var university = _universityRepository.GetById(universityId);
             if (university is null)
-            {
                 return NotFound("University not found.");
-            }
             
             var course = _universityRepository.GetCourseByCode(universityId, courseCode);
             if (course is null)
-            {
                 return NotFound("Course not found.");
-            }
+            
             
             var subject = _universityRepository.GetSubjectByCode(universityId, courseCode, subjectCode);
-            
+            if (subject is null)
+                return NotFound("Subject not found.");
+                
             subject.Name = newSubjectRequest.Name;
             subject.Description = newSubjectRequest.Description;
             subject.Level = newSubjectRequest.Level;
