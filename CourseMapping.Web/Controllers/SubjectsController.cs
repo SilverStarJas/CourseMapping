@@ -1,5 +1,4 @@
 ﻿using CourseMapping.Domain;
-using CourseMapping.Infrastructure;
 using CourseMapping.Infrastructure.Persistence.Abstraction;
 using CourseMapping.Web.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -16,24 +15,49 @@ namespace CourseMapping.Web.Controllers
         {
             _universityRepository = universityRepository;
         }
+
+        [HttpGet("{subjectCode}", Name = "GetSubjectByCode")]
+        public ActionResult<SubjectResponse> GetSubjectByCode(Guid universityId, string courseCode,
+            string subjectCode)
+        {
+            var university = _universityRepository.GetUniversityById(universityId);
+            if (university is null)
+                return NotFound("University not found.");
+            
+            var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
+            if (course is null)
+                return NotFound("Course not found.");
+            
+            var subject = course.Subjects.FirstOrDefault(s => s.Code == subjectCode);
+            if (subject is null)
+                return NotFound("Subject not found.");
+
+            var response = new SubjectResponse
+            {
+                Code = subject.Code,
+                Name = subject.Name,
+                Description = subject.Description,
+                Level = subject.Level
+            };
+            
+            return Ok(response);
+        }
         
         [HttpGet(Name = "GetSubjects")]
         public ActionResult<SubjectResponse> GetSubjects(Guid universityId, string courseCode)
         {
-            var university = _universityRepository.GetById(universityId);
+            var university = _universityRepository.GetUniversityById(universityId);
             if (university is null)
-            {
                 return NotFound("University not found.");
-            }
 
             var course = _universityRepository.GetCourseByCode(universityId, courseCode);
             if (course is null)
-            {
                 return NotFound("Course not found.");
-            }
             
             var subjects = _universityRepository.GetSubjects(universityId, courseCode);
-
+            if (subjects is null)
+                return NotFound("Subjects not found.");
+            
             var response = subjects.Select(s => new SubjectResponse
             {
                 Code = s.Code,
@@ -47,21 +71,16 @@ namespace CourseMapping.Web.Controllers
 
         [HttpPost]
         public ActionResult<SubjectResponse> CreateSubject(
-            Guid universityId,
-            string courseCode,
+            Guid universityId, string courseCode,
             [FromBody] CreateNewSubjectRequest newSubjectRequest)
         {
-            var university = _universityRepository.GetById(universityId);
+            var university = _universityRepository.GetUniversityById(universityId);
             if (university is null)
-            {
                 return NotFound("University not found.");
-            }
             
             var course = _universityRepository.GetCourseByCode(universityId, courseCode);
             if (course is null)
-            {
                 return NotFound("Course not found.");
-            }
 
             var subjectCode = _universityRepository.GetNextSubjectCode();
             var newSubject = new Subject(subjectCode, newSubjectRequest.Name, newSubjectRequest.Description, newSubjectRequest.Level);
@@ -77,7 +96,49 @@ namespace CourseMapping.Web.Controllers
                 Level = newSubject.Level
             };
             
-            return CreatedAtRoute("GetSubjects", new {universityId = universityId, courseCode = courseCode, subjectCode = newSubject.Code}, subjectResponse);
+            return CreatedAtRoute("GetSubjects", new {universityId, courseCode, subjectCode = newSubject.Code}, subjectResponse);
+        }
+        
+        // TODO: Fix PUT and DELETE 
+
+        [HttpPut("{subjectCode}", Name = "UpdateSubject")]
+        public ActionResult<SubjectResponse> UpdateSubject(
+            Guid universityId, string courseCode, string subjectCode,
+            [FromBody] CreateNewSubjectRequest newSubjectRequest)
+        {
+            var university = _universityRepository.GetUniversityById(universityId);
+            if (university is null)
+                return NotFound("University not found.");
+            
+            var course = _universityRepository.GetCourseByCode(universityId, courseCode);
+            if (course is null)
+                return NotFound("Course not found.");
+            
+            var subject = _universityRepository.GetSubjectByCode(universityId, courseCode, subjectCode);
+            if (subject is null)
+                return NotFound("Subject not found.");
+                
+            subject.Name = newSubjectRequest.Name;
+            subject.Description = newSubjectRequest.Description;
+            subject.Level = newSubjectRequest.Level;
+            
+            _universityRepository.SaveChanges();
+            
+            return NoContent();
+        }
+
+        [HttpDelete("{subjectCode}", Name = "DeleteSubject")]
+        public ActionResult<SubjectResponse> DeleteSubject(
+            Guid universityId, string courseCode, string subjectCode)
+        {
+            var subject = _universityRepository.GetSubjectByCode(universityId, courseCode, subjectCode);
+            if (subject is null)
+                return NotFound("Subject not found.");
+            
+            _universityRepository.DeleteSubject(subject);
+            _universityRepository.SaveChanges();
+            
+            return NoContent();
         }
     }
 }

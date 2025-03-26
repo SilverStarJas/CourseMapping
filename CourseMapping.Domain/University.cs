@@ -10,8 +10,8 @@ namespace CourseMapping.Domain
     {
         // Properties
         public Guid Id { get; }
-        public string Name { get; }
-        public string Country { get; }
+        public string Name { get; set; }
+        public string Country { get; set; }
         public List<Course> Courses { get; }
 
         // Constructor

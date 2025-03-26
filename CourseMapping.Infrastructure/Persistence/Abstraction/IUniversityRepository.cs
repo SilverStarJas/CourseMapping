@@ -5,7 +5,8 @@ namespace CourseMapping.Infrastructure.Persistence.Abstraction;
 
 public interface IUniversityRepository
 {
-    University? GetById(Guid id);
+    public University? GetUniversityById(Guid id);
+    public List<University> GetAllUniversities();
 
     public List<Course>? GetCourses(Guid universityId);
 
@@ -13,10 +14,16 @@ public interface IUniversityRepository
     
     public List<Subject>? GetSubjects(Guid universityId, string courseCode);
 
-    void Add(University university);
+    public Subject? GetSubjectByCode(Guid universityId, string courseCode, string subjectCode);
 
-    void Delete(University university);
+    public void Add(University university);
 
+    public void DeleteUniversity(University university);
+    
+    public void DeleteCourse(Course course);
+    
+    public void DeleteSubject(Subject subject);
+    
     string GetNextCourseCode();
     
     string GetNextSubjectCode();
