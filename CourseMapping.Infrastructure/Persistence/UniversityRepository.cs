@@ -19,6 +19,11 @@ public class UniversityRepository : IUniversityRepository
         return _dbContext.Universities.FirstOrDefault(u => u.Id == id);
     }
 
+    public List<University> GetAllUniversities()
+    {
+        return _dbContext.Universities.ToList();
+    }
+
     public List<Course>? GetCourses(Guid universityId)
     {
         return _dbContext.Courses.Where(c => c.UniversityId == universityId).ToList();

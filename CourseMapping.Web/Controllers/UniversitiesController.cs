@@ -1,10 +1,7 @@
 ﻿using CourseMapping.Domain;
-using CourseMapping.Infrastructure;
-using CourseMapping.Infrastructure.Persistence;
 using CourseMapping.Infrastructure.Persistence.Abstraction;
 using CourseMapping.Web.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Migrations.Operations;
 
 namespace CourseMapping.Web.Controllers;
 
@@ -34,6 +31,13 @@ public class UniversitiesController : ControllerBase
         };
 
         return Ok(response);
+    }
+
+    [HttpGet(Name = "GetAllUniversities")]
+    public ActionResult<List<UniversityResponse>> GetAllUniversities()
+    {
+        var universities = _universityRepository.GetAllUniversities();
+        return Ok(universities);
     }
 
     [HttpPost(Name = "AddUniversity")]
@@ -79,5 +83,4 @@ public class UniversitiesController : ControllerBase
         
         return NoContent();
     }
-    
 }
