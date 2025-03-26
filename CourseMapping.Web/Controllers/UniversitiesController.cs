@@ -19,7 +19,7 @@ public class UniversitiesController : ControllerBase
     [HttpGet("{universityId}", Name = "GetUniversity")]
     public ActionResult<University> GetUniversity(Guid universityId)
     {
-        var university = _universityRepository.GetById(universityId);
+        var university = _universityRepository.GetUniversityById(universityId);
         if (university is null)
             return NotFound("University not found.");
 
@@ -59,7 +59,7 @@ public class UniversitiesController : ControllerBase
         Guid universityId,
         [FromBody] CreateNewUniversityRequest newUniversityRequest)
     {
-        var university = _universityRepository.GetById(universityId);
+        var university = _universityRepository.GetUniversityById(universityId);
         if (university is null)
             return NotFound("University not found.");
         
@@ -74,7 +74,7 @@ public class UniversitiesController : ControllerBase
     [HttpDelete("{universityId}", Name = "DeleteUniversity")]
     public ActionResult<UniversityResponse> DeleteUniversity(Guid universityId)
     {
-        var university = _universityRepository.GetById(universityId);
+        var university = _universityRepository.GetUniversityById(universityId);
         if (university is null)
             return NotFound("University not found.");
         

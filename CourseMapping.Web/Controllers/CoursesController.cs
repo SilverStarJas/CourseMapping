@@ -1,5 +1,4 @@
 ﻿using CourseMapping.Domain;
-using CourseMapping.Infrastructure;
 using CourseMapping.Infrastructure.Persistence.Abstraction;
 using CourseMapping.Web.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -17,15 +16,39 @@ public class CoursesController : ControllerBase
         _universityRepository = universityRepository;
     }
 
+    [HttpGet("{courseCode}", Name = "GetCourse")]
+    public ActionResult<CourseResponse> GetCourseByCode(Guid universityId, string courseCode)
+    {
+        var university = _universityRepository.GetUniversityById(universityId);
+        if (university is null)
+            return NotFound("University not found.");
+        
+        var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
+        if (course is null)
+            return NotFound("Course not found.");
+
+        var response = new CourseResponse
+        {
+            Code = course.Code,
+            Name = course.Name,
+            Description = course.Description
+        };
+        
+        return Ok(response);
+    }
+    
     [HttpGet(Name = "GetCourses")]
     public ActionResult<List<CourseResponse>> GetCourses(Guid universityId)
     {
-        var university = _universityRepository.GetById(universityId);
+        var university = _universityRepository.GetUniversityById(universityId);
         if (university is null)
             return NotFound("University not found.");
 
         var courses = _universityRepository.GetCourses(universityId);
 
+        if (courses is null)
+            return NotFound("Courses not found.");
+        
         var response = courses.Select(c => new CourseResponse
         {
             Code = c.Code,
@@ -41,7 +64,7 @@ public class CoursesController : ControllerBase
         Guid universityId,
         [FromBody] CreateNewCourseRequest newCourseRequest)
     {
-        var university = _universityRepository.GetById(universityId);
+        var university = _universityRepository.GetUniversityById(universityId);
         if (university is null)
             return NotFound("University not found.");
 
@@ -58,7 +81,7 @@ public class CoursesController : ControllerBase
             Description = newCourse.Description
         };
     
-        return CreatedAtRoute("GetCourses", new { universityId = universityId, courseCode = newCourse.Code }, courseResponse);
+        return CreatedAtRoute("GetCourses", new { universityId, courseCode = newCourse.Code }, courseResponse);
     }
 
     [HttpPut("{courseCode}", Name = "UpdateCourse")]

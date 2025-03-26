@@ -14,7 +14,7 @@ public class UniversityRepository : IUniversityRepository
         _dbContext = dbContext;
     }
         
-    public University? GetById(Guid id)
+    public University? GetUniversityById(Guid id)
     {
         return _dbContext.Universities.FirstOrDefault(u => u.Id == id);
     }
