@@ -37,8 +37,8 @@ public class CoursesController : ControllerBase
         return Ok(response);
     }
     
-    [HttpGet(Name = "GetCourses")]
-    public ActionResult<List<CourseResponse>> GetCourses(Guid universityId)
+    [HttpGet(Name = "GetAllCourses")]
+    public ActionResult<List<CourseResponse>> GetAllCourses(Guid universityId)
     {
         var university = _universityRepository.GetUniversityById(universityId);
         if (university is null)
@@ -72,7 +72,6 @@ public class CoursesController : ControllerBase
         var newCourse = new Course(courseCode, newCourseRequest.Name, newCourseRequest.Description);
         
         university.AddCourse(newCourse);
-        _universityRepository.SaveChanges();
         
         var courseResponse = new CourseResponse
         {
@@ -80,8 +79,10 @@ public class CoursesController : ControllerBase
             Name = newCourse.Name,
             Description = newCourse.Description
         };
-    
-        return CreatedAtRoute("GetCourses", new { universityId, courseCode = newCourse.Code }, courseResponse);
+        
+        _universityRepository.SaveChanges();
+        
+        return CreatedAtRoute("GetCourse", new { universityId, courseCode = newCourse.Code }, courseResponse);
     }
 
     [HttpPut("{courseCode}", Name = "UpdateCourse")]

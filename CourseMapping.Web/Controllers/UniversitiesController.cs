@@ -43,7 +43,6 @@ public class UniversitiesController : ControllerBase
     [HttpPost(Name = "AddUniversity")]
     public ActionResult<UniversityResponse> CreateUniversity([FromBody] CreateNewUniversityRequest newUniversityRequest)
     {
-        // Generate and set an ID for the created University
         var universityId = Guid.NewGuid();
 
         var newUniversity = new University(universityId, newUniversityRequest.Name, newUniversityRequest.Country);

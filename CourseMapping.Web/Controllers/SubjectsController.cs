@@ -44,7 +44,7 @@ namespace CourseMapping.Web.Controllers
         }
         
         [HttpGet(Name = "GetSubjects")]
-        public ActionResult<SubjectResponse> GetSubjects(Guid universityId, string courseCode)
+        public ActionResult<SubjectResponse> GetAllSubjects(Guid universityId, string courseCode)
         {
             var university = _universityRepository.GetUniversityById(universityId);
             if (university is null)
