@@ -16,7 +16,10 @@ public class UniversityRepository : IUniversityRepository
         
     public University? GetUniversityById(Guid id)
     {
-        return _dbContext.Universities.FirstOrDefault(u => u.Id == id);
+        return _dbContext.Universities
+            .Include(u => u.Courses)
+            .ThenInclude(c => c.Subjects)
+            .FirstOrDefault(u => u.Id == id);
     }
 
     public List<University> GetAllUniversities()
