@@ -16,7 +16,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IUniversityRepository, UniversityRepository>();
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase("courseMappingDbName"));
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("courseMappingDbName")));
 
 var app = builder.Build();
 
