@@ -18,6 +18,11 @@ public class ApplicationDbContext : DbContext
             .Entity<Subject>()
             .HasKey(s => s.Code)
             .HasName("subject_code");
+        
+        modelBuilder
+            .Entity<Subject>()
+            .Property(s => s.Code)
+            .HasColumnName("subject_code");
 
         modelBuilder
             .Entity<Subject>()
@@ -42,6 +47,11 @@ public class ApplicationDbContext : DbContext
         
         modelBuilder
             .Entity<Course>()
+            .Property(c => c.Code)
+            .HasColumnName("course_code");
+        
+        modelBuilder
+            .Entity<Course>()
             .Property(s => s.Name)
             .HasColumnName("course_name");
         
@@ -61,6 +71,11 @@ public class ApplicationDbContext : DbContext
             .Entity<University>()
             .HasKey(u => u.Id)
             .HasName("university_id");
+        
+        modelBuilder
+            .Entity<University>()
+            .Property(u => u.Id)
+            .HasColumnName("university_id");
         
         modelBuilder
             .Entity<University>()
