@@ -11,5 +11,17 @@ public class SubjectTypeConfiguration : IEntityTypeConfiguration<Subject>
         builder
             .Property(s => s.Code)
             .IsRequired();
+
+        builder
+            .Property(s => s.Name)
+            .IsRequired();
+        
+        builder
+            .Property(s => s.Description)
+            .IsRequired();
+        
+        builder
+            .Property(s => s.Level)
+            .IsRequired();
     }
 }

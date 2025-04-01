@@ -11,5 +11,17 @@ public class UniversityTypeConfiguration : IEntityTypeConfiguration<University>
         builder
             .Property(u => u.Id)
             .IsRequired();
+        
+        builder
+            .Property(u => u.Name)
+            .IsRequired();
+        
+        builder
+            .Property(u => u.Country)
+            .IsRequired();
+        
+        builder
+            .Property(u => u.Courses)
+            .IsRequired();
     }
 }

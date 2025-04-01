@@ -11,5 +11,17 @@ public class CourseTypeConfiguration : IEntityTypeConfiguration<Course>
         builder
             .Property(c => c.Code)
             .IsRequired();
+        
+        builder
+            .Property(c => c.Name)
+            .IsRequired();
+        
+        builder
+            .Property(c => c.Description)
+            .IsRequired();
+        
+        builder
+            .Property(c => c.Subjects)
+            .IsRequired();
     }
 }
