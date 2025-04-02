@@ -18,17 +18,5 @@ public class ApplicationDbContext : DbContext
             .ApplyConfiguration(new UniversityTypeConfiguration())
             .ApplyConfiguration(new CourseTypeConfiguration())
             .ApplyConfiguration(new SubjectTypeConfiguration());
-        
-        modelBuilder.Entity<University>()
-            .HasKey(u => u.Id)
-            .HasName("pk_university");
-        
-        modelBuilder.Entity<Course>()
-            .HasKey(c => c.Code)
-            .HasName("pk_course");
-        
-        modelBuilder.Entity<Subject>()
-            .HasKey(s => s.Code)
-            .HasName("pk_subject");
     }
 }

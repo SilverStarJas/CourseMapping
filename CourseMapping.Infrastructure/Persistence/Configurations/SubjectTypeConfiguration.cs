@@ -10,6 +10,10 @@ public class SubjectTypeConfiguration : IEntityTypeConfiguration<Subject>
     {
         builder
             .ToTable("Subject");
+        
+        builder
+            .HasKey(s => s.Code)
+            .HasName("pk_subject");
 
         builder
             .Property(s => s.Code)

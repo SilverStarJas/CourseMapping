@@ -12,6 +12,10 @@ public class CourseTypeConfiguration : IEntityTypeConfiguration<Course>
             .ToTable("Course");
 
         builder
+            .HasKey(c => c.Code)
+            .HasName("pk_course");
+        
+        builder
             .Property(c => c.Code)
             .HasColumnName("course_code")
             .ValueGeneratedOnAdd();

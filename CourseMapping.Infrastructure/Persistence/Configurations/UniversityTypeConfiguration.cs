@@ -12,6 +12,10 @@ public class UniversityTypeConfiguration : IEntityTypeConfiguration<University>
             .ToTable("University");
         
         builder
+            .HasKey(u => u.Id)
+            .HasName("pk_university");
+        
+        builder
             .Property(u => u.Id)
             .HasColumnName("university_id")
             .ValueGeneratedOnAdd();
