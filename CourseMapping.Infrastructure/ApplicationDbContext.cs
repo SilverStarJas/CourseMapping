@@ -14,6 +14,9 @@ public class ApplicationDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Subject 
+        modelBuilder.Entity<Subject>()
+            .ToTable("Subject");
+        
         modelBuilder
             .Entity<Subject>()
             .HasKey(s => s.Code)
@@ -40,6 +43,9 @@ public class ApplicationDbContext : DbContext
             .HasColumnName("subject_level");
         
         // Course
+        modelBuilder.Entity<Course>()
+            .ToTable("Course");
+        
         modelBuilder
             .Entity<Course>()
             .HasKey(c => c.Code)
@@ -67,6 +73,9 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(s => s.CourseCode);
         
         // University
+        modelBuilder.Entity<University>()
+            .ToTable("University");
+        
         modelBuilder
             .Entity<University>()
             .HasKey(u => u.Id)

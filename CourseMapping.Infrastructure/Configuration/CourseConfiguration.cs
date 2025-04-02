@@ -4,24 +4,24 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CourseMapping.Infrastructure.Configuration;
 
-public class SubjectTypeConfiguration : IEntityTypeConfiguration<Subject>
+public class CourseConfiguration : IEntityTypeConfiguration<Course>
 {
-    public void Configure(EntityTypeBuilder<Subject> builder)
+    public void Configure(EntityTypeBuilder<Course> builder)
     {
         builder
-            .Property(s => s.Code)
-            .IsRequired();
-
-        builder
-            .Property(s => s.Name)
+            .Property(c => c.Code)
             .IsRequired();
         
         builder
-            .Property(s => s.Description)
+            .Property(c => c.Name)
             .IsRequired();
         
         builder
-            .Property(s => s.Level)
+            .Property(c => c.Description)
+            .IsRequired();
+        
+        builder
+            .Property(c => c.Subjects)
             .IsRequired();
     }
 }
