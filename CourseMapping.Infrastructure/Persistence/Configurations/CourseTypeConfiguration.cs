@@ -9,20 +9,13 @@ public class CourseTypeConfiguration : IEntityTypeConfiguration<Course>
     public void Configure(EntityTypeBuilder<Course> builder)
     {
         builder
-            .ToTable("Course");
-
-        builder
-            .HasKey(c => c.Code)
-            .HasName("pk_course");
+            .ToTable("course")
+            .HasKey(c => c.Code);
         
         builder
             .Property(c => c.Code)
             .HasColumnName("course_code")
-            .ValueGeneratedOnAdd();
-        
-        builder
-            .Property(c => c.Name)
-            .HasColumnName("course_name");
+            .ValueGeneratedNever();
         
         builder
             .Property(c => c.Description)

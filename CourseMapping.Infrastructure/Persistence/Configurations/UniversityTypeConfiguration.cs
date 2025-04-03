@@ -9,16 +9,13 @@ public class UniversityTypeConfiguration : IEntityTypeConfiguration<University>
     public void Configure(EntityTypeBuilder<University> builder)
     {
         builder
-            .ToTable("University");
-        
-        builder
-            .HasKey(u => u.Id)
-            .HasName("pk_university");
+            .ToTable("university")
+            .HasKey(u => u.Id);
         
         builder
             .Property(u => u.Id)
             .HasColumnName("university_id")
-            .ValueGeneratedOnAdd();
+            .ValueGeneratedNever();
 
         builder
             .Property(u => u.Name)

@@ -9,16 +9,13 @@ public class SubjectTypeConfiguration : IEntityTypeConfiguration<Subject>
     public void Configure(EntityTypeBuilder<Subject> builder)
     {
         builder
-            .ToTable("Subject");
-        
-        builder
-            .HasKey(s => s.Code)
-            .HasName("pk_subject");
+            .ToTable("subject")
+            .HasKey(s => s.Code);
 
         builder
             .Property(s => s.Code)
             .HasColumnName("subject_code")
-            .ValueGeneratedOnAdd();
+            .ValueGeneratedNever();
         
         builder
             .Property(s => s.Name)
