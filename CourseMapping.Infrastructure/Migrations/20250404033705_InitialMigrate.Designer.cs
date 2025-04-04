@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CourseMapping.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250331233958_InitialMigrate")]
+    [Migration("20250404033705_InitialMigrate")]
     partial class InitialMigrate
     {
         /// <inheritdoc />
@@ -23,7 +23,8 @@ namespace CourseMapping.Infrastructure.Migrations
             modelBuilder.Entity("CourseMapping.Domain.Course", b =>
                 {
                     b.Property<string>("Code")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .HasColumnName("course_code");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -32,24 +33,23 @@ namespace CourseMapping.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasColumnName("course_name");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("UniversityId")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Code")
-                        .HasName("course_code");
+                    b.HasKey("Code");
 
                     b.HasIndex("UniversityId");
 
-                    b.ToTable("Courses");
+                    b.ToTable("course", (string)null);
                 });
 
             modelBuilder.Entity("CourseMapping.Domain.Subject", b =>
                 {
                     b.Property<string>("Code")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .HasColumnName("subject_code");
 
                     b.Property<string>("CourseCode")
                         .HasColumnType("TEXT");
@@ -68,19 +68,18 @@ namespace CourseMapping.Infrastructure.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("subject_name");
 
-                    b.HasKey("Code")
-                        .HasName("subject_code");
+                    b.HasKey("Code");
 
                     b.HasIndex("CourseCode");
 
-                    b.ToTable("Subjects");
+                    b.ToTable("subject", (string)null);
                 });
 
             modelBuilder.Entity("CourseMapping.Domain.University", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .HasColumnName("university_id");
 
                     b.Property<string>("Country")
                         .IsRequired()
@@ -92,10 +91,9 @@ namespace CourseMapping.Infrastructure.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("university_name");
 
-                    b.HasKey("Id")
-                        .HasName("university_id");
+                    b.HasKey("Id");
 
-                    b.ToTable("Universities");
+                    b.ToTable("university", (string)null);
                 });
 
             modelBuilder.Entity("CourseMapping.Domain.Course", b =>

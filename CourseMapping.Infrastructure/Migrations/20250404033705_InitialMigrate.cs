@@ -12,43 +12,43 @@ namespace CourseMapping.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Universities",
+                name: "university",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    university_id = table.Column<Guid>(type: "TEXT", nullable: false),
                     university_name = table.Column<string>(type: "TEXT", nullable: false),
                     university_country = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("university_id", x => x.Id);
+                    table.PrimaryKey("PK_university", x => x.university_id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Courses",
+                name: "course",
                 columns: table => new
                 {
-                    Code = table.Column<string>(type: "TEXT", nullable: false),
-                    course_name = table.Column<string>(type: "TEXT", nullable: false),
+                    course_code = table.Column<string>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
                     course_description = table.Column<string>(type: "TEXT", nullable: false),
                     UniversityId = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("course_code", x => x.Code);
+                    table.PrimaryKey("PK_course", x => x.course_code);
                     table.ForeignKey(
-                        name: "FK_Courses_Universities_UniversityId",
+                        name: "FK_course_university_UniversityId",
                         column: x => x.UniversityId,
-                        principalTable: "Universities",
-                        principalColumn: "Id",
+                        principalTable: "university",
+                        principalColumn: "university_id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Subjects",
+                name: "subject",
                 columns: table => new
                 {
-                    Code = table.Column<string>(type: "TEXT", nullable: false),
+                    subject_code = table.Column<string>(type: "TEXT", nullable: false),
                     subject_name = table.Column<string>(type: "TEXT", nullable: false),
                     subject_description = table.Column<string>(type: "TEXT", nullable: false),
                     subject_level = table.Column<int>(type: "INTEGER", nullable: false),
@@ -56,22 +56,22 @@ namespace CourseMapping.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("subject_code", x => x.Code);
+                    table.PrimaryKey("PK_subject", x => x.subject_code);
                     table.ForeignKey(
-                        name: "FK_Subjects_Courses_CourseCode",
+                        name: "FK_subject_course_CourseCode",
                         column: x => x.CourseCode,
-                        principalTable: "Courses",
-                        principalColumn: "Code");
+                        principalTable: "course",
+                        principalColumn: "course_code");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Courses_UniversityId",
-                table: "Courses",
+                name: "IX_course_UniversityId",
+                table: "course",
                 column: "UniversityId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Subjects_CourseCode",
-                table: "Subjects",
+                name: "IX_subject_CourseCode",
+                table: "subject",
                 column: "CourseCode");
         }
 
@@ -79,13 +79,13 @@ namespace CourseMapping.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Subjects");
+                name: "subject");
 
             migrationBuilder.DropTable(
-                name: "Courses");
+                name: "course");
 
             migrationBuilder.DropTable(
-                name: "Universities");
+                name: "university");
         }
     }
 }
