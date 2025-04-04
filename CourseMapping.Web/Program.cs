@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using CourseMapping.Infrastructure;
+using CourseMapping.Infrastructure.Extensions;
 using CourseMapping.Infrastructure.Persistence;
 using CourseMapping.Infrastructure.Persistence.Abstraction;
 using Microsoft.EntityFrameworkCore;
