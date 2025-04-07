@@ -73,7 +73,7 @@ public class CoursesController : ControllerBase
         
         university.AddCourse(newCourse);
         
-        var courseResponse = new CourseResponse
+        var response = new CourseResponse
         {
             Code = newCourse.Code,
             Name = newCourse.Name,
@@ -82,7 +82,7 @@ public class CoursesController : ControllerBase
         
         _universityRepository.SaveChanges();
         
-        return CreatedAtRoute("GetCourse", new { universityId, courseCode = newCourse.Code }, courseResponse);
+        return CreatedAtRoute("GetCourse", new { universityId, courseCode = newCourse.Code }, response);
     }
 
     [HttpPut("{courseCode}", Name = "UpdateCourse")]

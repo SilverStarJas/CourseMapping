@@ -88,7 +88,7 @@ namespace CourseMapping.Web.Controllers
             course.AddSubject(newSubject);
             _universityRepository.SaveChanges();
             
-            var subjectResponse = new SubjectResponse
+            var response = new SubjectResponse
             {
                 Code = newSubject.Code,
                 Name = newSubject.Name,
@@ -96,7 +96,7 @@ namespace CourseMapping.Web.Controllers
                 Level = newSubject.Level
             };
             
-            return CreatedAtRoute("GetSubjects", new {universityId, courseCode, subjectCode = newSubject.Code}, subjectResponse);
+            return CreatedAtRoute("GetSubjects", new {universityId, courseCode, subjectCode = newSubject.Code}, response);
         }
         
         // TODO: Fix PUT and DELETE 
