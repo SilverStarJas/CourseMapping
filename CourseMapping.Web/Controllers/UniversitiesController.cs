@@ -47,7 +47,7 @@ public class UniversitiesController : ControllerBase
 
         var newUniversity = new University(universityId, newUniversityRequest.Name, newUniversityRequest.Country);
         
-        var university = new UniversityResponse
+        var response = new UniversityResponse
         {
             Id = universityId,
             Name = newUniversity.Name,
@@ -57,7 +57,7 @@ public class UniversitiesController : ControllerBase
         _universityRepository.Add(newUniversity);
         _universityRepository.SaveChanges();
         
-        return CreatedAtRoute("GetUniversity", new { universityId = newUniversity.Id }, university);
+        return CreatedAtRoute("GetUniversity", new { universityId = newUniversity.Id }, response);
     }
 
     [HttpPut("{universityId}", Name = "UpdateUniversity")]
