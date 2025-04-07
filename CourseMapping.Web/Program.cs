@@ -1,9 +1,4 @@
-using CourseMapping.Infrastructure;
 using CourseMapping.Infrastructure.Extensions;
-using CourseMapping.Infrastructure.Persistence;
-using CourseMapping.Infrastructure.Persistence.Abstraction;
-using Microsoft.EntityFrameworkCore;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
