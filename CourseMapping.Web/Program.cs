@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using CourseMapping.Infrastructure;
 using CourseMapping.Infrastructure.Extensions;
 using CourseMapping.Infrastructure.Persistence;
@@ -16,8 +15,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IUniversityRepository, UniversityRepository>();
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite("Data Source=CourseMapping.db"));
+builder.Services.AddInfrastructureServices();
 
 var app = builder.Build();
 

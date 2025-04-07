@@ -5,9 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CourseMapping.Infrastructure.Extensions;
 
-public static class AddInfrastructureService
+public static class InfrastructureServices
 {
-    public static void AddInfrastructureServices(IServiceCollection services)
+    public static void AddInfrastructureServices(this IServiceCollection services)
     {
         services.AddScoped<IUniversityRepository, UniversityRepository>();
         services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite("Data Source=CourseMapping.db"));

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseMapping.Infrastructure.Persistence;
 
-public class UniversityRepository : IUniversityRepository
+internal class UniversityRepository : IUniversityRepository
 {
     private readonly ApplicationDbContext _dbContext;
 
