@@ -38,7 +38,7 @@ namespace CourseMapping.Web.Controllers
             return Ok(response);
         }
         
-        [HttpGet(Name = "GetSubjects")]
+        [HttpGet(Name = "GetAllSubjects")]
         public ActionResult<SubjectResponse> GetAllSubjects(Guid universityId, string courseCode)
         {
             var university = _universityRepository.GetUniversityById(universityId);
