@@ -50,13 +50,11 @@ namespace CourseMapping.Web.Controllers
             if (university is null)
                 return NotFound("University not found.");
 
-            var course = _universityRepository.GetCourseByCode(universityId, courseCode);
+            var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
             if (course is null)
                 return NotFound("Course not found.");
             
-            var subjects = _universityRepository.GetSubjects(universityId, courseCode);
-            if (subjects is null)
-                return NotFound("Subjects not found.");
+            var subjects = course.Subjects;
             
             var response = subjects.Select(s => new SubjectResponse
             {
@@ -78,7 +76,7 @@ namespace CourseMapping.Web.Controllers
             if (university is null)
                 return NotFound("University not found.");
             
-            var course = _universityRepository.GetCourseByCode(universityId, courseCode);
+            var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
             if (course is null)
                 return NotFound("Course not found.");
 
@@ -109,12 +107,12 @@ namespace CourseMapping.Web.Controllers
             var university = _universityRepository.GetUniversityById(universityId);
             if (university is null)
                 return NotFound("University not found.");
-            
-            var course = _universityRepository.GetCourseByCode(universityId, courseCode);
+        
+            var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
             if (course is null)
                 return NotFound("Course not found.");
             
-            var subject = _universityRepository.GetSubjectByCode(universityId, courseCode, subjectCode);
+            var subject = course.Subjects.FirstOrDefault(s => s.Code == subjectCode);
             if (subject is null)
                 return NotFound("Subject not found.");
                 
@@ -129,7 +127,15 @@ namespace CourseMapping.Web.Controllers
         public ActionResult<SubjectResponse> DeleteSubject(
             Guid universityId, string courseCode, string subjectCode)
         {
-            var subject = _universityRepository.GetSubjectByCode(universityId, courseCode, subjectCode);
+            var university = _universityRepository.GetUniversityById(universityId);
+            if (university is null)
+                return NotFound("University not found.");
+        
+            var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
+            if (course is null)
+                return NotFound("Course not found.");
+            
+            var subject = course.Subjects.FirstOrDefault(s => s.Code == subjectCode);
             if (subject is null)
                 return NotFound("Subject not found.");
             

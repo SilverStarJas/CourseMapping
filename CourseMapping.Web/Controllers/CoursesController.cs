@@ -44,10 +44,7 @@ public class CoursesController : ControllerBase
         if (university is null)
             return NotFound("University not found.");
 
-        var courses = _universityRepository.GetCourses(universityId);
-
-        if (courses is null)
-            return NotFound("Courses not found.");
+        var courses = university.Courses.ToList();
         
         var response = courses.Select(c => new CourseResponse
         {
@@ -89,7 +86,12 @@ public class CoursesController : ControllerBase
         Guid universityId, string courseCode,
         [FromBody] UpdateCourseRequest updateCourseRequest)
     {
-        var course = _universityRepository.GetCourseByCode(universityId, courseCode); 
+        var university = _universityRepository.GetUniversityById(universityId);
+        if (university is null)
+            return NotFound("University not found.");
+        
+        var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
+        
         if (course is null)
             return NotFound("Course not found.");
 
@@ -104,7 +106,11 @@ public class CoursesController : ControllerBase
     public ActionResult<CourseResponse> DeleteCourse(
         Guid universityId, string courseCode)
     {
-        var course = _universityRepository.GetCourseByCode(universityId, courseCode); 
+        var university = _universityRepository.GetUniversityById(universityId);
+        if (university is null)
+            return NotFound("University not found.");
+        
+        var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
         if (course is null)
             return NotFound("Course not found.");
         

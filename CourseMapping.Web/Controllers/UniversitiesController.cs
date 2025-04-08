@@ -37,7 +37,15 @@ public class UniversitiesController : ControllerBase
     public ActionResult<List<UniversityResponse>> GetAllUniversities()
     {
         var universities = _universityRepository.GetAllUniversities();
-        return Ok(universities);
+
+        var response = universities.Select(u => new UniversityResponse
+        {
+            Id = u.Id,
+            Name = u.Name,
+            Country = u.Country
+        });
+        
+        return Ok(response);
     }
 
     [HttpPost(Name = "AddUniversity")]
