@@ -1,5 +1,6 @@
 ﻿using CourseMapping.Domain;
 using CourseMapping.Infrastructure.Persistence.Abstraction;
+using CourseMapping.Web.Extensions.Controller;
 using CourseMapping.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,12 +24,7 @@ public class UniversitiesController : ControllerBase
         if (university is null)
             return NotFound("University not found.");
 
-        var response = new UniversityResponse
-        {
-            Id = university.Id,
-            Name = university.Name,
-            Country = university.Country
-        };
+        var response = university.MapUniversityToResponse();
 
         return Ok(response);
     }
@@ -38,12 +34,7 @@ public class UniversitiesController : ControllerBase
     {
         var universities = _universityRepository.GetAllUniversities();
 
-        var response = universities.Select(u => new UniversityResponse
-        {
-            Id = u.Id,
-            Name = u.Name,
-            Country = u.Country
-        });
+        var response = universities.MapAllUniversitiesToResponse();
         
         return Ok(response);
     }
@@ -57,13 +48,8 @@ public class UniversitiesController : ControllerBase
         
         _universityRepository.Add(newUniversity);
         _universityRepository.SaveChanges();
-        
-        var response = new UniversityResponse
-        {
-            Id = universityId,
-            Name = newUniversity.Name,
-            Country = newUniversity.Country
-        };
+
+        var response = newUniversity.MapUniversityToResponse();
         
         return CreatedAtRoute("GetUniversity", new { universityId = newUniversity.Id }, response);
     }
