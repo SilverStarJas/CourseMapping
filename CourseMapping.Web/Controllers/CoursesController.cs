@@ -87,14 +87,13 @@ public class CoursesController : ControllerBase
     [HttpPut("{courseCode}", Name = "UpdateCourse")]
     public ActionResult<CourseResponse> UpdateCourse(
         Guid universityId, string courseCode,
-        [FromBody] CreateNewCourseRequest newCourseRequest)
+        [FromBody] UpdateCourseRequest updateCourseRequest)
     {
         var course = _universityRepository.GetCourseByCode(universityId, courseCode); 
         if (course is null)
             return NotFound("Course not found.");
 
-        course.Name = newCourseRequest.Name;
-        course.Description = newCourseRequest.Description;
+        course.UpdateCourse(updateCourseRequest.Name, updateCourseRequest.Description);
         
         _universityRepository.SaveChanges();
 

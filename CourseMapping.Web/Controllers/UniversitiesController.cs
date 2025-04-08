@@ -63,13 +63,13 @@ public class UniversitiesController : ControllerBase
     [HttpPut("{universityId}", Name = "UpdateUniversity")]
     public ActionResult<UniversityResponse> UpdateUniversity(
         Guid universityId,
-        [FromBody] CreateNewUniversityRequest newUniversityRequest)
+        [FromBody] UpdateUniversityRequest updateUniversityRequest)
     {
         var university = _universityRepository.GetUniversityById(universityId);
         if (university is null)
             return NotFound("University not found.");
         
-        university.UpdateUniversity(newUniversityRequest.Name, newUniversityRequest.Country);
+        university.UpdateUniversity(updateUniversityRequest.Name, updateUniversityRequest.Country);
         
         _universityRepository.SaveChanges();
 

@@ -104,7 +104,7 @@ namespace CourseMapping.Web.Controllers
         [HttpPut("{subjectCode}", Name = "UpdateSubject")]
         public ActionResult<SubjectResponse> UpdateSubject(
             Guid universityId, string courseCode, string subjectCode,
-            [FromBody] CreateNewSubjectRequest newSubjectRequest)
+            [FromBody] UpdateSubjectRequest updateSubjectRequest)
         {
             var university = _universityRepository.GetUniversityById(universityId);
             if (university is null)
@@ -118,9 +118,7 @@ namespace CourseMapping.Web.Controllers
             if (subject is null)
                 return NotFound("Subject not found.");
                 
-            subject.Name = newSubjectRequest.Name;
-            subject.Description = newSubjectRequest.Description;
-            subject.Level = newSubjectRequest.Level;
+            subject.UpdateSubject(updateSubjectRequest.Name, updateSubjectRequest.Description, updateSubjectRequest.Level);
             
             _universityRepository.SaveChanges();
             

@@ -21,6 +21,15 @@
             Subjects = [];
         }
 
+        public void UpdateCourse(string? name, string? description)
+        {
+            if (name != null)
+                Name = name;
+            
+            if (description != null)
+                Description = description;
+        }
+
         public void AddSubject(Subject unit) 
         {
             if (Subjects.Count < 3)
