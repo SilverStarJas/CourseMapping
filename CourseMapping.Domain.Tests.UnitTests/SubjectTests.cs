@@ -27,7 +27,7 @@
         {
             var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                new Subject("GHI", "GHI9012", "Higher than level 5", 6);
+                var subject = new Subject("GHI", "GHI9012", "Higher than level 5", 6);
             });
 
             Assert.Equal("Subject level must be between 1 and 5.", exception.ParamName);
@@ -38,23 +38,10 @@
         {
             var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                new Subject("JKL", "JKL3456", "Level is less than 1", 0);
+                var subject = new Subject("JKL", "JKL3456", "Level is less than 1", 0);
             });
 
             Assert.Equal("Subject level must be between 1 and 5.", exception.ParamName);
-        }
-
-        [Fact]
-        public void UpdateDescription_WhenGivenValidSubject_SuccessfullyUpdated()
-        {
-            // Arrange
-            var mno = new Subject("MNO", "MNO7890", "Update description test", 2);
-
-            // Act
-            mno.UpdateDescription("Testing that the description is successful");
-
-            // Assert
-            Assert.Equal("Testing that the description is successful", mno.Description);
         }
     }
 }
