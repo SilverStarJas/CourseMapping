@@ -1,5 +1,6 @@
 ﻿using CourseMapping.Domain;
 using CourseMapping.Infrastructure.Persistence.Abstraction;
+using CourseMapping.Web.Extensions.Controller;
 using CourseMapping.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,13 +33,7 @@ namespace CourseMapping.Web.Controllers
             if (subject is null)
                 return NotFound("Subject not found.");
 
-            var response = new SubjectResponse
-            {
-                Code = subject.Code,
-                Name = subject.Name,
-                Description = subject.Description,
-                Level = subject.Level
-            };
+            var response = subject.MapSubjectToResponse();
             
             return Ok(response);
         }
@@ -86,19 +81,11 @@ namespace CourseMapping.Web.Controllers
             course.AddSubject(newSubject);
             _universityRepository.SaveChanges();
             
-            var response = new SubjectResponse
-            {
-                Code = newSubject.Code,
-                Name = newSubject.Name,
-                Description = newSubject.Description,
-                Level = newSubject.Level
-            };
+            var response = newSubject.MapSubjectToResponse();
             
             return CreatedAtRoute("GetSubjects", new {universityId, courseCode, subjectCode = newSubject.Code}, response);
         }
         
-        // TODO: Fix PUT and DELETE 
-
         [HttpPut("{subjectCode}", Name = "UpdateSubject")]
         public ActionResult<SubjectResponse> UpdateSubject(
             Guid universityId, string courseCode, string subjectCode,
