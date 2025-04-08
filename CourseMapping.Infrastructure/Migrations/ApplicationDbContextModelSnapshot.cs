@@ -30,10 +30,12 @@ namespace CourseMapping.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .HasColumnName("course_name");
 
                     b.Property<Guid>("UniversityId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .HasColumnName("course_university_id");
 
                     b.HasKey("Code");
 
@@ -49,7 +51,8 @@ namespace CourseMapping.Infrastructure.Migrations
                         .HasColumnName("subject_code");
 
                     b.Property<string>("CourseCode")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .HasColumnName("subject_course_code");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -99,7 +102,8 @@ namespace CourseMapping.Infrastructure.Migrations
                         .WithMany("Courses")
                         .HasForeignKey("UniversityId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_course_university_id");
 
                     b.Navigation("University");
                 });
@@ -108,7 +112,8 @@ namespace CourseMapping.Infrastructure.Migrations
                 {
                     b.HasOne("CourseMapping.Domain.Course", "Course")
                         .WithMany("Subjects")
-                        .HasForeignKey("CourseCode");
+                        .HasForeignKey("CourseCode")
+                        .HasConstraintName("FK_subject_course_code");
 
                     b.Navigation("Course");
                 });

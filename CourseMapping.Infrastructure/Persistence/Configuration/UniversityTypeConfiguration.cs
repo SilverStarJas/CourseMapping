@@ -2,7 +2,7 @@ using CourseMapping.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace CourseMapping.Infrastructure.Persistence.Configurations;
+namespace CourseMapping.Infrastructure.Persistence.Configuration;
 
 public class UniversityTypeConfiguration : IEntityTypeConfiguration<University>
 {
@@ -24,10 +24,11 @@ public class UniversityTypeConfiguration : IEntityTypeConfiguration<University>
         builder
             .Property(u => u.Country)
             .HasColumnName("university_country");
-
+        
         builder
             .HasMany(u => u.Courses)
             .WithOne(c => c.University)
-            .HasForeignKey(c => c.UniversityId);
+            .HasForeignKey(c => c.UniversityId)
+            .HasConstraintName("FK_course_university_id");
     }
 }

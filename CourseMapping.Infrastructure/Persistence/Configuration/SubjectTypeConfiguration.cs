@@ -2,7 +2,7 @@ using CourseMapping.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace CourseMapping.Infrastructure.Persistence.Configurations;
+namespace CourseMapping.Infrastructure.Persistence.Configuration;
 
 public class SubjectTypeConfiguration : IEntityTypeConfiguration<Subject>
 {
@@ -28,5 +28,9 @@ public class SubjectTypeConfiguration : IEntityTypeConfiguration<Subject>
         builder
             .Property(s => s.Level)
             .HasColumnName("subject_level");
+
+        builder
+            .Property(s => s.CourseCode)
+            .HasColumnName("subject_course_code");
     }
 }
