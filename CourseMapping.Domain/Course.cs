@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CourseMapping.Domain
+﻿namespace CourseMapping.Domain
 {
     public class Course
     {
@@ -16,7 +10,7 @@ namespace CourseMapping.Domain
         
         // Foreign key and reference navigation to parent class
         public Guid UniversityId { get; set; }
-        public University University { get; set; } = null;
+        public University? University { get; set; }
 
         // Constructor
         public Course(string code, string name, string description)
@@ -25,6 +19,15 @@ namespace CourseMapping.Domain
             Name = name;
             Description = description;
             Subjects = [];
+        }
+
+        public void UpdateCourse(string? name, string? description)
+        {
+            if (name != null)
+                Name = name;
+            
+            if (description != null)
+                Description = description;
         }
 
         public void AddSubject(Subject unit) 

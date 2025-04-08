@@ -3,6 +3,7 @@ using System;
 using CourseMapping.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CourseMapping.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250408044523_AddFkConstraintName")]
+    partial class AddFkConstraintName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.3");
@@ -30,12 +33,10 @@ namespace CourseMapping.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasColumnName("course_name");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("UniversityId")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("course_university_id");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Code");
 
@@ -51,8 +52,7 @@ namespace CourseMapping.Infrastructure.Migrations
                         .HasColumnName("subject_code");
 
                     b.Property<string>("CourseCode")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("subject_course_code");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
                         .IsRequired()

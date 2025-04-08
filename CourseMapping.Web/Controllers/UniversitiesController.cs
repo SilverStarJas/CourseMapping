@@ -37,7 +37,15 @@ public class UniversitiesController : ControllerBase
     public ActionResult<List<UniversityResponse>> GetAllUniversities()
     {
         var universities = _universityRepository.GetAllUniversities();
-        return Ok(universities);
+
+        var response = universities.Select(u => new UniversityResponse
+        {
+            Id = u.Id,
+            Name = u.Name,
+            Country = u.Country
+        });
+        
+        return Ok(response);
     }
 
     [HttpPost(Name = "AddUniversity")]
@@ -47,6 +55,9 @@ public class UniversitiesController : ControllerBase
 
         var newUniversity = new University(universityId, newUniversityRequest.Name, newUniversityRequest.Country);
         
+        _universityRepository.Add(newUniversity);
+        _universityRepository.SaveChanges();
+        
         var response = new UniversityResponse
         {
             Id = universityId,
@@ -54,23 +65,19 @@ public class UniversitiesController : ControllerBase
             Country = newUniversity.Country
         };
         
-        _universityRepository.Add(newUniversity);
-        _universityRepository.SaveChanges();
-        
         return CreatedAtRoute("GetUniversity", new { universityId = newUniversity.Id }, response);
     }
 
     [HttpPut("{universityId}", Name = "UpdateUniversity")]
     public ActionResult<UniversityResponse> UpdateUniversity(
         Guid universityId,
-        [FromBody] CreateNewUniversityRequest newUniversityRequest)
+        [FromBody] UpdateUniversityRequest updateUniversityRequest)
     {
         var university = _universityRepository.GetUniversityById(universityId);
         if (university is null)
             return NotFound("University not found.");
         
-        university.Name = newUniversityRequest.Name;
-        university.Country = newUniversityRequest.Country;
+        university.UpdateUniversity(updateUniversityRequest.Name, updateUniversityRequest.Country);
         
         _universityRepository.SaveChanges();
 

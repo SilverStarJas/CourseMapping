@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CourseMapping.Domain
+﻿namespace CourseMapping.Domain
 {
     public class Subject
     {
@@ -31,13 +25,28 @@ namespace CourseMapping.Domain
             }
             else
             {
-                throw new ArgumentOutOfRangeException("Subject level must be between 1 and 5.");
+                var message = "Subject level must be between 1 and 5.";
+                throw new ArgumentOutOfRangeException(message);
             }
         }
 
-        public void UpdateDescription(string description)
+        public void UpdateSubject(string? name, string? description, int? level)
         {
-            Description = description;
+            if (name != null)
+                Name = name;
+            
+            if (description != null)
+                Description = description;
+            
+            if (level != null)
+                if (level >= 1 && level <= 5) 
+                    Level = (int)level;
+
+                else
+                {
+                    var message = "Subject level must be between 1 and 5.";
+                    throw new ArgumentOutOfRangeException(message);
+                }
         }
     }
 }

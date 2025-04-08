@@ -44,10 +44,7 @@ public class CoursesController : ControllerBase
         if (university is null)
             return NotFound("University not found.");
 
-        var courses = _universityRepository.GetCourses(universityId);
-
-        if (courses is null)
-            return NotFound("Courses not found.");
+        var courses = university.Courses.ToList();
         
         var response = courses.Select(c => new CourseResponse
         {
@@ -72,6 +69,7 @@ public class CoursesController : ControllerBase
         var newCourse = new Course(courseCode, newCourseRequest.Name, newCourseRequest.Description);
         
         university.AddCourse(newCourse);
+        _universityRepository.SaveChanges();
         
         var response = new CourseResponse
         {
@@ -80,22 +78,24 @@ public class CoursesController : ControllerBase
             Description = newCourse.Description
         };
         
-        _universityRepository.SaveChanges();
-        
         return CreatedAtRoute("GetCourse", new { universityId, courseCode = newCourse.Code }, response);
     }
 
     [HttpPut("{courseCode}", Name = "UpdateCourse")]
     public ActionResult<CourseResponse> UpdateCourse(
         Guid universityId, string courseCode,
-        [FromBody] CreateNewCourseRequest newCourseRequest)
+        [FromBody] UpdateCourseRequest updateCourseRequest)
     {
-        var course = _universityRepository.GetCourseByCode(universityId, courseCode); 
+        var university = _universityRepository.GetUniversityById(universityId);
+        if (university is null)
+            return NotFound("University not found.");
+        
+        var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
+        
         if (course is null)
             return NotFound("Course not found.");
 
-        course.Name = newCourseRequest.Name;
-        course.Description = newCourseRequest.Description;
+        course.UpdateCourse(updateCourseRequest.Name, updateCourseRequest.Description);
         
         _universityRepository.SaveChanges();
 
@@ -106,7 +106,11 @@ public class CoursesController : ControllerBase
     public ActionResult<CourseResponse> DeleteCourse(
         Guid universityId, string courseCode)
     {
-        var course = _universityRepository.GetCourseByCode(universityId, courseCode); 
+        var university = _universityRepository.GetUniversityById(universityId);
+        if (university is null)
+            return NotFound("University not found.");
+        
+        var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
         if (course is null)
             return NotFound("Course not found.");
         

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CourseMapping.Domain
+﻿namespace CourseMapping.Domain
 {
     public class University
     {
@@ -21,6 +15,15 @@ namespace CourseMapping.Domain
             Name = name;
             Country = country;
             Courses = [];
+        }
+
+        public void UpdateUniversity(string? name, string? country)
+        {
+            if (name != null)
+                Name = name;
+            
+            if (country != null)
+                Country = country;
         }
 
         public void AddCourse(Course newCourse)

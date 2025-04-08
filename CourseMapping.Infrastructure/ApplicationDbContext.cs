@@ -1,5 +1,5 @@
 using CourseMapping.Domain;
-using CourseMapping.Infrastructure.Persistence.Configurations;
+using CourseMapping.Infrastructure.Persistence.Configuration;
 using Microsoft.EntityFrameworkCore;
 
 namespace CourseMapping.Infrastructure;
