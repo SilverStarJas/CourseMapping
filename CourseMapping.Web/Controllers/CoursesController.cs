@@ -72,6 +72,7 @@ public class CoursesController : ControllerBase
         var newCourse = new Course(courseCode, newCourseRequest.Name, newCourseRequest.Description);
         
         university.AddCourse(newCourse);
+        _universityRepository.SaveChanges();
         
         var response = new CourseResponse
         {
@@ -79,8 +80,6 @@ public class CoursesController : ControllerBase
             Name = newCourse.Name,
             Description = newCourse.Description
         };
-        
-        _universityRepository.SaveChanges();
         
         return CreatedAtRoute("GetCourse", new { universityId, courseCode = newCourse.Code }, response);
     }
