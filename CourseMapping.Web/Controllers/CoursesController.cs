@@ -41,13 +41,8 @@ public class CoursesController : ControllerBase
             return NotFound("University not found.");
 
         var courses = university.Courses.ToList();
-        
-        var response = courses.Select(c => new CourseResponse
-        {
-            Code = c.Code,
-            Name = c.Name,
-            Description = c.Description
-        });
+
+        var response = courses.MapAllCoursesToResponse();
 
         return Ok(response);
     }

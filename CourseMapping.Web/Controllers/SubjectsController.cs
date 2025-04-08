@@ -50,14 +50,8 @@ namespace CourseMapping.Web.Controllers
                 return NotFound("Course not found.");
             
             var subjects = course.Subjects;
-            
-            var response = subjects.Select(s => new SubjectResponse
-            {
-                Code = s.Code,
-                Name = s.Name,
-                Description = s.Description,
-                Level = s.Level
-            });
+
+            var response = subjects.MapAllSubjectsToResponse();
             
             return Ok(response);
         }

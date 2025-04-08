@@ -15,6 +15,11 @@ public static class MapDomainModelToResponse
         };
     }
 
+    public static List<UniversityResponse> MapAllUniversitiesToResponse(this IEnumerable<University> universities)
+    {
+        return universities.Select(MapUniversityToResponse).ToList();
+    }
+
     public static CourseResponse MapCourseToResponse(this Course course)
     {
         return new CourseResponse
@@ -23,6 +28,11 @@ public static class MapDomainModelToResponse
             Name = course.Name,
             Description = course.Description
         };
+    }
+
+    public static List<CourseResponse> MapAllCoursesToResponse(this IEnumerable<Course> courses)
+    {
+        return courses.Select(MapCourseToResponse).ToList();
     }
 
     public static SubjectResponse MapSubjectToResponse(this Subject subject)
@@ -34,5 +44,10 @@ public static class MapDomainModelToResponse
             Description = subject.Description,
             Level = subject.Level
         };
+    }
+
+    public static List<SubjectResponse> MapAllSubjectsToResponse(this IEnumerable<Subject> subjects)
+    {
+        return subjects.Select(MapSubjectToResponse).ToList();
     }
 }

@@ -34,12 +34,7 @@ public class UniversitiesController : ControllerBase
     {
         var universities = _universityRepository.GetAllUniversities();
 
-        var response = universities.Select(u => new UniversityResponse
-        {
-            Id = u.Id,
-            Name = u.Name,
-            Country = u.Country
-        });
+        var response = universities.MapAllUniversitiesToResponse();
         
         return Ok(response);
     }
