@@ -17,7 +17,7 @@ namespace CourseMapping.Web.Controllers
             _universityRepository = universityRepository;
         }
 
-        [HttpGet("{subjectCode}", Name = "GetSubjectByCode")]
+        [HttpGet("{subjectCode}", Name = "GetSubject")]
         public ActionResult<SubjectResponse> GetSubjectByCode(Guid universityId, string courseCode,
             string subjectCode)
         {
@@ -77,7 +77,7 @@ namespace CourseMapping.Web.Controllers
             
             var response = newSubject.MapSubjectToResponse();
             
-            return CreatedAtRoute("GetSubjects", new {universityId, courseCode, subjectCode = newSubject.Code}, response);
+            return CreatedAtRoute("GetSubject", new {universityId, courseCode, subjectCode = newSubject.Code}, response);
         }
         
         [HttpPut("{subjectCode}", Name = "UpdateSubject")]
