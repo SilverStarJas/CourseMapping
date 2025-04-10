@@ -33,6 +33,6 @@ public class CourseTypeConfiguration : IEntityTypeConfiguration<Course>
             .HasMany(c => c.Subjects)
             .WithOne(s => s.Course)
             .HasForeignKey(s => s.CourseCode)
-            .HasConstraintName("FK_subject_course_code");
+            .HasConstraintName("fk_subject_course_code");
     }
 }

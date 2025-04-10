@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CourseMapping.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigrate : Migration
+    public partial class MoveToPostgreSQL : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,9 +15,9 @@ namespace CourseMapping.Infrastructure.Migrations
                 name: "university",
                 columns: table => new
                 {
-                    university_id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    university_name = table.Column<string>(type: "TEXT", nullable: false),
-                    university_country = table.Column<string>(type: "TEXT", nullable: false)
+                    university_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    university_name = table.Column<string>(type: "text", nullable: false),
+                    university_country = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -28,17 +28,17 @@ namespace CourseMapping.Infrastructure.Migrations
                 name: "course",
                 columns: table => new
                 {
-                    course_code = table.Column<string>(type: "TEXT", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
-                    course_description = table.Column<string>(type: "TEXT", nullable: false),
-                    UniversityId = table.Column<Guid>(type: "TEXT", nullable: false)
+                    course_code = table.Column<string>(type: "text", nullable: false),
+                    course_name = table.Column<string>(type: "text", nullable: false),
+                    course_description = table.Column<string>(type: "text", nullable: false),
+                    course_university_id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_course", x => x.course_code);
                     table.ForeignKey(
-                        name: "FK_course_university_UniversityId",
-                        column: x => x.UniversityId,
+                        name: "fk_course_university_id",
+                        column: x => x.course_university_id,
                         principalTable: "university",
                         principalColumn: "university_id",
                         onDelete: ReferentialAction.Cascade);
@@ -48,31 +48,31 @@ namespace CourseMapping.Infrastructure.Migrations
                 name: "subject",
                 columns: table => new
                 {
-                    subject_code = table.Column<string>(type: "TEXT", nullable: false),
-                    subject_name = table.Column<string>(type: "TEXT", nullable: false),
-                    subject_description = table.Column<string>(type: "TEXT", nullable: false),
-                    subject_level = table.Column<int>(type: "INTEGER", nullable: false),
-                    CourseCode = table.Column<string>(type: "TEXT", nullable: true)
+                    subject_code = table.Column<string>(type: "text", nullable: false),
+                    subject_name = table.Column<string>(type: "text", nullable: false),
+                    subject_description = table.Column<string>(type: "text", nullable: false),
+                    subject_level = table.Column<int>(type: "integer", nullable: false),
+                    subject_course_code = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_subject", x => x.subject_code);
                     table.ForeignKey(
-                        name: "FK_subject_course_CourseCode",
-                        column: x => x.CourseCode,
+                        name: "fk_subject_course_code",
+                        column: x => x.subject_course_code,
                         principalTable: "course",
                         principalColumn: "course_code");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_course_UniversityId",
+                name: "IX_course_course_university_id",
                 table: "course",
-                column: "UniversityId");
+                column: "course_university_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_subject_CourseCode",
+                name: "IX_subject_subject_course_code",
                 table: "subject",
-                column: "CourseCode");
+                column: "subject_course_code");
         }
 
         /// <inheritdoc />
