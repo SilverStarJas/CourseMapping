@@ -19,9 +19,9 @@ namespace CourseMapping.Web.Controllers
         }
 
         [HttpGet("{courseCode}", Name = "GetCourse")]
-        public async Task<ActionResult<CourseResponse>> GetCourseByCodeAsync(Guid universityId, string courseCode)
+        public async Task<ActionResult<CourseResponse>> GetCourseByCodeAsync(Guid universityId, string courseCode, CancellationToken cancellationToken)
         {
-            var university = await _universityRepository.GetUniversityByIdAsync(universityId);
+            var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
                 return NotFound("University not found.");
 
@@ -35,9 +35,9 @@ namespace CourseMapping.Web.Controllers
         }
 
         [HttpGet(Name = "GetAllCourses")]
-        public async Task<ActionResult<List<CourseResponse>>> GetAllCoursesAsync(Guid universityId)
+        public async Task<ActionResult<List<CourseResponse>>> GetAllCoursesAsync(Guid universityId, CancellationToken cancellationToken)
         {
-            var university = await _universityRepository.GetUniversityByIdAsync(universityId);
+            var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
                 return NotFound("University not found.");
 
@@ -51,9 +51,10 @@ namespace CourseMapping.Web.Controllers
         [HttpPost(Name = "AddCourse")]
         public async Task<ActionResult<CourseResponse>> CreateCourseAsync(
             Guid universityId,
-            [FromBody] CreateNewCourseRequest newCourseRequest)
+            [FromBody] CreateNewCourseRequest newCourseRequest,
+            CancellationToken cancellationToken)
         {
-            var university = await _universityRepository.GetUniversityByIdAsync(universityId);
+            var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
                 return NotFound("University not found.");
 
@@ -61,7 +62,7 @@ namespace CourseMapping.Web.Controllers
             var newCourse = new Course(courseCode, newCourseRequest.Name, newCourseRequest.Description);
 
             university.AddCourse(newCourse);
-            await _universityRepository.SaveChangesAsync();
+            await _universityRepository.SaveChangesAsync(cancellationToken);
 
             var response = newCourse.MapCourseToResponse();
 
@@ -71,9 +72,10 @@ namespace CourseMapping.Web.Controllers
         [HttpPut("{courseCode}", Name = "UpdateCourse")]
         public async Task<IActionResult> UpdateCourseAsync(
             Guid universityId, string courseCode,
-            [FromBody] UpdateCourseRequest updateCourseRequest)
+            [FromBody] UpdateCourseRequest updateCourseRequest,
+            CancellationToken cancellationToken)
         {
-            var university = await _universityRepository.GetUniversityByIdAsync(universityId);
+            var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
                 return NotFound("University not found.");
 
@@ -83,15 +85,15 @@ namespace CourseMapping.Web.Controllers
 
             course.UpdateCourse(updateCourseRequest.Name, updateCourseRequest.Description);
 
-            await _universityRepository.SaveChangesAsync();
+            await _universityRepository.SaveChangesAsync(cancellationToken);
 
             return NoContent();
         }
 
         [HttpDelete("{courseCode}", Name = "DeleteCourse")]
-        public async Task<IActionResult> DeleteCourseAsync(Guid universityId, string courseCode)
+        public async Task<IActionResult> DeleteCourseAsync(Guid universityId, string courseCode, CancellationToken cancellationToken)
         {
-            var university = await _universityRepository.GetUniversityByIdAsync(universityId);
+            var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
                 return NotFound("University not found.");
 
@@ -99,8 +101,8 @@ namespace CourseMapping.Web.Controllers
             if (course is null)
                 return NotFound("Course not found.");
 
-            await _universityRepository.DeleteCourseAsync(course);
-            await _universityRepository.SaveChangesAsync();
+            await _universityRepository.DeleteCourseAsync(course, cancellationToken);
+            await _universityRepository.SaveChangesAsync(cancellationToken);
 
             return NoContent();
         }

@@ -4,14 +4,16 @@ namespace CourseMapping.Infrastructure.Persistence.Abstraction;
 
 public interface IUniversityRepository
 {
-    public Task<University?> GetUniversityByIdAsync(Guid id);
-    public Task<List<University>> GetAllUniversitiesAsync();
-    
-    public Task AddAsync(University university);
-    public Task DeleteUniversityAsync(University university);
-    public Task DeleteCourseAsync(Course course);
-    public Task DeleteSubjectAsync(Subject subject);
+    public Task<University?> GetUniversityByIdAsync(Guid id, CancellationToken cancellationToken);
+    public Task<List<University>> GetAllUniversitiesAsync(CancellationToken cancellationToken);
+
+    public Task AddAsync(University university, CancellationToken cancellationToken);
+    public Task DeleteUniversityAsync(University university, CancellationToken cancellationToken);
+    public Task DeleteCourseAsync(Course course, CancellationToken cancellationToken);
+    public Task DeleteSubjectAsync(Subject subject, CancellationToken cancellationToken);
+
     public string GetNextCourseCode();
     public string GetNextSubjectCode();
-    public Task SaveChangesAsync();
+
+    public Task SaveChangesAsync(CancellationToken cancellationToken);
 }

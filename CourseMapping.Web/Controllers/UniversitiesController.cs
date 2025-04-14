@@ -18,9 +18,9 @@ namespace CourseMapping.Web.Controllers
         }
 
         [HttpGet("{universityId}", Name = "GetUniversity")]
-        public async Task<ActionResult<University>> GetUniversityAsync(Guid universityId)
+        public async Task<ActionResult<University>> GetUniversityAsync(Guid universityId, CancellationToken cancellationToken)
         {
-            var university = await _universityRepository.GetUniversityByIdAsync(universityId);
+            var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
                 return NotFound("University not found.");
 
@@ -30,9 +30,9 @@ namespace CourseMapping.Web.Controllers
         }
 
         [HttpGet(Name = "GetAllUniversities")]
-        public async Task<ActionResult<List<UniversityResponse>>> GetAllUniversitiesAsync()
+        public async Task<ActionResult<List<UniversityResponse>>> GetAllUniversitiesAsync(CancellationToken cancellationToken)
         {
-            var universities = await _universityRepository.GetAllUniversitiesAsync();
+            var universities = await _universityRepository.GetAllUniversitiesAsync(cancellationToken);
 
             var response = universities.MapAllUniversitiesToResponse();
 
@@ -40,14 +40,16 @@ namespace CourseMapping.Web.Controllers
         }
 
         [HttpPost(Name = "AddUniversity")]
-        public async Task<ActionResult<UniversityResponse>> CreateUniversityAsync([FromBody] CreateNewUniversityRequest newUniversityRequest)
+        public async Task<ActionResult<UniversityResponse>> CreateUniversityAsync(
+            [FromBody] CreateNewUniversityRequest newUniversityRequest, 
+            CancellationToken cancellationToken)
         {
             var universityId = Guid.NewGuid();
 
             var newUniversity = new University(universityId, newUniversityRequest.Name, newUniversityRequest.Country);
 
-            await _universityRepository.AddAsync(newUniversity);
-            await _universityRepository.SaveChangesAsync();
+            await _universityRepository.AddAsync(newUniversity, cancellationToken);
+            await _universityRepository.SaveChangesAsync(cancellationToken);
 
             var response = newUniversity.MapUniversityToResponse();
 
@@ -56,29 +58,30 @@ namespace CourseMapping.Web.Controllers
 
         [HttpPut("{universityId}", Name = "UpdateUniversity")]
         public async Task<ActionResult<UniversityResponse>> UpdateUniversityAsync(
-            Guid universityId,
-            [FromBody] UpdateUniversityRequest updateUniversityRequest)
+            Guid universityId, 
+            [FromBody] UpdateUniversityRequest updateUniversityRequest, 
+            CancellationToken cancellationToken)
         {
-            var university = await _universityRepository.GetUniversityByIdAsync(universityId);
+            var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
                 return NotFound("University not found.");
 
             university.UpdateUniversity(updateUniversityRequest.Name, updateUniversityRequest.Country);
 
-            await _universityRepository.SaveChangesAsync();
+            await _universityRepository.SaveChangesAsync(cancellationToken);
 
             return NoContent();
         }
 
         [HttpDelete("{universityId}", Name = "DeleteUniversity")]
-        public async Task<IActionResult> DeleteUniversityAsync(Guid universityId)
+        public async Task<IActionResult> DeleteUniversityAsync(Guid universityId, CancellationToken cancellationToken)
         {
-            var university = await _universityRepository.GetUniversityByIdAsync(universityId);
+            var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
                 return NotFound("University not found.");
 
-            await _universityRepository.DeleteUniversityAsync(university);
-            await _universityRepository.SaveChangesAsync();
+            await _universityRepository.DeleteUniversityAsync(university, cancellationToken);
+            await _universityRepository.SaveChangesAsync(cancellationToken);
 
             return NoContent();
         }
