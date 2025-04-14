@@ -12,38 +12,41 @@ internal class UniversityRepository : IUniversityRepository
     {
         _dbContext = dbContext;
     }
-        
-    public University? GetUniversityById(Guid id)
+
+    public async Task<University?> GetUniversityByIdAsync(Guid id)
     {
-        return _dbContext.Universities
+        return await _dbContext.Universities
             .Include(u => u.Courses)
             .ThenInclude(c => c.Subjects)
-            .FirstOrDefault(u => u.Id == id);
+            .FirstOrDefaultAsync(u => u.Id == id);
     }
 
-    public List<University> GetAllUniversities()
+    public async Task<List<University>> GetAllUniversitiesAsync()
     {
-        return _dbContext.Universities.ToList();
-    }
-    
-    public void Add(University university)
-    {
-        _dbContext.Add(university);
+        return await _dbContext.Universities.ToListAsync();
     }
 
-    public void DeleteUniversity(University university)
+    public async Task AddAsync(University university)
     {
-        _dbContext.Remove(university);
+        await _dbContext.Universities.AddAsync(university);
     }
 
-    public void DeleteCourse(Course course)
+    public async Task DeleteUniversityAsync(University university)
     {
-        _dbContext.Remove(course);
+        _dbContext.Universities.Remove(university);
+        await _dbContext.SaveChangesAsync();
     }
 
-    public void DeleteSubject(Subject subject)
+    public async Task DeleteCourseAsync(Course course)
     {
-        _dbContext.Remove(subject);
+        _dbContext.Courses.Remove(course);
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task DeleteSubjectAsync(Subject subject)
+    {
+        _dbContext.Subjects.Remove(subject);
+        await _dbContext.SaveChangesAsync();
     }
 
     public string GetNextCourseCode()
@@ -56,8 +59,8 @@ internal class UniversityRepository : IUniversityRepository
         return $"S-{Random.Shared.Next(2000)}";
     }
 
-    public void SaveChanges()
+    public async Task SaveChangesAsync()
     {
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync();
     }
 }
