@@ -4,82 +4,83 @@ using CourseMapping.Web.Extensions.Controller;
 using CourseMapping.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CourseMapping.Web.Controllers;
-
-[ApiController]
-[Route("v1/universities")]
-public class UniversitiesController : ControllerBase
+namespace CourseMapping.Web.Controllers
 {
-    private readonly IUniversityRepository _universityRepository;
-
-    public UniversitiesController(IUniversityRepository universityRepository)
+    [ApiController]
+    [Route("v1/universities")]
+    public class UniversitiesController : ControllerBase
     {
-        _universityRepository = universityRepository;
-    }
+        private readonly IUniversityRepository _universityRepository;
 
-    [HttpGet("{universityId}", Name = "GetUniversity")]
-    public ActionResult<University> GetUniversity(Guid universityId)
-    {
-        var university = _universityRepository.GetUniversityById(universityId);
-        if (university is null)
-            return NotFound("University not found.");
+        public UniversitiesController(IUniversityRepository universityRepository)
+        {
+            _universityRepository = universityRepository;
+        }
 
-        var response = university.MapUniversityToResponse();
+        [HttpGet("{universityId}", Name = "GetUniversity")]
+        public async Task<ActionResult<University>> GetUniversityAsync(Guid universityId)
+        {
+            var university = await _universityRepository.GetUniversityByIdAsync(universityId);
+            if (university is null)
+                return NotFound("University not found.");
 
-        return Ok(response);
-    }
+            var response = university.MapUniversityToResponse();
 
-    [HttpGet(Name = "GetAllUniversities")]
-    public ActionResult<List<UniversityResponse>> GetAllUniversities()
-    {
-        var universities = _universityRepository.GetAllUniversities();
+            return Ok(response);
+        }
 
-        var response = universities.MapAllUniversitiesToResponse();
-        
-        return Ok(response);
-    }
+        [HttpGet(Name = "GetAllUniversities")]
+        public async Task<ActionResult<List<UniversityResponse>>> GetAllUniversitiesAsync()
+        {
+            var universities = await _universityRepository.GetAllUniversitiesAsync();
 
-    [HttpPost(Name = "AddUniversity")]
-    public ActionResult<UniversityResponse> CreateUniversity([FromBody] CreateNewUniversityRequest newUniversityRequest)
-    {
-        var universityId = Guid.NewGuid();
+            var response = universities.MapAllUniversitiesToResponse();
 
-        var newUniversity = new University(universityId, newUniversityRequest.Name, newUniversityRequest.Country);
-        
-        _universityRepository.Add(newUniversity);
-        _universityRepository.SaveChanges();
+            return Ok(response);
+        }
 
-        var response = newUniversity.MapUniversityToResponse();
-        
-        return CreatedAtRoute("GetUniversity", new { universityId = newUniversity.Id }, response);
-    }
+        [HttpPost(Name = "AddUniversity")]
+        public async Task<ActionResult<UniversityResponse>> CreateUniversityAsync([FromBody] CreateNewUniversityRequest newUniversityRequest)
+        {
+            var universityId = Guid.NewGuid();
 
-    [HttpPut("{universityId}", Name = "UpdateUniversity")]
-    public ActionResult<UniversityResponse> UpdateUniversity(
-        Guid universityId,
-        [FromBody] UpdateUniversityRequest updateUniversityRequest)
-    {
-        var university = _universityRepository.GetUniversityById(universityId);
-        if (university is null)
-            return NotFound("University not found.");
-        
-        university.UpdateUniversity(updateUniversityRequest.Name, updateUniversityRequest.Country);
-        
-        _universityRepository.SaveChanges();
+            var newUniversity = new University(universityId, newUniversityRequest.Name, newUniversityRequest.Country);
 
-        return NoContent();
-    }
+            await _universityRepository.AddAsync(newUniversity);
+            await _universityRepository.SaveChangesAsync();
 
-    [HttpDelete("{universityId}", Name = "DeleteUniversity")]
-    public ActionResult<UniversityResponse> DeleteUniversity(Guid universityId)
-    {
-        var university = _universityRepository.GetUniversityById(universityId);
-        if (university is null)
-            return NotFound("University not found.");
-        
-        _universityRepository.DeleteUniversity(university);
-        _universityRepository.SaveChanges();
-        
-        return NoContent();
+            var response = newUniversity.MapUniversityToResponse();
+
+            return CreatedAtRoute("GetUniversity", new { universityId = newUniversity.Id }, response);
+        }
+
+        [HttpPut("{universityId}", Name = "UpdateUniversity")]
+        public async Task<ActionResult<UniversityResponse>> UpdateUniversityAsync(
+            Guid universityId,
+            [FromBody] UpdateUniversityRequest updateUniversityRequest)
+        {
+            var university = await _universityRepository.GetUniversityByIdAsync(universityId);
+            if (university is null)
+                return NotFound("University not found.");
+
+            university.UpdateUniversity(updateUniversityRequest.Name, updateUniversityRequest.Country);
+
+            await _universityRepository.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{universityId}", Name = "DeleteUniversity")]
+        public async Task<IActionResult> DeleteUniversityAsync(Guid universityId)
+        {
+            var university = await _universityRepository.GetUniversityByIdAsync(universityId);
+            if (university is null)
+                return NotFound("University not found.");
+
+            await _universityRepository.DeleteUniversityAsync(university);
+            await _universityRepository.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }
