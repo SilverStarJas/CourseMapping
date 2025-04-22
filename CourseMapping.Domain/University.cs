@@ -30,5 +30,15 @@
         {
             Courses.Add(newCourse);
         }
+
+        public void RemoveCourse(string courseCode)
+        {
+            var course = Courses.FirstOrDefault(x => x.Code == courseCode);
+
+            if (course is null)
+                return;
+            
+            Courses.Remove(course);
+        }
     }
 }

@@ -97,11 +97,7 @@ namespace CourseMapping.Web.Controllers
             if (university is null)
                 return NotFound("University not found.");
 
-            var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
-            if (course is null)
-                return NotFound("Course not found.");
-
-            await _universityRepository.DeleteCourseAsync(course, cancellationToken);
+            university.RemoveCourse(courseCode);
             await _universityRepository.SaveChangesAsync(cancellationToken);
 
             return NoContent();

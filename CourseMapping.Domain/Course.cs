@@ -30,12 +30,22 @@
                 Description = description;
         }
 
-        public void AddSubject(Subject unit) 
+        public void AddSubject(Subject subject) 
         {
             if (Subjects.Count < 3)
-                Subjects.Add(unit);
+                Subjects.Add(subject);
             else
                 throw new InvalidOperationException("Up to three subjects allowed.");
+        }
+
+        public void RemoveSubject(string subjectCode)
+        {
+            var subject = Subjects.FirstOrDefault(s => s.Code == subjectCode);
+            
+            if (subject is null)
+                return;
+            
+            Subjects.Remove(subject);
         }
     }
 }

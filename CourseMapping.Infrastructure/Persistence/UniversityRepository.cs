@@ -37,18 +37,6 @@ internal class UniversityRepository : IUniversityRepository
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task DeleteCourseAsync(Course course, CancellationToken cancellationToken)
-    {
-        _dbContext.Courses.Remove(course);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-    }
-
-    public async Task DeleteSubjectAsync(Subject subject, CancellationToken cancellationToken)
-    {
-        _dbContext.Subjects.Remove(subject);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-    }
-
     public string GetNextCourseCode()
     {
         return $"C-{Random.Shared.Next(1000)}";
