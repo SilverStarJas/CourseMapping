@@ -18,111 +18,110 @@ namespace CourseMapping.Web.Controllers
         }
 
         [HttpGet("{subjectCode}", Name = "GetSubject")]
-        public ActionResult<SubjectResponse> GetSubjectByCode(Guid universityId, string courseCode,
-            string subjectCode)
+        public async Task<ActionResult<SubjectResponse>> GetSubjectByCodeAsync(
+            Guid universityId, string courseCode, string subjectCode, CancellationToken cancellationToken)
         {
-            var university = _universityRepository.GetUniversityById(universityId);
+            var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
                 return NotFound("University not found.");
-            
+
             var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
             if (course is null)
                 return NotFound("Course not found.");
-            
+
             var subject = course.Subjects.FirstOrDefault(s => s.Code == subjectCode);
             if (subject is null)
                 return NotFound("Subject not found.");
 
             var response = subject.MapSubjectToResponse();
-            
+
             return Ok(response);
         }
-        
+
         [HttpGet(Name = "GetAllSubjects")]
-        public ActionResult<SubjectResponse> GetAllSubjects(Guid universityId, string courseCode)
+        public async Task<ActionResult<List<SubjectResponse>>> GetAllSubjectsAsync(
+            Guid universityId, string courseCode, CancellationToken cancellationToken)
         {
-            var university = _universityRepository.GetUniversityById(universityId);
+            var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
                 return NotFound("University not found.");
 
             var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
             if (course is null)
                 return NotFound("Course not found.");
-            
+
             var subjects = course.Subjects;
 
             var response = subjects.MapAllSubjectsToResponse();
-            
+
             return Ok(response);
         }
 
         [HttpPost]
-        public ActionResult<SubjectResponse> CreateSubject(
+        public async Task<ActionResult<SubjectResponse>> CreateSubjectAsync(
             Guid universityId, string courseCode,
-            [FromBody] CreateNewSubjectRequest newSubjectRequest)
+            [FromBody] CreateNewSubjectRequest newSubjectRequest,
+            CancellationToken cancellationToken)
         {
-            var university = _universityRepository.GetUniversityById(universityId);
+            var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
                 return NotFound("University not found.");
-            
+
             var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
             if (course is null)
                 return NotFound("Course not found.");
 
             var subjectCode = _universityRepository.GetNextSubjectCode();
             var newSubject = new Subject(subjectCode, newSubjectRequest.Name, newSubjectRequest.Description, newSubjectRequest.Level);
-            
+
             course.AddSubject(newSubject);
-            _universityRepository.SaveChanges();
-            
+            await _universityRepository.SaveChangesAsync(cancellationToken);
+
             var response = newSubject.MapSubjectToResponse();
-            
-            return CreatedAtRoute("GetSubject", new {universityId, courseCode, subjectCode = newSubject.Code}, response);
+
+            return CreatedAtRoute("GetSubject", new { universityId, courseCode, subjectCode = newSubject.Code }, response);
         }
-        
+
         [HttpPut("{subjectCode}", Name = "UpdateSubject")]
-        public ActionResult<SubjectResponse> UpdateSubject(
+        public async Task<IActionResult> UpdateSubjectAsync(
             Guid universityId, string courseCode, string subjectCode,
-            [FromBody] UpdateSubjectRequest updateSubjectRequest)
+            [FromBody] UpdateSubjectRequest updateSubjectRequest,
+            CancellationToken cancellationToken)
         {
-            var university = _universityRepository.GetUniversityById(universityId);
+            var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
                 return NotFound("University not found.");
-        
+
             var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
             if (course is null)
                 return NotFound("Course not found.");
-            
+
             var subject = course.Subjects.FirstOrDefault(s => s.Code == subjectCode);
             if (subject is null)
                 return NotFound("Subject not found.");
-                
+
             subject.UpdateSubject(updateSubjectRequest.Name, updateSubjectRequest.Description, updateSubjectRequest.Level);
-            
-            _universityRepository.SaveChanges();
-            
+
+            await _universityRepository.SaveChangesAsync(cancellationToken);
+
             return NoContent();
         }
 
         [HttpDelete("{subjectCode}", Name = "DeleteSubject")]
-        public ActionResult<SubjectResponse> DeleteSubject(
-            Guid universityId, string courseCode, string subjectCode)
+        public async Task<IActionResult> DeleteSubjectAsync(
+            Guid universityId, string courseCode, string subjectCode, CancellationToken cancellationToken)
         {
-            var university = _universityRepository.GetUniversityById(universityId);
+            var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
                 return NotFound("University not found.");
-        
+
             var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
             if (course is null)
                 return NotFound("Course not found.");
             
-            var subject = course.Subjects.FirstOrDefault(s => s.Code == subjectCode);
-            if (subject is null)
-                return NotFound("Subject not found.");
-            
-            _universityRepository.DeleteSubject(subject);
-            _universityRepository.SaveChanges();
-            
+            course.RemoveSubject(subjectCode);
+            await _universityRepository.SaveChangesAsync(cancellationToken);
+
             return NoContent();
         }
     }

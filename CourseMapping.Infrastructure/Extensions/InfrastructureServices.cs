@@ -13,6 +13,4 @@ public static class InfrastructureServices
         services.AddScoped<IUniversityRepository, UniversityRepository>();
         services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("CourseMappingDb")));
     }
-    
-    
 }

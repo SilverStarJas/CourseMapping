@@ -12,38 +12,29 @@ internal class UniversityRepository : IUniversityRepository
     {
         _dbContext = dbContext;
     }
-        
-    public University? GetUniversityById(Guid id)
+
+    public async Task<University?> GetUniversityByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        return _dbContext.Universities
+        return await _dbContext.Universities
             .Include(u => u.Courses)
             .ThenInclude(c => c.Subjects)
-            .FirstOrDefault(u => u.Id == id);
+            .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
     }
 
-    public List<University> GetAllUniversities()
+    public async Task<List<University>> GetAllUniversitiesAsync(CancellationToken cancellationToken)
     {
-        return _dbContext.Universities.ToList();
-    }
-    
-    public void Add(University university)
-    {
-        _dbContext.Add(university);
+        return await _dbContext.Universities.ToListAsync(cancellationToken);
     }
 
-    public void DeleteUniversity(University university)
+    public async Task AddAsync(University university, CancellationToken cancellationToken)
     {
-        _dbContext.Remove(university);
+        await _dbContext.Universities.AddAsync(university, cancellationToken);
     }
 
-    public void DeleteCourse(Course course)
+    public async Task DeleteUniversityAsync(University university, CancellationToken cancellationToken)
     {
-        _dbContext.Remove(course);
-    }
-
-    public void DeleteSubject(Subject subject)
-    {
-        _dbContext.Remove(subject);
+        _dbContext.Universities.Remove(university);
+        await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
     public string GetNextCourseCode()
@@ -56,8 +47,8 @@ internal class UniversityRepository : IUniversityRepository
         return $"S-{Random.Shared.Next(2000)}";
     }
 
-    public void SaveChanges()
+    public async Task SaveChangesAsync(CancellationToken cancellationToken)
     {
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync(cancellationToken);
     }
 }

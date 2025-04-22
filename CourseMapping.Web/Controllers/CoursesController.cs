@@ -5,105 +5,102 @@ using CourseMapping.Web.Models;
 using CourseMapping.Web.Models.Requests;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CourseMapping.Web.Controllers;
-
-[ApiController]
-[Route("v1/universities/{universityId}/courses")]
-public class CoursesController : ControllerBase
+namespace CourseMapping.Web.Controllers
 {
-    private readonly IUniversityRepository _universityRepository;
-
-    public CoursesController(IUniversityRepository universityRepository)
+    [ApiController]
+    [Route("v1/universities/{universityId}/courses")]
+    public class CoursesController : ControllerBase
     {
-        _universityRepository = universityRepository;
-    }
+        private readonly IUniversityRepository _universityRepository;
 
-    [HttpGet("{courseCode}", Name = "GetCourse")]
-    public ActionResult<CourseResponse> GetCourseByCode(Guid universityId, string courseCode)
-    {
-        var university = _universityRepository.GetUniversityById(universityId);
-        if (university is null)
-            return NotFound("University not found.");
-        
-        var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
-        if (course is null)
-            return NotFound("Course not found.");
+        public CoursesController(IUniversityRepository universityRepository)
+        {
+            _universityRepository = universityRepository;
+        }
 
-        var response = course.MapCourseToResponse();
-        
-        return Ok(response);
-    }
-    
-    [HttpGet(Name = "GetAllCourses")]
-    public ActionResult<List<CourseResponse>> GetAllCourses(Guid universityId)
-    {
-        var university = _universityRepository.GetUniversityById(universityId);
-        if (university is null)
-            return NotFound("University not found.");
+        [HttpGet("{courseCode}", Name = "GetCourse")]
+        public async Task<ActionResult<CourseResponse>> GetCourseByCodeAsync(Guid universityId, string courseCode, CancellationToken cancellationToken)
+        {
+            var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
+            if (university is null)
+                return NotFound("University not found.");
 
-        var courses = university.Courses.ToList();
+            var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
+            if (course is null)
+                return NotFound("Course not found.");
 
-        var response = courses.MapAllCoursesToResponse();
+            var response = course.MapCourseToResponse();
 
-        return Ok(response);
-    }
+            return Ok(response);
+        }
 
-    [HttpPost(Name = "AddCourse")]
-    public ActionResult<CourseResponse> CreateCourse(
-        Guid universityId,
-        [FromBody] CreateNewCourseRequest newCourseRequest)
-    {
-        var university = _universityRepository.GetUniversityById(universityId);
-        if (university is null)
-            return NotFound("University not found.");
+        [HttpGet(Name = "GetAllCourses")]
+        public async Task<ActionResult<List<CourseResponse>>> GetAllCoursesAsync(Guid universityId, CancellationToken cancellationToken)
+        {
+            var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
+            if (university is null)
+                return NotFound("University not found.");
 
-        var courseCode = _universityRepository.GetNextCourseCode();
-        var newCourse = new Course(courseCode, newCourseRequest.Name, newCourseRequest.Description);
-        
-        university.AddCourse(newCourse);
-        _universityRepository.SaveChanges();
+            var courses = university.Courses.ToList();
 
-        var response = newCourse.MapCourseToResponse();
-        
-        return CreatedAtRoute("GetCourse", new { universityId, courseCode = newCourse.Code }, response);
-    }
+            var response = courses.MapAllCoursesToResponse();
 
-    [HttpPut("{courseCode}", Name = "UpdateCourse")]
-    public ActionResult<CourseResponse> UpdateCourse(
-        Guid universityId, string courseCode,
-        [FromBody] UpdateCourseRequest updateCourseRequest)
-    {
-        var university = _universityRepository.GetUniversityById(universityId);
-        if (university is null)
-            return NotFound("University not found.");
-        
-        var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
-        
-        if (course is null)
-            return NotFound("Course not found.");
+            return Ok(response);
+        }
 
-        course.UpdateCourse(updateCourseRequest.Name, updateCourseRequest.Description);
-        
-        _universityRepository.SaveChanges();
+        [HttpPost(Name = "AddCourse")]
+        public async Task<ActionResult<CourseResponse>> CreateCourseAsync(
+            Guid universityId,
+            [FromBody] CreateNewCourseRequest newCourseRequest,
+            CancellationToken cancellationToken)
+        {
+            var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
+            if (university is null)
+                return NotFound("University not found.");
 
-        return NoContent();
-    }
+            var courseCode = _universityRepository.GetNextCourseCode();
+            var newCourse = new Course(courseCode, newCourseRequest.Name, newCourseRequest.Description);
 
-    [HttpDelete("{courseCode}", Name = "DeleteCourse")]
-    public ActionResult<CourseResponse> DeleteCourse(
-        Guid universityId, string courseCode)
-    {
-        var university = _universityRepository.GetUniversityById(universityId);
-        if (university is null)
-            return NotFound("University not found.");
-        
-        var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
-        if (course is null)
-            return NotFound("Course not found.");
-        
-        _universityRepository.DeleteCourse(course);
-        _universityRepository.SaveChanges();
-        
-        return NoContent();
+            university.AddCourse(newCourse);
+            await _universityRepository.SaveChangesAsync(cancellationToken);
+
+            var response = newCourse.MapCourseToResponse();
+
+            return CreatedAtRoute("GetCourse", new { universityId, courseCode = newCourse.Code }, response);
+        }
+
+        [HttpPut("{courseCode}", Name = "UpdateCourse")]
+        public async Task<IActionResult> UpdateCourseAsync(
+            Guid universityId, string courseCode,
+            [FromBody] UpdateCourseRequest updateCourseRequest,
+            CancellationToken cancellationToken)
+        {
+            var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
+            if (university is null)
+                return NotFound("University not found.");
+
+            var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
+            if (course is null)
+                return NotFound("Course not found.");
+
+            course.UpdateCourse(updateCourseRequest.Name, updateCourseRequest.Description);
+
+            await _universityRepository.SaveChangesAsync(cancellationToken);
+
+            return NoContent();
+        }
+
+        [HttpDelete("{courseCode}", Name = "DeleteCourse")]
+        public async Task<IActionResult> DeleteCourseAsync(Guid universityId, string courseCode, CancellationToken cancellationToken)
+        {
+            var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
+            if (university is null)
+                return NotFound("University not found.");
+
+            university.RemoveCourse(courseCode);
+            await _universityRepository.SaveChangesAsync(cancellationToken);
+
+            return NoContent();
+        }
     }
 }
