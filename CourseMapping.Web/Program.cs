@@ -12,11 +12,13 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddInfrastructureServices(builder.Configuration);
 
-builder.Services.AddHttpLogging(o => { });
-
 var app = builder.Build();
 
-app.UseHttpLogging();
+app.Use(async (context, next) =>
+{
+    await next.Invoke(); 
+    // Other delegates(?): References to methods with a param list and return type
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
