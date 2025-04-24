@@ -11,6 +11,8 @@ public static class InfrastructureServices
     public static void AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<IUniversityRepository, UniversityRepository>();
-        services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("CourseMappingDb")));
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseNpgsql(configuration.GetConnectionString("CourseMappingDb")));
+
     }
 }
