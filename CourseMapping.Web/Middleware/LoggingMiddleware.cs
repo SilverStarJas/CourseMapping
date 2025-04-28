@@ -2,9 +2,9 @@ namespace CourseMapping.Web.Middleware;
 
 public class LoggingMiddleware : IMiddleware
 {
-    private readonly ILogger _logger;
-    
-    public LoggingMiddleware(ILogger logger)
+    private readonly ILogger<LoggingMiddleware> _logger;
+
+    public LoggingMiddleware(ILogger<LoggingMiddleware> logger)
     {
         _logger = logger;
     }
