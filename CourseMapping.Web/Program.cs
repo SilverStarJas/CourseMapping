@@ -24,6 +24,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<AuthenticationMiddleware>();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

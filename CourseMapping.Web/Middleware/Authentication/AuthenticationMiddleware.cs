@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http.Extensions;
+
 namespace CourseMapping.Web.Middleware.Authentication;
 
 public class AuthenticationMiddleware
@@ -13,6 +15,12 @@ public class AuthenticationMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
+        if (context.Request.GetDisplayUrl().Contains("openapi"))
+        {
+            await _next(context);
+            return;
+        }
+        
         if (!context.Request.Headers.TryGetValue(AuthConstants.ApiKeyHeaderName, out var extractedApiKey))
         {
             context.Response.StatusCode = 401;
