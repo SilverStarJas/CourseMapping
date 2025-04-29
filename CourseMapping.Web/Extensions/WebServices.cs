@@ -1,4 +1,5 @@
 using CourseMapping.Web.Middleware;
+using CourseMapping.Web.Middleware.Authentication;
 
 namespace CourseMapping.Web.Extensions;
 

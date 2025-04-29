@@ -13,7 +13,7 @@ public class LoggingMiddleware : IMiddleware
     {
         var keyValue = $"{context.Request.Method} {context.Request.Path}";
 
-        if (_logger.IsEnabled(LogLevel.Information))
+        if (_logger.IsEnabled(LogLevel.Debug))
         {
             _logger.LogDebug(keyValue, "Request: {Request}", context.Request);
         }

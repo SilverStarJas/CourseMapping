@@ -1,20 +1,19 @@
 using CourseMapping.Infrastructure.Extensions;
 using CourseMapping.Web.Extensions;
+using CourseMapping.Web.Middleware;
+using CourseMapping.Web.Middleware.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddWebServices();
+builder.Logging.AddConsole();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 
 var app = builder.Build();
 
-app.Use(async (context, next) =>
-{
-    await next.Invoke(); 
-    // Other delegates(?): References to methods with a param list and return type
-});
+app.UseMiddleware<LoggingMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -22,6 +21,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<AuthenticationMiddleware>();
 
 app.UseAuthorization();
 
