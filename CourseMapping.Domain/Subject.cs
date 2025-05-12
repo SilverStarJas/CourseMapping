@@ -48,5 +48,15 @@
                     throw new ArgumentOutOfRangeException(message);
                 }
         }
+
+        public void MapSubject(string keyword)
+        {
+            if (string.IsNullOrEmpty(keyword))
+                throw new Exception("Search keyword cannot be null or empty.");
+            
+            var mappedSubjects = new List<string>();
+            if (Name.Contains(keyword))
+                mappedSubjects.Add(Code);
+        }
     }
 }
