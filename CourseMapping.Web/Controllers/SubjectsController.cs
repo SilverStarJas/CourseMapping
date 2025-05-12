@@ -56,6 +56,27 @@ namespace CourseMapping.Web.Controllers
 
             return Ok(response);
         }
+        
+        [HttpGet("mapped/{subjectName}", Name = "GetMappedSubjects")]
+        public async Task<ActionResult<List<SubjectResponse>>> GetMappedSubjectsAsync(
+            Guid universityId, string courseCode,
+            string subjectName,
+            CancellationToken cancellationToken)
+        {
+            var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
+            if (university is null)
+                return NotFound("University not found.");
+        
+            var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
+            if (course is null)
+                return NotFound("Course not found.");
+            
+            var newCourseSubjects = course.Subjects.Where(s => s.Name == subjectName);
+            
+            var response = newCourseSubjects.MapAllSubjectsToResponse();
+            
+            return Ok(response);
+        }
 
         [HttpPost]
         public async Task<ActionResult<SubjectResponse>> CreateSubjectAsync(
