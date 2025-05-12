@@ -49,7 +49,7 @@
                 }
         }
 
-        public void MapSubject(string keyword)
+        public List<string> MapSubject(string keyword)
         {
             if (string.IsNullOrEmpty(keyword))
                 throw new Exception("Search keyword cannot be null or empty.");
@@ -57,6 +57,8 @@
             var mappedSubjects = new List<string>();
             if (Name.Contains(keyword))
                 mappedSubjects.Add(Code);
+            
+            return mappedSubjects;
         }
     }
 }
