@@ -60,5 +60,13 @@
             
             return mappedSubjects;
         }
+
+        public string? TryMatchSubject(string keyword)
+        {
+            if (Name.Contains(keyword))
+                return Code;
+
+            return null;
+        }
     }
 }

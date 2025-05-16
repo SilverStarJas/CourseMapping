@@ -72,8 +72,9 @@ namespace CourseMapping.Web.Controllers
                 return NotFound("Course not found.");
 
             var mappedSubjects = course.Subjects
-                .Where(s => s.Name.Contains(subjectKeyword, StringComparison.OrdinalIgnoreCase))
-                .SelectMany(s => s.MapSubject(subjectKeyword))
+                // .Where(s => s.Name.Contains(subjectKeyword, StringComparison.OrdinalIgnoreCase))
+                .Select(s => s.TryMatchSubject(subjectKeyword))
+                .Where(s => s != null)
                 .ToList();
 
             if (!mappedSubjects.Any())
@@ -81,8 +82,7 @@ namespace CourseMapping.Web.Controllers
 
             return Ok(mappedSubjects);
         }
-
-
+        
         [HttpPost]
         public async Task<ActionResult<SubjectResponse>> CreateSubjectAsync(
             Guid universityId, string courseCode,
