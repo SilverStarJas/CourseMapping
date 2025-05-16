@@ -56,7 +56,7 @@ namespace CourseMapping.Web.Controllers
 
             return Ok(response);
         }
-
+        
         [HttpPost]
         public async Task<ActionResult<SubjectResponse>> CreateSubjectAsync(
             Guid universityId, string courseCode,

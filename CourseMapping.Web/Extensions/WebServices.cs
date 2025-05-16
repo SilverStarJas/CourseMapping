@@ -14,5 +14,6 @@ public static class WebServices
         services.AddSwaggerGen();
         
         services.AddTransient<LoggingMiddleware>();
+        services.AddTransient<AuthenticationMiddleware>();
     }
 }
