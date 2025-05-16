@@ -2,22 +2,20 @@ using Microsoft.AspNetCore.Http.Extensions;
 
 namespace CourseMapping.Web.Middleware.Authentication;
 
-public class AuthenticationMiddleware
+public class AuthenticationMiddleware : IMiddleware
 {
-    private readonly RequestDelegate _next;
     private readonly IConfiguration _configuration;
 
-    public AuthenticationMiddleware(RequestDelegate next, IConfiguration configuration)
+    public AuthenticationMiddleware(IConfiguration configuration)
     {
-        _next = next;
         _configuration = configuration;
     }
-
-    public async Task InvokeAsync(HttpContext context)
+    
+    public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
         if (context.Request.GetDisplayUrl().Contains("openapi"))
         {
-            await _next(context);
+            await next(context);
             return;
         }
         
@@ -36,6 +34,6 @@ public class AuthenticationMiddleware
             return;
         }
         
-        await _next(context);
+        await next(context);
     }
 }
