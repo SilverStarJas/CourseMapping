@@ -57,32 +57,6 @@ namespace CourseMapping.Web.Controllers
             return Ok(response);
         }
         
-        [HttpGet("mapped/{subjectKeyword}", Name = "GetMappedSubjects")]
-        public async Task<ActionResult<List<string>>> GetMappedSubjectsAsync(
-            Guid universityId, string courseCode,
-            string subjectKeyword,
-            CancellationToken cancellationToken)
-        {
-            var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
-            if (university is null)
-                return NotFound("University not found.");
-
-            var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
-            if (course is null)
-                return NotFound("Course not found.");
-
-            var mappedSubjects = course.Subjects
-                // .Where(s => s.Name.Contains(subjectKeyword, StringComparison.OrdinalIgnoreCase))
-                .Select(s => s.TryMatchSubject(subjectKeyword))
-                .Where(s => s != null)
-                .ToList();
-
-            if (!mappedSubjects.Any())
-                return NotFound("No mapped subjects found.");
-
-            return Ok(mappedSubjects);
-        }
-        
         [HttpPost]
         public async Task<ActionResult<SubjectResponse>> CreateSubjectAsync(
             Guid universityId, string courseCode,

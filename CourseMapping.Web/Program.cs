@@ -15,8 +15,6 @@ var app = builder.Build();
 
 app.UseMiddleware<LoggingMiddleware>();
 
-app.UseMiddleware<AuthenticationMiddleware>();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -24,6 +22,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<AuthenticationMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
