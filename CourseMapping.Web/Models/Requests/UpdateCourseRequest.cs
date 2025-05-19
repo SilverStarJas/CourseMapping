@@ -1,7 +1,8 @@
-namespace CourseMapping.Web.Models;
-
-public class UpdateCourseRequest
+namespace CourseMapping.Web.Models.Requests
 {
-    public string? Name { get; set; }
-    public string? Description { get; set; }
+    public class UpdateCourseRequest
+    {
+        public string? Name { get; set; }
+        public string? Description { get; set; }
+    }
 }

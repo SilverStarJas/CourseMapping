@@ -1,5 +1,6 @@
 using CourseMapping.Domain;
 using CourseMapping.Web.Models;
+using CourseMapping.Web.Models.Responses;
 
 namespace CourseMapping.Web.Extensions.Controller;
 

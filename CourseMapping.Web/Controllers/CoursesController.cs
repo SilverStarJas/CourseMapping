@@ -3,6 +3,7 @@ using CourseMapping.Infrastructure.Persistence.Abstraction;
 using CourseMapping.Web.Extensions.Controller;
 using CourseMapping.Web.Models;
 using CourseMapping.Web.Models.Requests;
+using CourseMapping.Web.Models.Responses;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CourseMapping.Web.Controllers
@@ -63,12 +64,11 @@ namespace CourseMapping.Web.Controllers
                 return NotFound("Course not found.");
 
             var mappedSubjects = course.Subjects
-                // .Where(s => s.Name.Contains(subjectKeyword, StringComparison.OrdinalIgnoreCase))
                 .Select(s => s.TryMatchSubject(subjectKeyword))
                 .Where(s => s != null)
                 .ToList();
 
-            if (!mappedSubjects.Any())
+            if (mappedSubjects.Count == 0)
                 return NotFound("No mapped subjects found.");
 
             return Ok(mappedSubjects);

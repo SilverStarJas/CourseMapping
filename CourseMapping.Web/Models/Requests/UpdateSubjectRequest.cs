@@ -1,4 +1,4 @@
-namespace CourseMapping.Web.Models;
+namespace CourseMapping.Web.Models.Requests;
 
 public class UpdateSubjectRequest
 {
