@@ -41,19 +41,19 @@
             Courses.Remove(course);
         }
 
-        // public void MatchSubject()
-        // {
-        //     List<Subject> allSubjects = new List<Subject>();
-        //
-        //     var currentSubjects = request.CurrentSubjects;
-        //
-        //     foreach (var name in currentSubjects)
-        //     {
-        //         if (allSubjects.Any(x => x.Name == name))
-        //             continue;
-        //
-        //         for ()
-        //     }
-        // }
+        public List<string> MapCurrentSubjectsToNew(List<Subject> currentSubjects, List<Subject> allSubjects)
+        {
+            var matchedSubjectsCodes = new List<string>();
+
+            foreach (var subject in currentSubjects)
+            {
+                var matches = allSubjects.FindAll(x => x.Name == subject.Name);
+                foreach (var match in matches)
+                    matchedSubjectsCodes.Add(match.Code);
+            }
+
+            return matchedSubjectsCodes;
+        }
+
     }
 }

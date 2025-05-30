@@ -8,39 +8,27 @@ namespace CourseMapping.Web.Controllers;
 
 [ApiController]
 [Route("v1/universities/{universityId}/mappedSubjects")]
-public class MappingsController : ControllerBase
+public class MatchesController : ControllerBase
 {
     private readonly IUniversityRepository _universityRepository;
 
-    public MappingsController(IUniversityRepository universityRepository)
+    public MatchesController(IUniversityRepository universityRepository)
     {
         _universityRepository = universityRepository;
     }
 
     [HttpGet]
-    public async Task<ActionResult<MappedSubjectsResponse>> GetMappedSubjectsAsync(
+    public async Task<ActionResult<MatchedSubjectsResponse>> GetMappedSubjectsAsync(
         [FromRoute] Guid universityId,
-        [FromBody] GetMappedSubjectsRequest request,
+        [FromBody] GetMatchedSubjectsRequest request,
         CancellationToken cancellationToken)
     {
         var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
         if (university is null)
             return NotFound("University not found.");
 
-        // This should all be in Domain
-        List<Subject> allSubjects = new List<Subject>();
-        
-        var currentSubjects = request.CurrentSubjects;
-        
-        foreach (var name in currentSubjects)
-        {
-            if (allSubjects.Any(x => x.Name == name))
-                continue;
-        
-            // for ()
-            //     return NoContent(); // temporary placeholder
-        }
+        // var allSubjects = university.
 
-        return Ok(); // temporary placeholder
+        return Ok(new {});
     }
 }
