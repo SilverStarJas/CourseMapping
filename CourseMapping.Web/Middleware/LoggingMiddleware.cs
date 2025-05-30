@@ -8,16 +8,16 @@ public class LoggingMiddleware : IMiddleware
     {
         _logger = logger;
     }
-    
+
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
-        var requestDetails = $"REQUEST: {context.Request.Method} at {context.Request.Path}";
+        var keyValue = $"{context.Request.Method} {context.Request.Path}";
 
         if (_logger.IsEnabled(LogLevel.Debug))
         {
-            _logger.LogDebug("{RequestDetails}", requestDetails);
+            _logger.LogDebug("Request: {Request}", keyValue);
         }
-    
+        
         await next(context);
     }
 }

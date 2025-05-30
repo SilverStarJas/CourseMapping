@@ -21,7 +21,7 @@
         {
             if (name != null)
                 Name = name;
-            
+
             if (country != null)
                 Country = country;
         }
@@ -37,8 +37,23 @@
 
             if (course is null)
                 return;
-            
+
             Courses.Remove(course);
         }
+
+        // public void MatchSubject()
+        // {
+        //     List<Subject> allSubjects = new List<Subject>();
+        //
+        //     var currentSubjects = request.CurrentSubjects;
+        //
+        //     foreach (var name in currentSubjects)
+        //     {
+        //         if (allSubjects.Any(x => x.Name == name))
+        //             continue;
+        //
+        //         for ()
+        //     }
+        // }
     }
 }

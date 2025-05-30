@@ -2,5 +2,5 @@ namespace CourseMapping.Web.Models.Responses;
 
 public class MappedSubjectsResponse
 {
-    public List<string>? Codes { get; set; }
+    public List<string>? NewSubjectCodes { get; set; }
 }

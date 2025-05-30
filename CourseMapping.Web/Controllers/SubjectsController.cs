@@ -1,7 +1,6 @@
 ﻿using CourseMapping.Domain;
 using CourseMapping.Infrastructure.Persistence.Abstraction;
 using CourseMapping.Web.Extensions.Controller;
-using CourseMapping.Web.Models;
 using CourseMapping.Web.Models.Requests;
 using CourseMapping.Web.Models.Responses;
 using Microsoft.AspNetCore.Mvc;

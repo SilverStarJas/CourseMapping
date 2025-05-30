@@ -13,12 +13,6 @@ public class AuthenticationMiddleware : IMiddleware
     
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
-        if (context.Request.GetDisplayUrl().Contains("openapi"))
-        {
-            await next(context);
-            return;
-        }
-        
         if (!context.Request.Headers.TryGetValue(AuthConstants.ApiKeyHeaderName, out var extractedApiKey))
         {
             context.Response.StatusCode = 401;
