@@ -27,7 +27,7 @@ public class Program
             app.UseSwaggerUI();
         }
 
-        app.UseMiddleware<AuthenticationMiddleware>();
+        // app.UseMiddleware<AuthenticationMiddleware>();
 
         app.UseAuthentication();
         app.UseAuthorization();
