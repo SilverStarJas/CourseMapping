@@ -3,10 +3,8 @@ using Xunit;
 
 namespace CourseMapping.Tests.IntegrationTests.Controllers;
 
-public class UniversityControllerTests : Fixtures.IntegrationTests
+public class UniversityControllerTests(WebApplicationFactory factory) : Fixtures.IntegrationTests(factory)
 {
-    public UniversityControllerTests(WebApplicationFactory factory) : base(factory) { }
-
     [Fact]
     public async Task GivenAValidUniversityId_WhenGetUniversityByIdIsCalled_ThenReturnsCorrectUniversity()
     {
