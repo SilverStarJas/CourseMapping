@@ -1,4 +1,5 @@
 using CourseMapping.Infrastructure;
+using CourseMapping.Web;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -7,9 +8,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace CourseMapping.Tests.IntegrationTests;
+namespace CourseMapping.Tests.IntegrationTests.Fixtures;
 
-internal class WebApplicationFactory : WebApplicationFactory<Web.Program>
+public class WebApplicationFactory : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {

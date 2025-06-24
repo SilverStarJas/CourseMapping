@@ -44,7 +44,7 @@ namespace CourseMapping.Web.Controllers
             [FromBody] CreateNewUniversityRequest newUniversityRequest, 
             CancellationToken cancellationToken)
         {
-            var universityId = Guid.NewGuid();
+            var universityId = Guid.CreateVersion7();
 
             var newUniversity = new University(universityId, newUniversityRequest.Name, newUniversityRequest.Country);
 
