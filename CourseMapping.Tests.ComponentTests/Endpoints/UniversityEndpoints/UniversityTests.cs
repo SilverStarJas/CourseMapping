@@ -1,38 +1,42 @@
 using System.Net;
-using System.Text;
+using System.Net.Http.Json;
 using CourseMapping.Domain;
-using CourseMapping.Infrastructure.Persistence;
-using CourseMapping.Infrastructure.Persistence.Abstraction;
+using CourseMapping.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using CourseMapping.Tests.ComponentTests.Fixtures;
 using FluentAssertions;
-using Newtonsoft.Json;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Xunit;
 
 namespace CourseMapping.Tests.ComponentTests.Endpoints.UniversityEndpoints;
 
-public class UniversityTests : Fixtures.ComponentTests
+public class UniversityTests
 {
     private readonly HttpClient _client;
-    private readonly TestDbContext _dbContext;
+    private readonly ApplicationDbContext _dbContext;
 
-    public UniversityTests(WebApplicationFactory factory) : base(factory)
+    public UniversityTests()
     {
-        var webAppFactory = factory.WithWebHostBuilder(builder =>
+        var webAppFactory = new WebApplicationFactory().WithWebHostBuilder(builder =>
         {
             builder.ConfigureServices(services =>
             {
-                services.AddScoped<IUniversityRepository, UniversityRepository>();
+                var dbContextDescriptor = services.Where(
+                    d => d.ServiceType == 
+                         typeof(IDbContextOptionsConfiguration<ApplicationDbContext>)).ToList();
+
+                foreach (var descriptor in dbContextDescriptor)
+                    services.Remove(descriptor);
                 
-                services.AddDbContext<TestDbContext>(options =>
+                services.AddDbContext<ApplicationDbContext>(options =>
                     options.UseInMemoryDatabase("TestDb"));
             });
         });
         
         var scopeFactory = webAppFactory.Services.GetRequiredService<IServiceScopeFactory>();
         var scope = scopeFactory.CreateScope();
-        _dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+        _dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         _client = webAppFactory.CreateClient();
         _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(Guid.NewGuid().ToString());
     }
@@ -82,10 +86,10 @@ public class UniversityTests : Fixtures.ComponentTests
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var content = await response.Content.ReadAsStringAsync();
-        content.Should().Contain("University One");
-        content.Should().Contain("University Two");
-        content.Length.Should().Be(2);
+        var content = await response.Content.ReadFromJsonAsync<List<University>>();
+        content.Should().Contain(university1);
+        content.Should().Contain(university2);
+        content.Count.Should().Be(2);
     }
 
     [Fact]
@@ -97,10 +101,9 @@ public class UniversityTests : Fixtures.ComponentTests
         _dbContext.SaveChanges();
 
         var updateRequest = new { Name = "New Name", Country = "New Country" };
-        var content = new StringContent(JsonConvert.SerializeObject(updateRequest), Encoding.UTF8, "application/json");
 
         // Act
-        var response = await _client.PutAsync($"v1/universities/{university.Id}", content);
+        var response = await _client.PutAsJsonAsync($"v1/universities/{university.Id}", updateRequest);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -123,6 +126,7 @@ public class UniversityTests : Fixtures.ComponentTests
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
         
-        university.Should().BeNull();
+        var content = await response.Content.ReadFromJsonAsync<List<University>>();
+        content.Should().BeEmpty();
     }
 }
