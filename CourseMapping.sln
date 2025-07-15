@@ -13,6 +13,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseMapping.Web", "Course
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseMapping.Infrastructure", "CourseMapping.Infrastructure\CourseMapping.Infrastructure.csproj", "{F467DC56-2478-4B80-83A6-6CCD3D420475}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseMapping.Tests.ComponentTests", "CourseMapping.Tests.ComponentTests\CourseMapping.Tests.ComponentTests.csproj", "{7E40FD2D-B616-41A3-957D-16BDB52D2FC4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseMapping.Tests.IntegrationTests", "CourseMapping.Tests.IntegrationTests\CourseMapping.Tests.IntegrationTests.csproj", "{CE3AC14A-B44C-443E-9FC0-589DD879BA7A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseMapping.Web.Tests.UnitTests", "CourseMapping.Web.Tests.UnitTests\CourseMapping.Web.Tests.UnitTests.csproj", "{192C55D9-810A-43BB-B874-FD4461FEF927}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseMapping.Infrastructure.Tests.UnitTests", "CourseMapping.Infrastructure.Tests.UnitTests\CourseMapping.Infrastructure.Tests.UnitTests.csproj", "{C2999B72-7B9F-4A2B-BA5A-337AE6D5FED4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,11 +43,31 @@ Global
 		{F467DC56-2478-4B80-83A6-6CCD3D420475}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F467DC56-2478-4B80-83A6-6CCD3D420475}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F467DC56-2478-4B80-83A6-6CCD3D420475}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E40FD2D-B616-41A3-957D-16BDB52D2FC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E40FD2D-B616-41A3-957D-16BDB52D2FC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E40FD2D-B616-41A3-957D-16BDB52D2FC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E40FD2D-B616-41A3-957D-16BDB52D2FC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE3AC14A-B44C-443E-9FC0-589DD879BA7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE3AC14A-B44C-443E-9FC0-589DD879BA7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE3AC14A-B44C-443E-9FC0-589DD879BA7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE3AC14A-B44C-443E-9FC0-589DD879BA7A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{192C55D9-810A-43BB-B874-FD4461FEF927}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{192C55D9-810A-43BB-B874-FD4461FEF927}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{192C55D9-810A-43BB-B874-FD4461FEF927}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{192C55D9-810A-43BB-B874-FD4461FEF927}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2999B72-7B9F-4A2B-BA5A-337AE6D5FED4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2999B72-7B9F-4A2B-BA5A-337AE6D5FED4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2999B72-7B9F-4A2B-BA5A-337AE6D5FED4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2999B72-7B9F-4A2B-BA5A-337AE6D5FED4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{9130D16C-E4D0-40A0-9D7C-2D2A160F7F76} = {4A866A79-7AD3-4B4F-87DD-EE8D737369FE}
+		{7E40FD2D-B616-41A3-957D-16BDB52D2FC4} = {4A866A79-7AD3-4B4F-87DD-EE8D737369FE}
+		{CE3AC14A-B44C-443E-9FC0-589DD879BA7A} = {4A866A79-7AD3-4B4F-87DD-EE8D737369FE}
+		{192C55D9-810A-43BB-B874-FD4461FEF927} = {4A866A79-7AD3-4B4F-87DD-EE8D737369FE}
+		{C2999B72-7B9F-4A2B-BA5A-337AE6D5FED4} = {4A866A79-7AD3-4B4F-87DD-EE8D737369FE}
 	EndGlobalSection
 EndGlobal

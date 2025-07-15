@@ -3,7 +3,7 @@
     public class University
     {
         // Properties
-        public Guid Id { get; }
+        public Guid Id { get; init; }
         public string Name { get; set; }
         public string Country { get; set; }
         public List<Course> Courses { get; }

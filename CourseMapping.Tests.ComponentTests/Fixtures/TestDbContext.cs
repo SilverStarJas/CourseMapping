@@ -2,15 +2,15 @@ using CourseMapping.Domain;
 using CourseMapping.Infrastructure.Persistence.Configuration;
 using Microsoft.EntityFrameworkCore;
 
-namespace CourseMapping.Infrastructure;
+namespace CourseMapping.Tests.ComponentTests.Fixtures;
 
-public class ApplicationDbContext : DbContext
+public class TestDbContext : DbContext
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
-    
-    public DbSet<Subject> Subjects { get; set; }
-    public DbSet<Course> Courses { get; set; }
+    public TestDbContext(DbContextOptions<TestDbContext> options) : base(options) { }
+
     public DbSet<University> Universities { get; set; }
+    public DbSet<Course> Courses { get; set; }
+    public DbSet<Subject> Subjects { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
