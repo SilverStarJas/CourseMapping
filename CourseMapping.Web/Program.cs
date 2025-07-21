@@ -1,7 +1,7 @@
 using CourseMapping.Infrastructure.Extensions;
 using CourseMapping.Web.Extensions;
 using CourseMapping.Web.Middleware;
-using Serilog;
+using OpenTelemetry.Resources;
 
 namespace CourseMapping.Web;
 
@@ -10,17 +10,12 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        
-        Log.Logger = new LoggerConfiguration()
-            .ReadFrom.Configuration(builder.Configuration)
-            .Enrich.FromLogContext()
-            .WriteTo.Console()
-            .CreateLogger();
-        
-        builder.Logging.ClearProviders();
-        builder.Logging.AddSerilog(Log.Logger);
 
-        // builder.Host.UseSerilog(Log.Logger);
+        builder.Services.AddOpenTelemetry()
+            .ConfigureResource(resource =>
+            {
+                resource.AddService("CourseMapping.Web");
+            });
 
         // Add services to the container.
         builder.Services.AddWebServices();
