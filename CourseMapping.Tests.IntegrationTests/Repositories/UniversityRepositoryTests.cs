@@ -12,35 +12,34 @@ namespace CourseMapping.Tests.IntegrationTests.Repositories;
 
 public class UniversityRepositoryTests : IAsyncLifetime
 {
-    
-    private readonly HttpClient _client;
     private readonly ApplicationDbContext _dbContext;
 
     public UniversityRepositoryTests()
     {
         var webAppFactory = new WebApplicationFactory().WithWebHostBuilder(builder =>
         {
-            builder.ConfigureServices(services =>
-            {
-                var dbContextDescriptor = services
-                    .Where(d => d.ServiceType == typeof(IDbContextOptionsConfiguration<ApplicationDbContext>))
-                    .ToList();
-
-                foreach (var descriptor in dbContextDescriptor)
-                    services.Remove(descriptor);
-
-                var connectionString = GetConnectionString();
-                services.AddDbContext<ApplicationDbContext>(options =>
-                    options.UseNpgsql(connectionString));
-            });
+            // builder.ConfigureServices(services =>
+            // {
+            //     var dbContextDescriptor = services
+            //         .Where(d => d.ServiceType == typeof(IDbContextOptionsConfiguration<ApplicationDbContext>))
+            //         .ToList();
+            //
+            //     foreach (var descriptor in dbContextDescriptor)
+            //         services.Remove(descriptor);
+            //
+            //     var connectionString = GetConnectionString();
+            //     services.AddDbContext<ApplicationDbContext>(options =>
+            //         options.UseNpgsql(connectionString));
+            // });
         });
+        
+        // Can just run container with DB 
 
         var scopeFactory = webAppFactory.Services.GetRequiredService<IServiceScopeFactory>();
         var scope = scopeFactory.CreateScope();
         _dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        _client = webAppFactory.CreateClient();
-        _client.DefaultRequestHeaders.Authorization = 
-            new System.Net.Http.Headers.AuthenticationHeaderValue(Guid.NewGuid().ToString());
+        // _client.DefaultRequestHeaders.Authorization = 
+        //     new System.Net.Http.Headers.AuthenticationHeaderValue(Guid.NewGuid().ToString());
     }
     
     private static string? GetConnectionString()
@@ -60,6 +59,7 @@ public class UniversityRepositoryTests : IAsyncLifetime
         await _dbContext.SaveChangesAsync();
     }
 
+    // IDisposable 
     public Task DisposeAsync() => Task.CompletedTask;
     
     [Fact]
@@ -69,6 +69,7 @@ public class UniversityRepositoryTests : IAsyncLifetime
         var newUniversity = new University(Guid.CreateVersion7(), "Test University", "Test Country");
         
         // Act
+        // should interact with the repository directly
         await _dbContext.AddAsync(newUniversity, CancellationToken.None);
         await _dbContext.SaveChangesAsync();
 
@@ -77,6 +78,7 @@ public class UniversityRepositoryTests : IAsyncLifetime
         universityCount.Should().Be(1);
     }
     
+    // can combine into one test
     [Fact]
     public async Task GivenAnExistingUniversity_WhenGetUniversityByIdIsCalled_ThenReturnsCorrectUniversity()
     {
