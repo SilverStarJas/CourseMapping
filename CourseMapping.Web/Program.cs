@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using CourseMapping.Infrastructure.Extensions;
 using CourseMapping.Web.Extensions;
 using CourseMapping.Web.Middleware;
