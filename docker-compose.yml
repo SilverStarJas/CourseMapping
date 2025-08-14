@@ -1,0 +1,44 @@
+#version: '3.8'
+
+services:
+  coursemapping-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=coursemappingdb;Username=jazza;Password=JasGres
+    volumes:
+      - ~/.aspnet/https:/https:ro
+    depends_on:
+      - seq
+      - postgres
+
+  postgres:
+    image: postgres:latest
+    container_name: coursemapping-postgres
+    environment:
+      - POSTGRES_USER=jazza
+      - POSTGRES_PASSWORD=JasGres
+    ports:
+      - "6789:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  seq:
+    image: datalust/seq:latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_NOAUTHENTICATION=true
+    ports:
+      - "5100:80"
+    volumes:
+      - seq_data:/data
+
+# Needed to declare volume names
+volumes:
+  seq_data:
+  postgres_data:

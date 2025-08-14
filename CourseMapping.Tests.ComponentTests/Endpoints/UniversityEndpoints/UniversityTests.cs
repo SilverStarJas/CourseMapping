@@ -61,9 +61,10 @@ public class UniversityTests : IAsyncLifetime
         var response = await _client.GetAsync($"v1/universities/{university.Id}");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var content = await response.Content.ReadAsStringAsync();
-        content.Should().Contain("Test University");
-        content.Should().Contain("Australia");
+        var content = await response.Content.ReadFromJsonAsync<University>();
+        content.Should().NotBeNull();
+        content.Name.Should().Be("Test University");
+        content.Country.Should().Be("Australia");
     }
 
     [Fact]
@@ -107,13 +108,13 @@ public class UniversityTests : IAsyncLifetime
 
         var updateResponse = await _client.PutAsJsonAsync($"v1/universities/{university.Id}", updateRequest);
         updateResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
-
+        
         var response = await _client.GetAsync($"v1/universities/{university.Id}");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var updatedUniversity = await response.Content.ReadFromJsonAsync<University>();
         updatedUniversity.Should().NotBeNull();
-        updatedUniversity!.Id.Should().Be(university.Id);
+        updatedUniversity.Id.Should().Be(university.Id);
         updatedUniversity.Name.Should().Be("New Name");
         updatedUniversity.Country.Should().Be("New Country");
     }

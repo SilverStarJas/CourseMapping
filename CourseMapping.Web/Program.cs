@@ -1,6 +1,10 @@
 using CourseMapping.Infrastructure.Extensions;
 using CourseMapping.Web.Extensions;
 using CourseMapping.Web.Middleware;
+using OpenTelemetry;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using OpenTelemetry.Exporter;
 using Serilog;
 
 namespace CourseMapping.Web;
@@ -9,42 +13,83 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        var builder = WebApplication.CreateBuilder(args);
-        
+        // Configure Serilog
         Log.Logger = new LoggerConfiguration()
-            .ReadFrom.Configuration(builder.Configuration)
-            .Enrich.FromLogContext()
-            .WriteTo.Console()
+            .ReadFrom.Configuration(GetConfiguration())
             .CreateLogger();
-        
-        builder.Logging.ClearProviders();
-        builder.Logging.AddSerilog(Log.Logger);
 
-        // builder.Host.UseSerilog(Log.Logger);
-
-        // Add services to the container.
-        builder.Services.AddWebServices();
-        builder.Logging.AddConsole();
-        builder.Services.AddInfrastructureServices(builder.Configuration);
-
-        var app = builder.Build();
-
-        app.UseMiddleware<LoggingMiddleware>();
-
-        // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
+        try
         {
-            app.UseSwagger();
-            app.UseSwaggerUI();
+            Log.Information("Starting CourseMapping Web Application");
+            
+            var builder = WebApplication.CreateBuilder(args);
+
+            // Use Serilog as the logging provider
+            builder.Host.UseSerilog();
+
+            builder.Services.AddOpenTelemetry()
+                .ConfigureResource(r => r.AddService("CourseMapping"))
+                .WithTracing(tracing =>
+                {
+                    tracing.AddSource("CourseMapping.Web");
+                    tracing.AddSource("Example.Source");
+                    tracing.AddAspNetCoreInstrumentation();
+                    tracing.AddHttpClientInstrumentation();
+                    tracing.AddSqlClientInstrumentation();
+                    tracing.AddConsoleExporter();
+                    tracing.AddOtlpExporter(opt =>
+                    {
+                        opt.Endpoint = new Uri("http://localhost:5341/ingest/otlp/v1/traces");
+                        opt.Protocol = OtlpExportProtocol.HttpProtobuf;
+                        opt.ExportProcessorType = ExportProcessorType.Batch;
+                        opt.BatchExportProcessorOptions = new()
+                        {
+                            ExporterTimeoutMilliseconds = 5000
+                        };
+                    });
+                });
+
+            // Add services to the container
+            builder.Services.AddWebServices();
+            builder.Services.AddInfrastructureServices(builder.Configuration);
+
+            var app = builder.Build();
+
+            app.UseMiddleware<LoggingMiddleware>();
+
+            // Configure the HTTP request pipeline
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
+
+            // app.UseMiddleware<AuthenticationMiddleware>();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.MapControllers();
+
+            app.Run();
         }
+        catch (Exception ex)
+        {
+            Log.Fatal(ex, "Application terminated unexpectedly");
+        }
+        finally
+        {
+            Log.CloseAndFlush();
+        }
+    }
 
-        // app.UseMiddleware<AuthenticationMiddleware>();
-
-        app.UseAuthentication();
-        app.UseAuthorization();
-
-        app.MapControllers();
-
-        app.Run();
+    private static IConfiguration GetConfiguration()
+    {
+        return new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true)
+            .AddEnvironmentVariables()
+            .Build();
     }
 }
