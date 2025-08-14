@@ -4,9 +4,11 @@ This is an application used for students wanting to transfer or do an exchange, 
 
 
 **Docker Command**
-1. To pull the latest Docker image for postgres: `docker pull postgres`
-2. To run the container, run the following command and configure according to your settings:
-`docker run --name coursemapping-postgres -p 6789:5432 -e POSTGRES_USER=<username> -e POSTGRES_PASSWORD=<password> -d postgres:latest`
+1. In the root directory, run the following command to build and run the Docker container:
+   ```bash
+   docker compose up -d
+   ```
+   Optionally, you can run the command with `--build` to ensure that the latest changes are included in the build.
 
 **Setting up and viewing the database**
 1. Download the installer and run it: https://www.pgadmin.org/download/ 
