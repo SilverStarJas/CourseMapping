@@ -108,8 +108,7 @@ public class UniversityTests : IAsyncLifetime
 
         var updateResponse = await _client.PutAsJsonAsync($"v1/universities/{university.Id}", updateRequest);
         updateResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
-
-        // fetch from db instead - but this is fetching the response from the API
+        
         var response = await _client.GetAsync($"v1/universities/{university.Id}");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 

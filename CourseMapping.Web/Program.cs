@@ -1,6 +1,7 @@
 using CourseMapping.Infrastructure.Extensions;
 using CourseMapping.Web.Extensions;
 using CourseMapping.Web.Middleware;
+using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Exporter;
@@ -40,6 +41,11 @@ public class Program
                     {
                         opt.Endpoint = new Uri("http://localhost:5341/ingest/otlp/v1/traces");
                         opt.Protocol = OtlpExportProtocol.HttpProtobuf;
+                        opt.ExportProcessorType = ExportProcessorType.Batch;
+                        opt.BatchExportProcessorOptions = new()
+                        {
+                            ExporterTimeoutMilliseconds = 5000
+                        };
                     });
                 });
 
