@@ -46,6 +46,7 @@ public class UniversityRepositoryTests : IAsyncLifetime
         // Assert
         universityCount.Should().Be(1);
         university.Should().NotBeNull();
+        // fix test - devil's advocate
         university.Name.Should().Be("Test University");
         university.Country.Should().Be("Test Country");
     }

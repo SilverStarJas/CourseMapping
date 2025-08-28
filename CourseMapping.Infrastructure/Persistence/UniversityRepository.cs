@@ -16,8 +16,8 @@ public class UniversityRepository : IUniversityRepository
     public async Task<University?> GetUniversityByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         return await _dbContext.Universities
-            .Include(u => u.Courses)
-            .ThenInclude(c => c.Subjects)
+            // .Include(u => u.Courses)
+            // .ThenInclude(c => c.Subjects)
             .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
     }
 
