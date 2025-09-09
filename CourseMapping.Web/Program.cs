@@ -1,6 +1,10 @@
 using CourseMapping.Infrastructure.Extensions;
 using CourseMapping.Web.Extensions;
 using CourseMapping.Web.Middleware;
+using OpenTelemetry;
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Serilog;
 
 namespace CourseMapping.Web;
@@ -9,7 +13,7 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        // Configure Serilog early
+        // Configure Serilog
         Log.Logger = new LoggerConfiguration()
             .ReadFrom.Configuration(GetConfiguration())
             .CreateBootstrapLogger();
@@ -20,31 +24,27 @@ public class Program
             
             var builder = WebApplication.CreateBuilder(args);
 
-            // Use Serilog as the logging provider
-            builder.Host.UseSerilog((context, services, configuration) => configuration
+            // Use Serilog for logging
+            builder.Host.UseSerilog((context, configuration) => configuration
                 .ReadFrom.Configuration(context.Configuration));
 
-            // builder.Services.AddOpenTelemetry()
-            //     .ConfigureResource(r => r.AddService("CourseMapping"))
-            //     .WithTracing(tracing =>
-            //     {
-            //         tracing.AddSource("CourseMapping.Web");
-            //         tracing.AddSource("Example.Source");
-            //         tracing.AddAspNetCoreInstrumentation();
-            //         tracing.AddHttpClientInstrumentation();
-            //         tracing.AddSqlClientInstrumentation();
-            //         tracing.AddConsoleExporter();
-            //         tracing.AddOtlpExporter(opt =>
-            //         {
-            //             opt.Endpoint = new Uri("http://localhost:5341/ingest/otlp/v1/traces");
-            //             opt.Protocol = OtlpExportProtocol.HttpProtobuf;
-            //             opt.ExportProcessorType = ExportProcessorType.Batch;
-            //             opt.BatchExportProcessorOptions = new()
-            //             {
-            //                 ExporterTimeoutMilliseconds = 5000
-            //             };
-            //         });
-            //     });
+            // Use OpenTelemetry for tracing
+            builder.Services.AddOpenTelemetry()
+                .ConfigureResource(r => r.AddService("CourseMapping"))
+                .WithTracing(tracing =>
+                {
+                    tracing.AddSource("CourseMapping.Web");
+                    tracing.AddAspNetCoreInstrumentation();
+                    tracing.AddHttpClientInstrumentation();
+                    tracing.AddSqlClientInstrumentation();
+                    tracing.AddConsoleExporter();
+                    tracing.AddOtlpExporter(opt =>
+                    {
+                        opt.Endpoint = new Uri("http://localhost:5100/ingest/otlp/v1/traces");
+                        opt.Protocol = OtlpExportProtocol.HttpProtobuf;
+                        opt.ExportProcessorType = ExportProcessorType.Batch;
+                    });
+                });
 
             // Add services to the container
             builder.Services.AddWebServices();
