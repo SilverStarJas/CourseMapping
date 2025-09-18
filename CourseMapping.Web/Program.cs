@@ -1,7 +1,6 @@
 using CourseMapping.Infrastructure.Extensions;
 using CourseMapping.Web.Extensions;
 using CourseMapping.Web.Middleware;
-using OpenTelemetry;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -16,7 +15,7 @@ public class Program
         // Configure Serilog
         Log.Logger = new LoggerConfiguration()
             .ReadFrom.Configuration(GetConfiguration())
-            .CreateBootstrapLogger();
+            .CreateLogger(); // vs. CreateBootstrapLogger
 
         try
         {
@@ -28,23 +27,23 @@ public class Program
             builder.Host.UseSerilog((context, configuration) => configuration
                 .ReadFrom.Configuration(context.Configuration));
 
-            // Use OpenTelemetry for tracing
-            builder.Services.AddOpenTelemetry()
-                .ConfigureResource(r => r.AddService("CourseMapping"))
-                .WithTracing(tracing =>
-                {
-                    tracing.AddSource("CourseMapping.Web");
-                    tracing.AddAspNetCoreInstrumentation();
-                    tracing.AddHttpClientInstrumentation();
-                    tracing.AddSqlClientInstrumentation();
-                    tracing.AddConsoleExporter();
-                    tracing.AddOtlpExporter(opt =>
-                    {
-                        opt.Endpoint = new Uri("http://localhost:5100/ingest/otlp/v1/traces");
-                        opt.Protocol = OtlpExportProtocol.HttpProtobuf;
-                        opt.ExportProcessorType = ExportProcessorType.Batch;
-                    });
-                });
+            // // Use OpenTelemetry for tracing
+            // builder.Services.AddOpenTelemetry()
+            //     .ConfigureResource(r => r.AddService("CourseMapping"))
+            //     .WithTracing(tracing =>
+            //     {
+            //         tracing.AddSource("CourseMapping.Web");
+            //         tracing.AddAspNetCoreInstrumentation();
+            //         tracing.AddHttpClientInstrumentation();
+            //         tracing.AddSqlClientInstrumentation();
+            //         tracing.AddConsoleExporter();
+            //         tracing.AddOtlpExporter(opt =>
+            //         {
+            //             // Use Docker Compose endpoint for traces when running in container
+            //             opt.Endpoint = new Uri("http://seq:80/ingest/otlp/v1/traces");
+            //             opt.Protocol = OtlpExportProtocol.HttpProtobuf;
+            //         });
+            //     });
 
             // Add services to the container
             builder.Services.AddWebServices();
