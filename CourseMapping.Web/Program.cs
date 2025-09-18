@@ -1,95 +1,53 @@
+using CourseMapping.Infrastructure;
 using CourseMapping.Infrastructure.Extensions;
 using CourseMapping.Web.Extensions;
 using CourseMapping.Web.Middleware;
+using Npgsql;
 using OpenTelemetry;
+using OpenTelemetry.Exporter;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using OpenTelemetry.Exporter;
-using Serilog;
 
-namespace CourseMapping.Web;
+var builder = WebApplication.CreateBuilder(args);
 
-public class Program
+builder.Logging.AddSeq(builder.Configuration.GetSection("Seq"));
+
+builder.Services.AddWebServices();
+builder.Services.AddInfrastructureServices(builder.Configuration);
+
+builder
+    .Services
+    .AddOpenTelemetry()
+    .ConfigureResource(x => x.AddService("CourseMapping"))
+    .WithTracing(c =>
+    {
+        c.AddAspNetCoreInstrumentation()
+            .AddSource("ABC-1")
+            .AddSource("ABC-2")
+            .AddHttpClientInstrumentation()
+            .AddNpgsql();
+    })
+    .UseOtlpExporter(OtlpExportProtocol.HttpProtobuf, new Uri("http://localhost:5100/ingest/otlp/v1/traces"));
+
+var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
 {
-    public static void Main(string[] args)
-    {
-        // Configure Serilog
-        Log.Logger = new LoggerConfiguration()
-            .ReadFrom.Configuration(GetConfiguration())
-            .CreateLogger();
-
-        try
-        {
-            Log.Information("Starting CourseMapping Web Application");
-            
-            var builder = WebApplication.CreateBuilder(args);
-
-            // Use Serilog as the logging provider
-            builder.Host.UseSerilog();
-
-            builder.Services.AddOpenTelemetry()
-                .ConfigureResource(r => r.AddService("CourseMapping"))
-                .WithTracing(tracing =>
-                {
-                    tracing.AddSource("CourseMapping.Web");
-                    tracing.AddSource("Example.Source");
-                    tracing.AddAspNetCoreInstrumentation();
-                    tracing.AddHttpClientInstrumentation();
-                    tracing.AddSqlClientInstrumentation();
-                    tracing.AddConsoleExporter();
-                    tracing.AddOtlpExporter(opt =>
-                    {
-                        opt.Endpoint = new Uri("http://localhost:5341/ingest/otlp/v1/traces");
-                        opt.Protocol = OtlpExportProtocol.HttpProtobuf;
-                        opt.ExportProcessorType = ExportProcessorType.Batch;
-                        opt.BatchExportProcessorOptions = new()
-                        {
-                            ExporterTimeoutMilliseconds = 5000
-                        };
-                    });
-                });
-
-            // Add services to the container
-            builder.Services.AddWebServices();
-            builder.Services.AddInfrastructureServices(builder.Configuration);
-
-            var app = builder.Build();
-
-            app.UseMiddleware<LoggingMiddleware>();
-
-            // Configure the HTTP request pipeline
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
-
-            // app.UseMiddleware<AuthenticationMiddleware>();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            app.MapControllers();
-
-            app.Run();
-        }
-        catch (Exception ex)
-        {
-            Log.Fatal(ex, "Application terminated unexpectedly");
-        }
-        finally
-        {
-            Log.CloseAndFlush();
-        }
-    }
-
-    private static IConfiguration GetConfiguration()
-    {
-        return new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true)
-            .AddEnvironmentVariables()
-            .Build();
-    }
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await dbContext.Database.EnsureCreatedAsync();
 }
+
+app.UseMiddleware<LoggingMiddleware>();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();

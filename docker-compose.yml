@@ -1,5 +1,3 @@
-#version: '3.8'
-
 services:
   coursemapping-web:
     build:
@@ -16,17 +14,17 @@ services:
     depends_on:
       - seq
       - postgres
+    profiles:
+      - void
 
   postgres:
     image: postgres:latest
     container_name: coursemapping-postgres
     environment:
-      - POSTGRES_USER=jazza
+      - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=JasGres
     ports:
       - "6789:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
 
   seq:
     image: datalust/seq:latest
@@ -35,10 +33,3 @@ services:
       - SEQ_FIRSTRUN_NOAUTHENTICATION=true
     ports:
       - "5100:80"
-    volumes:
-      - seq_data:/data
-
-# Needed to declare volume names
-volumes:
-  seq_data:
-  postgres_data:
