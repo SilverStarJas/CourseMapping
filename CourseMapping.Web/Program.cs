@@ -22,8 +22,6 @@ builder
     .WithTracing(c =>
     {
         c.AddAspNetCoreInstrumentation()
-            .AddSource("ABC-1")
-            .AddSource("ABC-2")
             .AddHttpClientInstrumentation()
             .AddNpgsql();
     })
