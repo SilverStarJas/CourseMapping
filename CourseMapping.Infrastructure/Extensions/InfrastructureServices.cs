@@ -14,5 +14,8 @@ public static class InfrastructureServices
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("CourseMappingDb")));
 
+        services.AddDistributedMemoryCache();
+        services.AddMemoryCache();
+        services.AddSingleton<IHybridCache, HybridCacheService>();
     }
 }

@@ -14,6 +14,7 @@ builder.Logging.AddSeq(builder.Configuration.GetSection("Seq"));
 
 builder.Services.AddWebServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddHybridCache();
 
 builder
     .Services
