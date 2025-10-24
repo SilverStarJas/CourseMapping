@@ -1,5 +1,6 @@
 using CourseMapping.Domain;
 using CourseMapping.Infrastructure;
+using CourseMapping.Infrastructure.Extensions;
 using CourseMapping.Infrastructure.Persistence;
 using CourseMapping.Tests.IntegrationTests.Fixtures;
 using FluentAssertions;
@@ -19,7 +20,7 @@ public class UniversityRepositoryTests : IAsyncLifetime
         var scopeFactory = webAppFactory.Services.GetRequiredService<IServiceScopeFactory>();
         var scope = scopeFactory.CreateScope();
         _dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        _universityRepository = new UniversityRepository(_dbContext);
+        _universityRepository = new UniversityRepository(_dbContext, scope.ServiceProvider.GetRequiredService<IHybridCache>());
     }
     
     public async Task InitializeAsync()
