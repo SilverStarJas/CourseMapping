@@ -14,7 +14,6 @@ builder.Logging.AddSeq(builder.Configuration.GetSection("Seq"));
 
 builder.Services.AddWebServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
-builder.Services.AddHybridCache();
 
 builder
     .Services
@@ -27,6 +26,11 @@ builder
             .AddNpgsql();
     })
     .UseOtlpExporter(OtlpExportProtocol.HttpProtobuf, new Uri("http://localhost:5100/ingest/otlp/v1/traces"));
+
+builder.Services.AddOutputCache(options =>
+{
+    options.AddPolicy("Expire5Minutes", policyBuilder => policyBuilder.Expire(TimeSpan.FromMinutes(5)));
+});
 
 var app = builder.Build();
 
@@ -45,6 +49,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseAuthentication();
+app.UseOutputCache();
 app.UseAuthorization();
 
 app.MapControllers();
