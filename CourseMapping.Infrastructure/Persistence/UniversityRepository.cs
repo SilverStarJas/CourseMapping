@@ -29,21 +29,21 @@ public class UniversityRepository : IUniversityRepository
             .ThenInclude(c => c.Subjects)
             .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
         if (university != null)
-            await _cache.SetAsync(cacheKey, university, TimeSpan.FromMinutes(10));
+            await _cache.SetAsync(cacheKey, university);
         
         return university;
     }
 
     public async Task<List<University>> GetAllUniversitiesAsync(CancellationToken cancellationToken)
     {
-        // Checks cache first and returns if result found - this may not be good if unis are added/deleted between requests?
-        var cacheKey = "Universities:All";
+        // Checks cache first and returns if result found, invalidated by Add/Delete operations
+        const string cacheKey = "Universities:All";
         var cachedList = await _cache.GetAsync<List<University>>(cacheKey);
         if (cachedList != null)
             return cachedList;
         
         var universities = await _dbContext.Universities.ToListAsync(cancellationToken);
-        await _cache.SetAsync(cacheKey, universities, TimeSpan.FromMinutes(10));
+        await _cache.SetAsync(cacheKey, universities);
         
         return universities;
     }
@@ -51,12 +51,14 @@ public class UniversityRepository : IUniversityRepository
     public async Task AddAsync(University university, CancellationToken cancellationToken)
     {
         await _dbContext.Universities.AddAsync(university, cancellationToken);
+        await _cache.RemoveAsync("Universities:All");
     }
 
     public async Task DeleteUniversityAsync(University university, CancellationToken cancellationToken)
     {
         _dbContext.Universities.Remove(university);
         await _dbContext.SaveChangesAsync(cancellationToken);
+        await _cache.RemoveAsync("Universities:All");
     }
 
     public string GetNextCourseCode()

@@ -13,28 +13,28 @@ namespace CourseMapping.Infrastructure.Extensions
             _distributedCache = distributedCache;
         }
 
-        public async System.Threading.Tasks.Task<T?> GetAsync<T>(string key)
+        public async Task<T?> GetAsync<T>(string key)
         {
-            if (_memoryCache.TryGetValue(key, out T value))
+            if (_memoryCache.TryGetValue(key, out T? value))
                 return value;
+            
             var cached = await _distributedCache.GetStringAsync(key);
-            if (cached != null)
-            {
-                var result = System.Text.Json.JsonSerializer.Deserialize<T>(cached);
-                _memoryCache.Set(key, result);
-                return result;
-            }
-            return default(T?);
+            if (cached == null) return default;
+            
+            var result = System.Text.Json.JsonSerializer.Deserialize<T>(cached);
+            _memoryCache.Set(key, result);
+            return result;
         }
 
-        public async System.Threading.Tasks.Task SetAsync<T>(string key, T value, System.TimeSpan? absoluteExpiration = null)
+        public async Task SetAsync<T>(string key, T value, TimeSpan? absoluteExpiration = null)
         {
-            _memoryCache.Set(key, value, absoluteExpiration ?? System.TimeSpan.FromMinutes(10));
+            _memoryCache.Set(key, value, absoluteExpiration ?? TimeSpan.FromMinutes(10));
             var serialized = System.Text.Json.JsonSerializer.Serialize(value);
+
             await _distributedCache.SetStringAsync(key, serialized);
         }
 
-        public async System.Threading.Tasks.Task RemoveAsync(string key)
+        public async Task RemoveAsync(string key)
         {
             _memoryCache.Remove(key);
             await _distributedCache.RemoveAsync(key);
