@@ -1,16 +1,16 @@
 using CourseMapping.Domain;
 using CourseMapping.Infrastructure.Persistence.Abstraction;
 using Microsoft.EntityFrameworkCore;
-using CourseMapping.Infrastructure.Extensions;
+using Microsoft.Extensions.Caching.Hybrid;
 
 namespace CourseMapping.Infrastructure.Persistence;
 
 public class UniversityRepository : IUniversityRepository
 {
     private readonly ApplicationDbContext _dbContext;
-    private readonly IHybridCache _cache;
+    private readonly HybridCache _cache;
 
-    public UniversityRepository(ApplicationDbContext dbContext, IHybridCache cache)
+    public UniversityRepository(ApplicationDbContext dbContext, HybridCache cache)
     {
         _dbContext = dbContext;
         _cache = cache;
@@ -18,47 +18,39 @@ public class UniversityRepository : IUniversityRepository
 
     public async Task<University?> GetUniversityByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        // Checks cache first and returns if result found
         var cacheKey = $"University:{id}";
-        var cachedUniversity = await _cache.GetAsync<University>(cacheKey);
-        if (cachedUniversity != null)
-            return cachedUniversity;
-        
-        var university = await _dbContext.Universities
-            .Include(u => u.Courses)
-            .ThenInclude(c => c.Subjects)
-            .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
-        if (university != null)
-            await _cache.SetAsync(cacheKey, university);
-        
+        var university = await _cache.GetOrCreateAsync(
+            cacheKey,
+            _dbContext, // Function closure captures _dbContext
+            async (dbContext, token) => await dbContext.Universities.FirstOrDefaultAsync(u => u.Id == id, token),
+            cancellationToken: cancellationToken
+        );
         return university;
     }
 
     public async Task<List<University>> GetAllUniversitiesAsync(CancellationToken cancellationToken)
     {
-        // Checks cache first and returns if result found, invalidated by Add/Delete operations
         const string cacheKey = "Universities:All";
-        var cachedList = await _cache.GetAsync<List<University>>(cacheKey);
-        if (cachedList != null)
-            return cachedList;
-        
-        var universities = await _dbContext.Universities.ToListAsync(cancellationToken);
-        await _cache.SetAsync(cacheKey, universities);
-        
-        return universities;
+        var cachedList = await _cache.GetOrCreateAsync(
+            cacheKey,
+            _dbContext,
+            async (dbContext, token) => await dbContext.Universities.ToListAsync(token),
+            cancellationToken : cancellationToken
+            );
+        return cachedList;
     }
 
     public async Task AddAsync(University university, CancellationToken cancellationToken)
     {
         await _dbContext.Universities.AddAsync(university, cancellationToken);
-        await _cache.RemoveAsync("Universities:All");
+        await _cache.RemoveAsync("Universities:All", cancellationToken);
     }
 
     public async Task DeleteUniversityAsync(University university, CancellationToken cancellationToken)
     {
         _dbContext.Universities.Remove(university);
         await _dbContext.SaveChangesAsync(cancellationToken);
-        await _cache.RemoveAsync("Universities:All");
+        await _cache.RemoveAsync("Universities:All", cancellationToken);
     }
 
     public string GetNextCourseCode()
