@@ -18,27 +18,33 @@ public class UniversityRepository : IUniversityRepository
 
     public async Task<University?> GetUniversityByIdAsync(Guid id, CancellationToken cancellationToken)
     {
+        // Checks cache first and returns if result found
         var cacheKey = $"University:{id}";
         var cachedUniversity = await _cache.GetAsync<University>(cacheKey);
         if (cachedUniversity != null)
             return cachedUniversity;
+        
         var university = await _dbContext.Universities
             .Include(u => u.Courses)
             .ThenInclude(c => c.Subjects)
             .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
         if (university != null)
             await _cache.SetAsync(cacheKey, university, TimeSpan.FromMinutes(10));
+        
         return university;
     }
 
     public async Task<List<University>> GetAllUniversitiesAsync(CancellationToken cancellationToken)
     {
+        // Checks cache first and returns if result found - this may not be good if unis are added/deleted between requests?
         var cacheKey = "Universities:All";
         var cachedList = await _cache.GetAsync<List<University>>(cacheKey);
         if (cachedList != null)
             return cachedList;
+        
         var universities = await _dbContext.Universities.ToListAsync(cancellationToken);
         await _cache.SetAsync(cacheKey, universities, TimeSpan.FromMinutes(10));
+        
         return universities;
     }
 
