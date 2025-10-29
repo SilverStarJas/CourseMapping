@@ -26,7 +26,7 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
           
       - name: Start Docker Compose
-        uses: docker-compose up -d
+        run: docker-compose up -d
 
       - name: Install dependencies
         run: dotnet restore
