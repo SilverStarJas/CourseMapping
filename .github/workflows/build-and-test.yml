@@ -50,6 +50,9 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
+      - name: Install dependencies
+        run: dotnet restore
+        
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
