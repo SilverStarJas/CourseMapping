@@ -6,36 +6,61 @@ on:
   pull_request:
     branches: [ main ]
     paths:
-    - '**.cs'
-    - '**.csproj'
-    
+      - '**.cs'
+      - '**.csproj'
+
 env:
-    DOTNET_VERSION: '9.0.x'
+  DOTNET_VERSION: '9.0.x'
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
-          
-      - name: Install Docker Compose
-        run: sudo apt-get update && sudo apt-get install -y docker-compose
-          
-      - name: Start Docker Compose
-        run: docker-compose up -d
 
       - name: Install dependencies
         run: dotnet restore
 
       - name: Build
         run: dotnet build --configuration Release --no-restore
+
+      - name: Publish build artifacts
+        run: dotnet publish --configuration Release --output ./publish
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: app
+          path: ./publish
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: app
+          path: ./publish
+
+      - name: Install Docker Compose
+        run: sudo apt-get update && sudo apt-get install -y docker-compose
+
+      - name: Start Docker Compose
+        run: docker-compose up -d
 
       - name: Test
         run: dotnet test --no-restore --verbosity normal
