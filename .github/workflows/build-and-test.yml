@@ -47,7 +47,7 @@ jobs:
         run: dotnet restore
 
       - name: Start Docker Compose
-        run: docker-compose up -d
+        run: docker compose up -d
 
       - name: Test
         run: dotnet test --no-restore --verbosity normal --logger "trx;LogFileName=test-results.trx"
