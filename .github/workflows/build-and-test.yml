@@ -1,4 +1,5 @@
-# SOURCE: https://learn.microsoft.com/en-us/dotnet/devops/dotnet-test-github-action
+# https://learn.microsoft.com/en-us/dotnet/devops/dotnet-test-github-action
+# https://docs.github.com/en/actions/tutorials/build-and-test-code/net
 name: Build and Test
 
 on:
@@ -53,14 +54,7 @@ jobs:
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: test-results
           path: '**/test-results.trx'
-
-      - name: Publish Test Report
-        uses: dorny/test-reporter@v1
-        if: always()
-        with:
-          name: .NET Test Results
-          path: '**/test-results.trx'
-          reporter: dotnet-trx
