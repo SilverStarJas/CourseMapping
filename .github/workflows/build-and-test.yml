@@ -58,3 +58,8 @@ jobs:
         with:
           name: test-results
           path: '**/test-results.trx'
+          
+      - name: Display test results
+        if: always()
+        run: cat **/test-results.trx
+           
