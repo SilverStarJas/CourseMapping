@@ -61,5 +61,5 @@ jobs:
           
       - name: Display test results
         if: always()
-        run: cat **/test-results.trx
+        run: cat test-results.trx
            
