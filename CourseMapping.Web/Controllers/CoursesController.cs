@@ -4,11 +4,13 @@ using CourseMapping.Web.Extensions.Controller;
 using CourseMapping.Web.Models;
 using CourseMapping.Web.Models.Requests;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 
 namespace CourseMapping.Web.Controllers
 {
     [ApiController]
     [Route("v1/universities/{universityId}/courses")]
+    [OutputCache(PolicyName = "Expire5Minutes")]
     public class CoursesController : ControllerBase
     {
         private readonly IUniversityRepository _universityRepository;

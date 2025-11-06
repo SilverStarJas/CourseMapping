@@ -1,40 +1,56 @@
 using CourseMapping.Domain;
 using CourseMapping.Infrastructure.Persistence.Abstraction;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 
 namespace CourseMapping.Infrastructure.Persistence;
 
 public class UniversityRepository : IUniversityRepository
 {
     private readonly ApplicationDbContext _dbContext;
+    private readonly HybridCache _cache;
 
-    public UniversityRepository(ApplicationDbContext dbContext)
+    public UniversityRepository(ApplicationDbContext dbContext, HybridCache cache)
     {
         _dbContext = dbContext;
+        _cache = cache;
     }
 
     public async Task<University?> GetUniversityByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        return await _dbContext.Universities
-            .Include(u => u.Courses)
-            .ThenInclude(c => c.Subjects)
-            .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+        var cacheKey = $"University:{id}";
+        var university = await _cache.GetOrCreateAsync(
+            cacheKey,
+            _dbContext, // Function closure captures _dbContext
+            async (dbContext, token) => await dbContext.Universities.FirstOrDefaultAsync(u => u.Id == id, token),
+            cancellationToken: cancellationToken
+        );
+        return university;
     }
 
     public async Task<List<University>> GetAllUniversitiesAsync(CancellationToken cancellationToken)
     {
-        return await _dbContext.Universities.ToListAsync(cancellationToken);
+        const string cacheKey = "Universities:All";
+        var cachedList = await _cache.GetOrCreateAsync(
+            cacheKey,
+            _dbContext,
+            async (dbContext, token) => await dbContext.Universities.ToListAsync(token),
+            cancellationToken : cancellationToken
+            );
+        return cachedList;
     }
 
     public async Task AddAsync(University university, CancellationToken cancellationToken)
     {
         await _dbContext.Universities.AddAsync(university, cancellationToken);
+        await _cache.RemoveAsync("Universities:All", cancellationToken);
     }
 
     public async Task DeleteUniversityAsync(University university, CancellationToken cancellationToken)
     {
         _dbContext.Universities.Remove(university);
         await _dbContext.SaveChangesAsync(cancellationToken);
+        await _cache.RemoveAsync("Universities:All", cancellationToken);
     }
 
     public string GetNextCourseCode()
