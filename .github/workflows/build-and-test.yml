@@ -13,6 +13,12 @@ on:
 env:
   DOTNET_VERSION: '9.0.x'
 
+permissions:
+  checks: write
+  pull-requests: write
+  contents: read
+  actions: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -53,7 +59,7 @@ jobs:
         run: dotnet test --no-restore --verbosity normal --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results
 
       - name: Publish test results
-        uses: EnricoMi/publish-unit-test-result-action@v2
+        uses: EnricoMi/publish-test-results-action@v2
         if: always()
         with:
           files: test-results/**/*.trx
