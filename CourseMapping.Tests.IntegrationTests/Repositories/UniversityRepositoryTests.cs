@@ -16,7 +16,7 @@ public class UniversityRepositoryTests : IAsyncLifetime
 
     public UniversityRepositoryTests()
     {
-        var webAppFactory = new WebApplicationFactory().WithWebHostBuilder(builder => { });
+        var webAppFactory = new WebApplicationFactory().WithWebHostBuilder(_ => { });
         var scopeFactory = webAppFactory.Services.GetRequiredService<IServiceScopeFactory>();
         var scope = scopeFactory.CreateScope();
         _dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
