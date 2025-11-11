@@ -53,7 +53,7 @@ jobs:
         run: dotnet test --no-restore --verbosity normal --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results
 
       - name: Publish test results
-        uses: EnricoMi/publish-test-result-action@v2
+        uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
           files: test-results/**/*.trx
