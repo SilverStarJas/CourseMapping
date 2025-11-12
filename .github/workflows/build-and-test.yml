@@ -55,10 +55,14 @@ jobs:
       - name: Start Docker Compose
         run: docker compose up -d
 
-      - name: Run tests in container
-        env:
-          ConnectionStrings__CourseMappingDb: "Server=postgres;Port=5432;Database=coursemappingdb;User Id=postgres;Password=JasGres"
-        run: dotnet test --no-restore --verbosity normal --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results
+      - name: Run unit tests
+        run: dotnet test CourseMapping.Domain.Tests.UnitTests/CourseMapping.Domain.Tests.UnitTests.csproj --no-restore --verbosity normal --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results/unit
+
+      - name: Run component tests
+        run: dotnet test CourseMapping.Tests.ComponentTests/CourseMapping.Tests.ComponentTests.csproj --no-restore --verbosity normal --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results/component
+
+      - name: Run integration tests
+        run: dotnet test CourseMapping.Tests.IntegrationTests/CourseMapping.Tests.IntegrationTests.csproj --no-restore --verbosity normal --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results/integration
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
