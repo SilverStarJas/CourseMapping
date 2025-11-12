@@ -55,8 +55,17 @@ jobs:
       - name: Start Docker Compose
         run: docker compose up -d
 
-      - name: Test
+      - name: Run tests in container
+        env:
+          ConnectionStrings__CourseMappingDb: "Server=postgres;Port=5432;Database=coursemappingdb;User Id=postgres;Password=JasGres"
         run: dotnet test --no-restore --verbosity normal --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: test-results/**/*.trx
 
       - name: Publish test results
         uses: EnricoMi/publish-unit-test-result-action@v2

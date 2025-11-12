@@ -17,21 +17,24 @@ public class WebApplicationFactory : WebApplicationFactory<Program>
         builder.ConfigureTestServices(services =>
         {
             services.RemoveAll<DbContextOptions<ApplicationDbContext>>();
-            
+
             var connectionString = GetConnectionString();
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(connectionString));
         });
     }
-    
+
     private static string? GetConnectionString()
     {
+        var envConnStr = Environment.GetEnvironmentVariable("ConnectionStrings__CourseMappingDb");
+        if (!string.IsNullOrEmpty(envConnStr))
+            return envConnStr;
+
         var configuration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json")
             .Build();
-        
         var connectionString = configuration.GetConnectionString("CourseMappingDb");
-        
+
         return connectionString;
     }
 }

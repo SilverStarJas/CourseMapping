@@ -26,10 +26,13 @@ public class WebApplicationFactory : WebApplicationFactory<Program>
     
     private static string? GetConnectionString()
     {
+        var envConnStr = Environment.GetEnvironmentVariable("ConnectionStrings__CourseMappingDb");
+        if (!string.IsNullOrEmpty(envConnStr))
+            return envConnStr;
+
         var configuration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json")
             .Build();
-        
         var connectionString = configuration.GetConnectionString("CourseMappingDb");
         
         return connectionString;
