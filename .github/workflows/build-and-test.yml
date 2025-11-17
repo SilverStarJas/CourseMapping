@@ -52,27 +52,37 @@ jobs:
       - name: Install dependencies
         run: dotnet restore
 
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
       - name: Start Docker Compose
         run: docker compose up -d
 
       - name: Run unit tests
-        run: dotnet test CourseMapping.Domain.Tests.UnitTests/CourseMapping.Domain.Tests.UnitTests.csproj --no-restore --verbosity minimal --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results/unit
+        run: dotnet test CourseMapping.Domain.Tests.UnitTests/CourseMapping.Domain.Tests.UnitTests.csproj --no-build --configuration Release --verbosity minimal --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results/unit
+
+      - name: List test results
+        if: always()
+        run: |
+          echo "Listing test-results directory:"
+          find ./test-results -type f -name "*.trx" || echo "No TRX files found"
 
       - name: Run component tests
-        run: dotnet test CourseMapping.Tests.ComponentTests/CourseMapping.Tests.ComponentTests.csproj --no-restore --verbosity minimal --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results/component
+        run: dotnet test CourseMapping.Tests.ComponentTests/CourseMapping.Tests.ComponentTests.csproj --no-build --configuration Release --verbosity minimal --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results/component
 
       - name: Run integration tests
-        run: dotnet test CourseMapping.Tests.IntegrationTests/CourseMapping.Tests.IntegrationTests.csproj --no-restore --verbosity minimal --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results/integration
+        run: dotnet test CourseMapping.Tests.IntegrationTests/CourseMapping.Tests.IntegrationTests.csproj --no-build --configuration Release --verbosity minimal --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results/integration
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: test-results
-          path: './test-results/**/*.trx'
+          path: test-results/
 
       - name: Publish test results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
-          files: './test-results/**/*.trx'
+          files: |
+            test-results/**/*.trx
