@@ -64,31 +64,18 @@ jobs:
       - name: Run integration tests
         run: dotnet test CourseMapping.Tests.IntegrationTests/CourseMapping.Tests.IntegrationTests.csproj --no-restore --verbosity minimal --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results/integration
 
-      # Step for debugging
-      - name: List test result files
-        if: always()
-        run: |
-          find . -name "*.trx" -type f || echo "No .trx files found"
-          ls -la test-results/ || echo "test-results directory not found"
-          find test-results -type f 2>/dev/null || echo "No files in test-results"
+      - name: Print test results directory
+        run: tree ./
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
         if: always()
-        continue-on-error: true
         with:
           name: test-results
-          path: |
-            test-results/**/*.trx
-            **/TestResults/*.trx
-            **/*.trx
+          path: './test-results/**/*.trx'
 
       - name: Publish test results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
-        continue-on-error: true
         with:
-          files: |
-            test-results/**/*.trx
-            **/TestResults/*.trx
-            **/*.trx
+          files: './test-results/**/*.trx'
