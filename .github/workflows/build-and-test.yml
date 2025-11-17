@@ -52,37 +52,43 @@ jobs:
       - name: Install dependencies
         run: dotnet restore
 
-      - name: Build
-        run: dotnet build --configuration Release --no-restore
-
       - name: Start Docker Compose
         run: docker compose up -d
 
       - name: Run unit tests
-        run: dotnet test CourseMapping.Domain.Tests.UnitTests/CourseMapping.Domain.Tests.UnitTests.csproj --no-build --configuration Release --verbosity minimal --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results/unit
-
-      - name: List test results
-        if: always()
-        run: |
-          echo "Listing test-results directory:"
-          find ./test-results -type f -name "*.trx" || echo "No TRX files found"
+        run: dotnet test CourseMapping.Domain.Tests.UnitTests/CourseMapping.Domain.Tests.UnitTests.csproj --no-restore --verbosity minimal --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results/unit
 
       - name: Run component tests
-        run: dotnet test CourseMapping.Tests.ComponentTests/CourseMapping.Tests.ComponentTests.csproj --no-build --configuration Release --verbosity minimal --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results/component
+        run: dotnet test CourseMapping.Tests.ComponentTests/CourseMapping.Tests.ComponentTests.csproj --no-restore --verbosity minimal --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results/component
 
       - name: Run integration tests
-        run: dotnet test CourseMapping.Tests.IntegrationTests/CourseMapping.Tests.IntegrationTests.csproj --no-build --configuration Release --verbosity minimal --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results/integration
+        run: dotnet test CourseMapping.Tests.IntegrationTests/CourseMapping.Tests.IntegrationTests.csproj --no-restore --verbosity minimal --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results/integration
+
+      # Step for debugging
+      - name: List test result files
+        if: always()
+        run: |
+          find . -name "*.trx" -type f || echo "No .trx files found"
+          ls -la test-results/ || echo "test-results directory not found"
+          find test-results -type f 2>/dev/null || echo "No files in test-results"
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
         if: always()
+        continue-on-error: true
         with:
           name: test-results
-          path: test-results/
+          path: |
+            test-results/**/*.trx
+            **/TestResults/*.trx
+            **/*.trx
 
       - name: Publish test results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
+        continue-on-error: true
         with:
           files: |
             test-results/**/*.trx
+            **/TestResults/*.trx
+            **/*.trx
