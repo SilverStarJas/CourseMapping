@@ -56,7 +56,7 @@ jobs:
         run: docker compose up -d
 
       - name: Run unit tests
-        run: dotnet test CourseMapping.Domain.Tests.UnitTests/CourseMapping.Domain.Tests.UnitTests.csproj --no-restore --verbosity minimal --logger:trx --results-directory ./test-results/unit
+        run: dotnet test CourseMapping.Domain.Tests.UnitTests/CourseMapping.Domain.Tests.UnitTests.csproj --no-restore --verbosity minimal --logger trx --results-directory ./test-results/unit
 
       - name: Run component tests
         run: dotnet test CourseMapping.Tests.ComponentTests/CourseMapping.Tests.ComponentTests.csproj --no-restore --verbosity minimal --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results/component
