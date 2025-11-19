@@ -47,35 +47,48 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
 
-      - name: Install dependencies
-        run: dotnet restore
+      - name: Build base image
+        run: docker build -t coursemapping-build --target build .
 
-      - name: Start Docker Compose
-        run: docker compose up -d
+      - name: Create test results directories
+        run: |
+          mkdir -p test-results/unit
+          mkdir -p test-results/component
+          mkdir -p test-results/integration
+
+      - name: Start dependencies (postgres, seq)
+        run: docker compose up -d postgres seq
 
       - name: Run unit tests
-        run: dotnet test CourseMapping.Domain.Tests.UnitTests/CourseMapping.Domain.Tests.UnitTests.csproj --no-restore --verbosity minimal --logger trx --results-directory ./test-results/unit
+        run: docker compose run --rm test-unit
 
       - name: Run component tests
-        run: dotnet test CourseMapping.Tests.ComponentTests/CourseMapping.Tests.ComponentTests.csproj --no-restore --verbosity minimal --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results/component
+        run: docker compose run --rm test-component
 
       - name: Run integration tests
-        run: dotnet test CourseMapping.Tests.IntegrationTests/CourseMapping.Tests.IntegrationTests.csproj --no-restore --verbosity minimal --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results/integration
+        run: docker compose run --rm test-integration
 
-      - name: Print test results directory
-        run: tree ./
+      - name: List test result files
+        run: find test-results -type f -maxdepth 3 -print
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: test-results
-          path: './test-results/**/*.trx'
+          path: 'test-results/**/*.trx'
 
       - name: Publish test results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
-          files: './test-results/**/*.trx'
+          files: 'test-results/**/*.trx'
+
+      - name: Shutdown containers
+        if: always()
+        run: docker compose down -v

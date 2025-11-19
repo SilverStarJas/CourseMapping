@@ -34,41 +34,48 @@ services:
     ports:
       - "5100:80"
 
+  # Test containers use the Dockerfile build stage to have source & projects available.
   test-unit:
     build:
       context: .
       dockerfile: Dockerfile
+      target: build
     environment:
       - ConnectionStrings__CourseMappingDb=Server=postgres;Port=5432;Database=coursemappingdb;User Id=postgres;Password=JasGres
     depends_on:
       - postgres
+    working_dir: /src
     command: >
-      dotnet test CourseMapping.Domain.Tests.UnitTests/CourseMapping.Domain.Tests.UnitTests.csproj --no-restore --verbosity normal --logger "trx;LogFileName=test-results.trx" --results-directory /app/test-results/unit
+      dotnet test CourseMapping.Domain.Tests.UnitTests/CourseMapping.Domain.Tests.UnitTests.csproj --no-restore --verbosity minimal --logger "trx;LogFileName=test-results.trx" --results-directory /src/test-results/unit
     volumes:
-      - ./test-results/unit:/app/test-results/unit
+      - ./test-results/unit:/src/test-results/unit
 
   test-component:
     build:
       context: .
       dockerfile: Dockerfile
+      target: build
     environment:
       - ConnectionStrings__CourseMappingDb=Server=postgres;Port=5432;Database=coursemappingdb;User Id=postgres;Password=JasGres
     depends_on:
       - postgres
+    working_dir: /src
     command: >
-      dotnet test CourseMapping.Tests.ComponentTests/CourseMapping.Tests.ComponentTests.csproj --no-restore --verbosity normal --logger "trx;LogFileName=test-results.trx" --results-directory /app/test-results/component
+      dotnet test CourseMapping.Tests.ComponentTests/CourseMapping.Tests.ComponentTests.csproj --no-restore --verbosity minimal --logger "trx;LogFileName=test-results.trx" --results-directory /src/test-results/component
     volumes:
-      - ./test-results/component:/app/test-results/component
+      - ./test-results/component:/src/test-results/component
 
   test-integration:
     build:
       context: .
       dockerfile: Dockerfile
+      target: build
     environment:
       - ConnectionStrings__CourseMappingDb=Server=postgres;Port=5432;Database=coursemappingdb;User Id=postgres;Password=JasGres
     depends_on:
       - postgres
+    working_dir: /src
     command: >
-      dotnet test CourseMapping.Tests.IntegrationTests/CourseMapping.Tests.IntegrationTests.csproj --no-restore --verbosity normal --logger "trx;LogFileName=test-results.trx" --results-directory /app/test-results/integration
+      dotnet test CourseMapping.Tests.IntegrationTests/CourseMapping.Tests.IntegrationTests.csproj --no-restore --verbosity minimal --logger "trx;LogFileName=test-results.trx" --results-directory /src/test-results/integration
     volumes:
-      - ./test-results/integration:/app/test-results/integration
+      - ./test-results/integration:/src/test-results/integration
