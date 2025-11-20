@@ -25,6 +25,11 @@ services:
       - POSTGRES_PASSWORD=JasGres
     ports:
       - "6789:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   seq:
     image: datalust/seq:latest
@@ -41,9 +46,10 @@ services:
       dockerfile: Dockerfile
       target: build
     environment:
-      - ConnectionStrings__CourseMappingDb=Server=postgres;Port=5432;Database=coursemappingdb;User Id=postgres;Password=JasGres
+      - ConnectionStrings__CourseMappingDb=Server=postgres;Port=5432;Database=coursemappingdb_unit;User Id=postgres;Password=JasGres
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     working_dir: /src
     command: >
       dotnet test CourseMapping.Domain.Tests.UnitTests/CourseMapping.Domain.Tests.UnitTests.csproj --no-restore --verbosity minimal --logger "trx;LogFileName=test-results.trx" --results-directory /src/test-results/unit
@@ -56,9 +62,10 @@ services:
       dockerfile: Dockerfile
       target: build
     environment:
-      - ConnectionStrings__CourseMappingDb=Server=postgres;Port=5432;Database=coursemappingdb;User Id=postgres;Password=JasGres
+      - ConnectionStrings__CourseMappingDb=Server=postgres;Port=5432;Database=coursemappingdb_component;User Id=postgres;Password=JasGres
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     working_dir: /src
     command: >
       dotnet test CourseMapping.Tests.ComponentTests/CourseMapping.Tests.ComponentTests.csproj --no-restore --verbosity minimal --logger "trx;LogFileName=test-results.trx" --results-directory /src/test-results/component
@@ -71,9 +78,10 @@ services:
       dockerfile: Dockerfile
       target: build
     environment:
-      - ConnectionStrings__CourseMappingDb=Server=postgres;Port=5432;Database=coursemappingdb;User Id=postgres;Password=JasGres
+      - ConnectionStrings__CourseMappingDb=Server=postgres;Port=5432;Database=coursemappingdb_integration;User Id=postgres;Password=JasGres
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     working_dir: /src
     command: >
       dotnet test CourseMapping.Tests.IntegrationTests/CourseMapping.Tests.IntegrationTests.csproj --no-restore --verbosity minimal --logger "trx;LogFileName=test-results.trx" --results-directory /src/test-results/integration

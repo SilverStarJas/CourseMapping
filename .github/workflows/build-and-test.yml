@@ -44,16 +44,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v4
+      - name: Set up Docker Build
+        uses: docker/setup-buildx-action@v3
+
+      - name: Cache Docker layers
+        uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-buildx-
 
-      - name: Build base image
-        run: docker build -t coursemapping-build --target build .
 
       - name: Create test results directories
         run: |
@@ -74,6 +75,7 @@ jobs:
         run: docker compose run --rm test-integration
 
       - name: List test result files
+        if: always()
         run: find test-results -type f -maxdepth 3 -print
 
       - name: Upload test results
