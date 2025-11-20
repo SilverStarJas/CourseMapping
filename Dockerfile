@@ -5,12 +5,18 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
+COPY ["CourseMapping.Domain/CourseMapping.Domain.csproj", "CourseMapping.Domain/"]
 COPY ["CourseMapping.Web/CourseMapping.Web.csproj", "CourseMapping.Web/"]
 COPY ["CourseMapping.Infrastructure/CourseMapping.Infrastructure.csproj", "CourseMapping.Infrastructure/"]
 COPY ["CourseMapping.Domain.Tests.UnitTests/CourseMapping.Domain.Tests.UnitTests.csproj", "CourseMapping.Domain.Tests.UnitTests/"]
 COPY ["CourseMapping.Tests.ComponentTests/CourseMapping.Tests.ComponentTests.csproj", "CourseMapping.Tests.ComponentTests/"]
 COPY ["CourseMapping.Tests.IntegrationTests/CourseMapping.Tests.IntegrationTests.csproj", "CourseMapping.Tests.IntegrationTests/"]
+COPY ["CourseMapping.Infrastructure.Tests.UnitTests/CourseMapping.Infrastructure.Tests.UnitTests.csproj", "CourseMapping.Infrastructure.Tests.UnitTests/"]
+COPY ["CourseMapping.Web.Tests.UnitTests/CourseMapping.Web.Tests.UnitTests.csproj", "CourseMapping.Web.Tests.UnitTests/"]
 RUN dotnet restore "CourseMapping.Web/CourseMapping.Web.csproj"
+RUN dotnet restore "CourseMapping.Domain.Tests.UnitTests/CourseMapping.Domain.Tests.UnitTests.csproj"
+RUN dotnet restore "CourseMapping.Tests.ComponentTests/CourseMapping.Tests.ComponentTests.csproj"
+RUN dotnet restore "CourseMapping.Tests.IntegrationTests/CourseMapping.Tests.IntegrationTests.csproj"
 COPY . .
 WORKDIR "/src/CourseMapping.Web"
 RUN dotnet build "CourseMapping.Web.csproj" -c Release -o /app/build
