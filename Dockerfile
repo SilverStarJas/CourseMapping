@@ -16,7 +16,7 @@ COPY ["CourseMapping.Web.Tests.UnitTests/CourseMapping.Web.Tests.UnitTests.cspro
 RUN dotnet restore "CourseMapping.Web/CourseMapping.Web.csproj"
 RUN dotnet restore "CourseMapping.Domain.Tests.UnitTests/CourseMapping.Domain.Tests.UnitTests.csproj"
 RUN dotnet restore "CourseMapping.Tests.ComponentTests/CourseMapping.Tests.ComponentTests.csproj"
-RUN dotnet restore "CourseMapping.Tests.IntegrationTests/CourseMapping.Tests.IntegrationTests.csproj"
+RUN dotnet restore "CourseMapping.Tests.IntegrationTests/CourseMapping.Tests.IntegrationTests.csproj" 
 COPY . .
 WORKDIR "/src/CourseMapping.Web"
 RUN dotnet build "CourseMapping.Web.csproj" -c Release -o /app/build
@@ -24,17 +24,21 @@ RUN dotnet build "CourseMapping.Web.csproj" -c Release -o /app/build
 # Unit tests
 FROM build AS test-unit
 WORKDIR /src
-RUN dotnet test CourseMapping.Domain.Tests.UnitTests/CourseMapping.Domain.Tests.UnitTests.csproj --no-restore --verbosity normal --logger trx --results-directory /src/test-results/unit
+RUN dotnet build "CourseMapping.Domain.Tests.UnitTests/CourseMapping.Domain.Tests.UnitTests.csproj" 
+ENTRYPOINT ["dotnet", "test", "CourseMapping.Domain.Tests.UnitTests/CourseMapping.Domain.Tests.UnitTests.csproj", "--no-restore", "--verbosity", "normal", "--logger", "trx", "--results-directory", "/src/test-results/unit"]
 
 # Component tests
 FROM build AS test-component
 WORKDIR /src
-RUN dotnet test CourseMapping.Tests.ComponentTests/CourseMapping.Tests.ComponentTests.csproj --no-restore --verbosity normal --logger trx --results-directory /src/test-results/component
+RUN dotnet build "CourseMapping.Tests.ComponentTests/CourseMapping.Tests.ComponentTests.csproj"
+ENTRYPOINT ["dotnet", "test", "CourseMapping.Tests.ComponentTests/CourseMapping.Tests.ComponentTests.csproj", "--no-restore", "--verbosity", "normal", "--logger", "trx", "--results-directory", "/src/test-results/component"]
 
 # Integration tests
 FROM build AS test-integration
 WORKDIR /src
-RUN dotnet test CourseMapping.Tests.IntegrationTests/CourseMapping.Tests.IntegrationTests.csproj --no-restore --verbosity normal --logger trx --results-directory /src/test-results/integration
+RUN dotnet build "CourseMapping.Tests.IntegrationTests/CourseMapping.Tests.IntegrationTests.csproj"
+ENTRYPOINT ["dotnet", "test", "CourseMapping.Tests.IntegrationTests/CourseMapping.Tests.IntegrationTests.csproj", "--no-restore", "--verbosity", "normal", "--logger", "trx", "--results-directory", "/src/test-results/integration"]
+
 
 FROM build AS publish
 RUN dotnet publish "CourseMapping.Web.csproj" -c Release -o /app/publish
