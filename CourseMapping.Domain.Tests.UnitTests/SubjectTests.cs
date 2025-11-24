@@ -25,24 +25,23 @@
         [Fact]
         public void CreateSubject_WhenGivenLevelTooHigh_ThrowExceptioon()
         {
-            var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            var exception = Assert.Throws<Exceptions.SubjectLevelException>(() =>
             {
                 var subject = new Subject("GHI", "GHI9012", "Higher than level 5", 6);
             });
 
-            Assert.Equal("Subject level must be between 1 and 5.", exception.ParamName);
+            Assert.Equal("Subject level must be between 1 and 5.", exception.Message);
         }
 
         [Fact]
         public void CreateSubject_WhenGivenLevelTooLow_ThrowExceptioon()
         {
-            var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            var exception = Assert.Throws<Exceptions.SubjectLevelException>(() =>
             {
                 var subject = new Subject("JKL", "JKL3456", "Level is less than 1", 0);
             });
 
-            Assert.Equal("Subject level must be between 1 and 5.", exception.ParamName);
+            Assert.Equal("Subject level must be between 1 and 5.", exception.Message);
         }
     }
 }
-

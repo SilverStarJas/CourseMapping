@@ -1,4 +1,6 @@
-﻿namespace CourseMapping.Domain
+﻿using CourseMapping.Domain.Exceptions;
+
+namespace CourseMapping.Domain
 {
     public class Course
     {
@@ -9,8 +11,8 @@
         public List<Subject> Subjects { get; set; }
         
         // Foreign key and reference navigation to parent class
-        public Guid UniversityId { get; set; }
-        public University? University { get; set; }
+        public Guid UniversityId { get; init; }
+        public University? University { get; init; }
 
         // Constructor
         public Course(string code, string name, string description)
@@ -35,7 +37,7 @@
             if (Subjects.Count < 3)
                 Subjects.Add(subject);
             else
-                throw new InvalidOperationException("Up to three subjects allowed.");
+                throw new CourseException("Up to three subjects allowed.");
         }
 
         public void RemoveSubject(string subjectCode)
