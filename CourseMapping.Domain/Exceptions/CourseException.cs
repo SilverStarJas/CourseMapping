@@ -2,14 +2,8 @@ namespace CourseMapping.Domain.Exceptions;
 
 public class CourseException : Exception
 {
-    public CourseException()
-    {
-    }
+    public CourseException() { }
 
-    public CourseException(string message) 
-        : base(message)
-    {
-    }
+    public CourseException(string message)
+        : base(message) { }
 }
-
-

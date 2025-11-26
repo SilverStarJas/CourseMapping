@@ -1,4 +1,6 @@
-﻿namespace CourseMapping.Domain
+﻿using CourseMapping.Domain.Exceptions;
+
+namespace CourseMapping.Domain
 {
     public class University
     {
@@ -36,7 +38,7 @@
             var course = Courses.FirstOrDefault(x => x.Code == courseCode);
 
             if (course is null)
-                return;
+                throw new CourseException($"Course {courseCode} not found in the university.");
             
             Courses.Remove(course);
         }

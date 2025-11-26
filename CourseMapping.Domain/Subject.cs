@@ -23,7 +23,7 @@ namespace CourseMapping.Domain
             }
             else
             {
-                throw new SubjectLevelException("Subject level must be between 1 and 5.");
+                throw new SubjectException("Subject level must be between 1 and 5.");
             }
         }
 
@@ -39,11 +39,13 @@ namespace CourseMapping.Domain
             {
                 case null:
                     return;
+
                 case >= 1 and <= 5:
                     Level = (int)level;
                     break;
+
                 default:
-                    throw new SubjectLevelException("Subject level must be between 1 and 5.");
+                    throw new SubjectException("Subject level must be between 1 and 5.");
             }
         }
     }

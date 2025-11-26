@@ -25,7 +25,7 @@
         [Fact]
         public void CreateSubject_WhenGivenLevelTooHigh_ThrowExceptioon()
         {
-            var exception = Assert.Throws<Exceptions.SubjectLevelException>(() =>
+            var exception = Assert.Throws<Exceptions.SubjectException>(() =>
             {
                 var subject = new Subject("GHI", "GHI9012", "Higher than level 5", 6);
             });
@@ -36,7 +36,7 @@
         [Fact]
         public void CreateSubject_WhenGivenLevelTooLow_ThrowExceptioon()
         {
-            var exception = Assert.Throws<Exceptions.SubjectLevelException>(() =>
+            var exception = Assert.Throws<Exceptions.SubjectException>(() =>
             {
                 var subject = new Subject("JKL", "JKL3456", "Level is less than 1", 0);
             });

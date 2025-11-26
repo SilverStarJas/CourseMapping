@@ -41,7 +41,7 @@ namespace CourseMapping.Domain
             var subject = Subjects.FirstOrDefault(s => s.Code == subjectCode);
             
             if (subject is null)
-                return;
+                throw new SubjectException($"Subject {subjectCode} not found in the course.");
             
             Subjects.Remove(subject);
         }
