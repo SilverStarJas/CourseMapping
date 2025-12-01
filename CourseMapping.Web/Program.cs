@@ -32,7 +32,14 @@ builder.Services.AddOutputCache(options =>
     options.AddPolicy("Expire5Minutes", policyBuilder => policyBuilder.Expire(TimeSpan.FromMinutes(5)));
 });
 
+builder.Services.AddProblemDetails();
+builder.Services.AddSingleton<Microsoft.AspNetCore.Mvc.Infrastructure.ProblemDetailsFactory, CustomProblemDetailsFactory>();
+
 var app = builder.Build();
+
+app.UseExceptionHandler();
+app.UseStatusCodePages();
+app.UseDeveloperExceptionPage();
 
 using (var scope = app.Services.CreateScope())
 {

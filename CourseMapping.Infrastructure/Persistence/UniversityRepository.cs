@@ -22,7 +22,9 @@ public class UniversityRepository : IUniversityRepository
         var university = await _cache.GetOrCreateAsync(
             cacheKey,
             _dbContext, // Function closure captures _dbContext
-            async (dbContext, token) => await dbContext.Universities.FirstOrDefaultAsync(u => u.Id == id, token),
+            async (dbContext, token) => await dbContext.Universities
+                .Include(u => u.Courses)
+                .FirstOrDefaultAsync(u => u.Id == id, token),
             cancellationToken: cancellationToken
         );
         return university;

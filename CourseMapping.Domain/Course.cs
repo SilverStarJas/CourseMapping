@@ -8,7 +8,7 @@ namespace CourseMapping.Domain
         public string Code { get; init; }
         public string Name { get; set; } 
         public string Description { get; set; }
-        public List<Subject> Subjects { get; set; }
+        public ICollection<Subject> Subjects { get; set; }
         
         // Constructor
         public Course(string code, string name, string description)

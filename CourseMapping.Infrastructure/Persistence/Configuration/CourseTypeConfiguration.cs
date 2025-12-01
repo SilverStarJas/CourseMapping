@@ -26,7 +26,7 @@ public class CourseTypeConfiguration : IEntityTypeConfiguration<Course>
             .HasColumnName("course_description");
         
         builder
-            .Property<string>("UniversityId")
+            .Property<Guid>("UniversityId")
             .HasColumnName("course_university_id");
 
         builder

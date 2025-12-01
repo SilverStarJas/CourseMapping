@@ -1,4 +1,5 @@
 ﻿using CourseMapping.Domain;
+using CourseMapping.Infrastructure;
 using CourseMapping.Infrastructure.Persistence.Abstraction;
 using CourseMapping.Web.Extensions.Controller;
 using CourseMapping.Web.Models;
@@ -70,7 +71,15 @@ namespace CourseMapping.Web.Controllers
             var courseCode = _universityRepository.GetNextCourseCode();
             var newCourse = new Course(courseCode, newCourseRequest.Name, newCourseRequest.Description);
 
+            if (HttpContext.RequestServices.GetService(typeof(ApplicationDbContext)) is ApplicationDbContext dbContext)
+            {
+                var entry = dbContext.Entry(newCourse);
+                entry.Property("UniversityId").CurrentValue = universityId;
+                await dbContext.Courses.AddAsync(newCourse, cancellationToken);
+            }
+            
             university.AddCourse(newCourse);
+
             await _universityRepository.SaveChangesAsync(cancellationToken);
 
             var response = newCourse.MapCourseToResponse();
