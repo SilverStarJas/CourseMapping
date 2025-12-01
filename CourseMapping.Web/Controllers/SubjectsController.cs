@@ -84,14 +84,14 @@ namespace CourseMapping.Web.Controllers
             if (course is null)
                 return CourseNotFound(courseCode);
 
-            var subjectCode = _universityRepository.GetNextSubjectCode();
-            var newSubject = new Subject(subjectCode, newSubjectRequest.Name, newSubjectRequest.Description, newSubjectRequest.Level);
-            
-            if (newSubjectRequest.Level is < 1 or > 5)
+            if (newSubjectRequest.Level < 1 || newSubjectRequest.Level > 5)
             {
                 ModelState.AddModelError("Level", "Subject level must be between 1 and 5 (inclusive).");
                 return ValidationProblem(statusCode: 422);
             }
+
+            var subjectCode = _universityRepository.GetNextSubjectCode();
+            var newSubject = new Subject(subjectCode, newSubjectRequest.Name, newSubjectRequest.Description, newSubjectRequest.Level);
 
             course.AddSubject(newSubject);
             await _universityRepository.SaveChangesAsync(cancellationToken);

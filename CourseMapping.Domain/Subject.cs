@@ -16,15 +16,7 @@ namespace CourseMapping.Domain
             Code = code;
             Name = name;
             Description = description;
-            
-            if (level is >= 1 and <= 5)
-            {
-                Level = level;
-            }
-            else
-            {
-                throw new SubjectException("Subject level must be between 1 and 5.");
-            }
+            Level = level;
         }
 
         public void UpdateSubject(string? name, string? description, int? level)
@@ -35,17 +27,9 @@ namespace CourseMapping.Domain
             if (description != null)
                 Description = description;
 
-            switch (level)
+            if (level is >= 1 and <= 5)
             {
-                case null:
-                    return;
-
-                case >= 1 and <= 5:
-                    Level = (int)level;
-                    break;
-
-                default:
-                    throw new SubjectException("Subject level must be between 1 and 5.");
+                Level = (int)level;
             }
         }
     }
