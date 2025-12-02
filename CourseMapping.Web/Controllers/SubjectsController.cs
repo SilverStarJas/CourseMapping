@@ -93,7 +93,15 @@ namespace CourseMapping.Web.Controllers
             var subjectCode = _universityRepository.GetNextSubjectCode();
             var newSubject = new Subject(subjectCode, newSubjectRequest.Name, newSubjectRequest.Description, newSubjectRequest.Level);
 
+            if (HttpContext.RequestServices.GetService(typeof(Infrastructure.ApplicationDbContext)) is Infrastructure.ApplicationDbContext dbContext)
+            {
+                var entry = dbContext.Entry(newSubject);
+                entry.Property("CourseCode").CurrentValue = courseCode;
+                await dbContext.Subjects.AddAsync(newSubject, cancellationToken);
+            }
+
             course.AddSubject(newSubject);
+
             await _universityRepository.SaveChangesAsync(cancellationToken);
 
             var response = newSubject.MapSubjectToResponse();

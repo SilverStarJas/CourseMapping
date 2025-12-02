@@ -83,7 +83,7 @@ namespace CourseMapping.Web.Controllers
         {
             var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
-                return UniversityNotFound(universityId);
+                return ValidationProblem(statusCode: 404);
 
             await _universityRepository.DeleteUniversityAsync(university, cancellationToken);
             await _universityRepository.SaveChangesAsync(cancellationToken);
