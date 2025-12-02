@@ -29,7 +29,7 @@ builder
 
 builder.Services.AddOutputCache(options =>
 {
-    options.AddPolicy("Expire5Minutes", policyBuilder => policyBuilder.Expire(TimeSpan.FromMinutes(5)));
+    options.AddPolicy("Expire1Minutes", policyBuilder => policyBuilder.Expire(TimeSpan.FromMinutes(1)));
 });
 
 var app = builder.Build();

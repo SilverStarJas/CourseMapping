@@ -9,7 +9,7 @@ namespace CourseMapping.Web.Controllers
 {
     [ApiController]
     [Route("v1/universities")]
-    [OutputCache(PolicyName = "Expire5Minutes")]
+    [OutputCache(PolicyName = "Expire1Minutes")]
     public class UniversitiesController : ControllerBase
     {
         private readonly IUniversityRepository _universityRepository;

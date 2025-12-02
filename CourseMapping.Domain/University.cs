@@ -6,7 +6,7 @@
         public Guid Id { get; init; }
         public string Name { get; set; }
         public string Country { get; set; }
-        public List<Course> Courses { get; }
+        public List<Course> Courses { get; set; }
 
         // Constructor
         public University(Guid id, string name, string country)

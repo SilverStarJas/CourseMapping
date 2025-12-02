@@ -7,10 +7,6 @@
         public string Name { get; set; } 
         public string Description { get; set; }
         public List<Subject> Subjects { get; set; }
-        
-        // Foreign key and reference navigation to parent class
-        public Guid UniversityId { get; set; }
-        public University? University { get; set; }
 
         // Constructor
         public Course(string code, string name, string description)

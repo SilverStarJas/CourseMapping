@@ -11,4 +11,5 @@ public interface IUniversityRepository
     public string GetNextCourseCode();
     public string GetNextSubjectCode();
     public Task SaveChangesAsync(CancellationToken cancellationToken);
+    public Task RemoveUniversityCacheAsync(Guid universityId, CancellationToken cancellationToken);
 }

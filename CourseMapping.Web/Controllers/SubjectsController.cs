@@ -1,4 +1,5 @@
 ﻿using CourseMapping.Domain;
+using CourseMapping.Infrastructure;
 using CourseMapping.Infrastructure.Persistence.Abstraction;
 using CourseMapping.Web.Extensions.Controller;
 using CourseMapping.Web.Models;
@@ -9,7 +10,7 @@ namespace CourseMapping.Web.Controllers
 {
     [ApiController]
     [Route("v1/universities/{universityId}/courses/{courseCode}/subjects")]
-    [OutputCache(PolicyName = "Expire5Minutes")]
+    [OutputCache(PolicyName = "Expire1Minutes")]
     public class SubjectsController : ControllerBase
     {
         private readonly IUniversityRepository _universityRepository;
@@ -76,8 +77,16 @@ namespace CourseMapping.Web.Controllers
             var subjectCode = _universityRepository.GetNextSubjectCode();
             var newSubject = new Subject(subjectCode, newSubjectRequest.Name, newSubjectRequest.Description, newSubjectRequest.Level);
 
+            if (HttpContext.RequestServices.GetService(typeof(ApplicationDbContext)) is ApplicationDbContext dbContext)
+            {
+                var entry = dbContext.Entry(newSubject);
+                entry.Property("CourseCode").CurrentValue = courseCode;
+                await dbContext.Subjects.AddAsync(newSubject, cancellationToken);
+            }
+
             course.AddSubject(newSubject);
             await _universityRepository.SaveChangesAsync(cancellationToken);
+            await _universityRepository.RemoveUniversityCacheAsync(universityId, cancellationToken); // hacky fix
 
             var response = newSubject.MapSubjectToResponse();
 

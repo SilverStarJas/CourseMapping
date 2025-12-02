@@ -27,8 +27,8 @@ public class UniversityTypeConfiguration : IEntityTypeConfiguration<University>
         
         builder
             .HasMany(u => u.Courses)
-            .WithOne(c => c.University)
-            .HasForeignKey(c => c.UniversityId)
+            .WithOne()
+            .HasForeignKey("UniversityId")
             .HasConstraintName("fk_course_university_id");
     }
 }

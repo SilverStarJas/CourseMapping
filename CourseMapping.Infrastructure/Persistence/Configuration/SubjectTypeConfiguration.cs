@@ -30,7 +30,7 @@ public class SubjectTypeConfiguration : IEntityTypeConfiguration<Subject>
             .HasColumnName("subject_level");
 
         builder
-            .Property(s => s.CourseCode)
+            .Property<string>("CourseCode")
             .HasColumnName("subject_course_code");
     }
 }

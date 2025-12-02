@@ -26,13 +26,13 @@ public class CourseTypeConfiguration : IEntityTypeConfiguration<Course>
             .HasColumnName("course_description");
         
         builder
-            .Property(c => c.UniversityId)
+            .Property<Guid>("UniversityId")
             .HasColumnName("course_university_id");
 
         builder
             .HasMany(c => c.Subjects)
-            .WithOne(s => s.Course)
-            .HasForeignKey(s => s.CourseCode)
+            .WithOne()
+            .HasForeignKey("CourseCode")
             .HasConstraintName("fk_subject_course_code");
     }
 }

@@ -22,7 +22,10 @@ public class UniversityRepository : IUniversityRepository
         var university = await _cache.GetOrCreateAsync(
             cacheKey,
             _dbContext, // Function closure captures _dbContext
-            async (dbContext, token) => await dbContext.Universities.FirstOrDefaultAsync(u => u.Id == id, token),
+            async (dbContext, token) => await dbContext.Universities
+                .Include(u => u.Courses)
+                    .ThenInclude(c => c.Subjects)
+                .FirstOrDefaultAsync(u => u.Id == id, token),
             cancellationToken: cancellationToken
         );
         return university;
@@ -34,7 +37,10 @@ public class UniversityRepository : IUniversityRepository
         var cachedList = await _cache.GetOrCreateAsync(
             cacheKey,
             _dbContext,
-            async (dbContext, token) => await dbContext.Universities.ToListAsync(token),
+            async (dbContext, token) => await dbContext.Universities
+                .Include(u => u.Courses)
+                .ThenInclude(c => c.Subjects)
+                .ToListAsync(token),
             cancellationToken : cancellationToken
             );
         return cachedList;
@@ -66,5 +72,11 @@ public class UniversityRepository : IUniversityRepository
     public async Task SaveChangesAsync(CancellationToken cancellationToken)
     {
         await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task RemoveUniversityCacheAsync(Guid universityId, CancellationToken cancellationToken)
+    {
+        var cacheKey = $"University:{universityId}";
+        await _cache.RemoveAsync(cacheKey, cancellationToken);
     }
 }
