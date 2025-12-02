@@ -14,16 +14,7 @@
             Code = code;
             Name = name;
             Description = description;
-            
-            if (level >= 1 && level <= 5)
-            {
-                Level = level;
-            }
-            else
-            {
-                var message = "Subject level must be between 1 and 5.";
-                throw new ArgumentOutOfRangeException(message);
-            }
+            Level = level;
         }
 
         public void UpdateSubject(string? name, string? description, int? level)
@@ -34,15 +25,10 @@
             if (description != null)
                 Description = description;
             
-            if (level != null)
-                if (level >= 1 && level <= 5) 
-                    Level = (int)level;
-
-                else
-                {
-                    var message = "Subject level must be between 1 and 5.";
-                    throw new ArgumentOutOfRangeException(message);
-                }
+            if (level is >= 1 and <= 5)
+            {
+                Level = (int)level;
+            }
         }
     }
 }

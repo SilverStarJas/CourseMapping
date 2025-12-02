@@ -79,4 +79,9 @@ public class UniversityRepository : IUniversityRepository
         var cacheKey = $"University:{universityId}";
         await _cache.RemoveAsync(cacheKey, cancellationToken);
     }
+
+    public async Task RemoveAllUniversitiesCacheAsync(CancellationToken cancellationToken)
+    {
+        await _cache.RemoveAsync("Universities:All", cancellationToken);
+    }
 }

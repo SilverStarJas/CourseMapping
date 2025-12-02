@@ -5,13 +5,13 @@ using CourseMapping.Web.Extensions.Controller;
 using CourseMapping.Web.Models;
 using CourseMapping.Web.Models.Requests;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OutputCaching;
+// using Microsoft.AspNetCore.OutputCaching;
 
 namespace CourseMapping.Web.Controllers
 {
     [ApiController]
     [Route("v1/universities/{universityId}/courses")]
-    [OutputCache(PolicyName = "Expire1Minutes")]
+    // [OutputCache(PolicyName = "Expire1Minutes")]
     public class CoursesController : ControllerBase
     {
         private readonly IUniversityRepository _universityRepository;
@@ -22,15 +22,15 @@ namespace CourseMapping.Web.Controllers
         }
 
         [HttpGet("{courseCode}", Name = "GetCourse")]
-        public async Task<ActionResult<CourseResponse>> GetCourseByCodeAsync(Guid universityId, string courseCode, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetCourseByCodeAsync(Guid universityId, string courseCode, CancellationToken cancellationToken)
         {
             var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
-                return NotFound("University not found.");
+                return ValidationProblem(statusCode: 404);
 
             var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
             if (course is null)
-                return NotFound("Course not found.");
+                return ValidationProblem(statusCode: 404);
 
             var response = course.MapCourseToResponse();
 
@@ -38,11 +38,11 @@ namespace CourseMapping.Web.Controllers
         }
 
         [HttpGet(Name = "GetAllCourses")]
-        public async Task<ActionResult<List<CourseResponse>>> GetAllCoursesAsync(Guid universityId, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllCoursesAsync(Guid universityId, CancellationToken cancellationToken)
         {
             var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
-                return NotFound("University not found.");
+                return ValidationProblem(statusCode: 404);
 
             var courses = university.Courses.ToList();
 
@@ -52,14 +52,14 @@ namespace CourseMapping.Web.Controllers
         }
 
         [HttpPost(Name = "AddCourse")]
-        public async Task<ActionResult<CourseResponse>> CreateCourseAsync(
+        public async Task<IActionResult> CreateCourseAsync(
             Guid universityId,
             [FromBody] CreateNewCourseRequest newCourseRequest,
             CancellationToken cancellationToken)
         {
             var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
-                return NotFound("University not found.");
+                return ValidationProblem(statusCode: 404);
 
             var courseCode = _universityRepository.GetNextCourseCode();
             var newCourse = new Course(courseCode, newCourseRequest.Name, newCourseRequest.Description);
@@ -87,14 +87,13 @@ namespace CourseMapping.Web.Controllers
         {
             var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
-                return NotFound("University not found.");
+                return ValidationProblem(statusCode: 404);
 
             var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
             if (course is null)
-                return NotFound("Course not found.");
+                return ValidationProblem(statusCode: 404);
 
             course.UpdateCourse(updateCourseRequest.Name, updateCourseRequest.Description);
-
             await _universityRepository.SaveChangesAsync(cancellationToken);
 
             return NoContent();
@@ -105,7 +104,7 @@ namespace CourseMapping.Web.Controllers
         {
             var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
-                return NotFound("University not found.");
+                return ValidationProblem(statusCode: 404);
 
             university.RemoveCourse(courseCode);
             await _universityRepository.SaveChangesAsync(cancellationToken);

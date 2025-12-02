@@ -24,7 +24,7 @@ namespace CourseMapping.Web.Controllers
         {
             var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
-                return NotFound("University not found.");
+                return ValidationProblem(statusCode: 404);
 
             var response = university.MapUniversityToResponse();
 
@@ -42,7 +42,7 @@ namespace CourseMapping.Web.Controllers
         }
 
         [HttpPost(Name = "AddUniversity")]
-        public async Task<ActionResult<UniversityResponse>> CreateUniversityAsync(
+        public async Task<IActionResult> CreateUniversityAsync(
             [FromBody] CreateNewUniversityRequest newUniversityRequest, 
             CancellationToken cancellationToken)
         {
@@ -66,10 +66,9 @@ namespace CourseMapping.Web.Controllers
         {
             var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
-                return NotFound("University not found.");
-
+                return ValidationProblem(statusCode: 404);
+            
             university.UpdateUniversity(updateUniversityRequest.Name, updateUniversityRequest.Country);
-
             await _universityRepository.SaveChangesAsync(cancellationToken);
 
             return NoContent();
@@ -80,7 +79,7 @@ namespace CourseMapping.Web.Controllers
         {
             var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
-                return NotFound("University not found.");
+                return ValidationProblem(statusCode: 404);
 
             await _universityRepository.DeleteUniversityAsync(university, cancellationToken);
             await _universityRepository.SaveChangesAsync(cancellationToken);

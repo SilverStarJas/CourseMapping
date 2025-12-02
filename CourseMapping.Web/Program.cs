@@ -1,6 +1,7 @@
 using CourseMapping.Infrastructure;
 using CourseMapping.Infrastructure.Extensions;
 using CourseMapping.Web.Extensions;
+using CourseMapping.Web.Extensions.Results;
 using CourseMapping.Web.Middleware;
 using Npgsql;
 using OpenTelemetry;
@@ -32,7 +33,14 @@ builder.Services.AddOutputCache(options =>
     options.AddPolicy("Expire1Minutes", policyBuilder => policyBuilder.Expire(TimeSpan.FromMinutes(1)));
 });
 
+builder.Services.AddProblemDetails();
+builder.Services.AddSingleton<Microsoft.AspNetCore.Mvc.Infrastructure.ProblemDetailsFactory, CourseMappingProblemDetails>();
+
 var app = builder.Build();
+
+app.UseExceptionHandler();
+app.UseStatusCodePages();
+app.UseDeveloperExceptionPage();
 
 using (var scope = app.Services.CreateScope())
 {
