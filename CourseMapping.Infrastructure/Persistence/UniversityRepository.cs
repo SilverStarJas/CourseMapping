@@ -52,11 +52,28 @@ public class UniversityRepository : IUniversityRepository
         await _cache.RemoveAsync("Universities:All", cancellationToken);
     }
 
-    public async Task DeleteUniversityAsync(University university, CancellationToken cancellationToken)
+    public async Task DeleteUniversityByIdAsync(Guid universityId, CancellationToken cancellationToken)
     {
+        var university = await _dbContext.Universities.FindAsync(new object[] { universityId }, cancellationToken);
+        if (university == null) throw new KeyNotFoundException();
         _dbContext.Universities.Remove(university);
         await _dbContext.SaveChangesAsync(cancellationToken);
-        await _cache.RemoveAsync("Universities:All", cancellationToken);
+    }
+
+    public async Task DeleteCourseByCodeAsync(string courseCode, CancellationToken cancellationToken)
+    {
+        var course = await _dbContext.Courses.FirstOrDefaultAsync(c => c.Code == courseCode, cancellationToken);
+        if (course == null) throw new KeyNotFoundException();
+        _dbContext.Courses.Remove(course);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task DeleteSubjectByCodeAsync(string subjectCode, CancellationToken cancellationToken)
+    {
+        var subject = await _dbContext.Subjects.FirstOrDefaultAsync(s => s.Code == subjectCode, cancellationToken);
+        if (subject == null) throw new KeyNotFoundException();
+        _dbContext.Subjects.Remove(subject);
+        await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
     public string GetNextCourseCode()

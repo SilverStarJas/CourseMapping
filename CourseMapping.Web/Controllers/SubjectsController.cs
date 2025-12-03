@@ -10,7 +10,7 @@ namespace CourseMapping.Web.Controllers
 {
     [ApiController]
     [Route("v1/universities/{universityId}/courses/{courseCode}/subjects")]
-    // [OutputCache(PolicyName = "Expire1Minutes")]
+    [OutputCache(PolicyName = "Expire1Minutes")]
     public class SubjectsController : ControllerBase
     {
         private readonly IUniversityRepository _universityRepository;
@@ -138,18 +138,15 @@ namespace CourseMapping.Web.Controllers
         public async Task<IActionResult> DeleteSubjectAsync(
             Guid universityId, string courseCode, string subjectCode, CancellationToken cancellationToken)
         {
-            var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
-            if (university is null)
+            try
+            {
+                await _universityRepository.DeleteSubjectByCodeAsync(subjectCode, cancellationToken);
+                return NoContent();
+            }
+            catch (KeyNotFoundException)
+            {
                 return ValidationProblem(statusCode: 404);
-
-            var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
-            if (course is null)
-                return ValidationProblem(statusCode: 404);
-            
-            course.RemoveSubject(subjectCode);
-            await _universityRepository.SaveChangesAsync(cancellationToken);
-
-            return NoContent();
+            }
         }
     }
 }

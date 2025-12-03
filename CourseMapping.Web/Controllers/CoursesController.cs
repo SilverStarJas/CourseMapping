@@ -105,11 +105,25 @@ namespace CourseMapping.Web.Controllers
             var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
                 return ValidationProblem(statusCode: 404);
-
-            university.RemoveCourse(courseCode);
-            await _universityRepository.SaveChangesAsync(cancellationToken);
-
-            return NoContent();
+            
+            var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
+            if (course is null)
+                return ValidationProblem(statusCode: 404);
+            
+            if (course.Subjects.Count > 0)
+            {
+                ModelState.AddModelError("Subjects", "Cannot delete course with linked subjects.");
+                return ValidationProblem(statusCode: 422);
+            }
+            try
+            {
+                await _universityRepository.DeleteCourseByCodeAsync(courseCode, cancellationToken);
+                return NoContent();
+            }
+            catch (KeyNotFoundException)
+            {
+                return ValidationProblem(statusCode: 404);
+            }
         }
     }
 }
