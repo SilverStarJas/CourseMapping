@@ -92,8 +92,6 @@ namespace CourseMapping.Web.Controllers
 
             course.AddSubject(newSubject);
             await _universityRepository.SaveChangesAsync(cancellationToken);
-            await _universityRepository.RemoveUniversityCacheAsync(universityId, cancellationToken); // hacky fix
-
             var response = newSubject.MapSubjectToResponse();
 
             return CreatedAtRoute("GetSubject", new { universityId, courseCode, subjectCode = newSubject.Code }, response);
@@ -125,7 +123,6 @@ namespace CourseMapping.Web.Controllers
             
             subject.UpdateSubject(updateSubjectRequest.Name, updateSubjectRequest.Description, updateSubjectRequest.Level);
             await _universityRepository.SaveChangesAsync(cancellationToken);
-            await _universityRepository.RemoveUniversityCacheAsync(universityId, cancellationToken);
 
             return NoContent();
         }
