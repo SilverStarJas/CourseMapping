@@ -123,10 +123,6 @@ namespace CourseMapping.Web.Controllers
                 return ValidationProblem(statusCode: 422);
             }
             
-            if (HttpContext.RequestServices.GetService(typeof(ApplicationDbContext)) is ApplicationDbContext dbContext)
-            {
-                dbContext.Attach(subject);
-            }
             subject.UpdateSubject(updateSubjectRequest.Name, updateSubjectRequest.Description, updateSubjectRequest.Level);
             await _universityRepository.SaveChangesAsync(cancellationToken);
             await _universityRepository.RemoveUniversityCacheAsync(universityId, cancellationToken);

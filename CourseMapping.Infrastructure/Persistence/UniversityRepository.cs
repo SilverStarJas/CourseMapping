@@ -18,16 +18,12 @@ public class UniversityRepository : IUniversityRepository
 
     public async Task<University?> GetUniversityByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        var cacheKey = $"University:{id}";
-        var university = await _cache.GetOrCreateAsync(
-            cacheKey,
-            _dbContext, // Function closure captures _dbContext
-            async (dbContext, token) => await dbContext.Universities
+        // var cacheKey = $"University:{id}";
+        var university =
+            await _dbContext.Universities
                 .Include(u => u.Courses)
-                    .ThenInclude(c => c.Subjects)
-                .FirstOrDefaultAsync(u => u.Id == id, token),
-            cancellationToken: cancellationToken
-        );
+                .ThenInclude(c => c.Subjects)
+                .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
         return university;
     }
 
