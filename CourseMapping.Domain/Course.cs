@@ -1,4 +1,6 @@
-﻿namespace CourseMapping.Domain
+﻿using CourseMapping.Domain.Exceptions;
+
+namespace CourseMapping.Domain
 {
     public class Course
     {
@@ -31,7 +33,7 @@
             if (Subjects.Count < 3)
                 Subjects.Add(subject);
             else
-                throw new InvalidOperationException("Up to three subjects allowed.");
+                throw new CourseSubjectException("Up to three subjects allowed.");
         }
 
         public void RemoveSubject(string subjectCode)

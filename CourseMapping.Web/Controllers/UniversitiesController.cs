@@ -1,4 +1,5 @@
 ﻿using CourseMapping.Domain;
+using CourseMapping.Domain.Exceptions;
 using CourseMapping.Infrastructure.Persistence.Abstraction;
 using CourseMapping.Web.Extensions.Controller;
 using CourseMapping.Web.Models;
@@ -24,7 +25,7 @@ namespace CourseMapping.Web.Controllers
         {
             var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
-                return ValidationProblem(statusCode: 404);
+                throw new UniversityNotFoundException($"University with ID '{universityId}' not found.");
 
             var response = university.MapUniversityToResponse();
 
@@ -66,7 +67,7 @@ namespace CourseMapping.Web.Controllers
         {
             var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
-                return ValidationProblem(statusCode: 404);
+                throw new UniversityNotFoundException($"University with ID '{universityId}' not found.");
             
             university.UpdateUniversity(updateUniversityRequest.Name, updateUniversityRequest.Country);
             await _universityRepository.SaveChangesAsync(cancellationToken);
@@ -79,7 +80,7 @@ namespace CourseMapping.Web.Controllers
         {
             var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
-                return ValidationProblem(statusCode: 404);
+                throw new UniversityNotFoundException($"University with ID '{universityId}' not found.");
             
             if (university.Courses.Count > 0)
             {

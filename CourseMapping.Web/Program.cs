@@ -38,9 +38,9 @@ builder.Services.AddSingleton<Microsoft.AspNetCore.Mvc.Infrastructure.ProblemDet
 
 var app = builder.Build();
 
-app.UseExceptionHandler();
+// Register custom exception handling middleware
+app.UseMiddleware<CourseMapping.Web.Extensions.Middleware.ExceptionHandlingMiddleware>();
 app.UseStatusCodePages();
-app.UseDeveloperExceptionPage();
 
 using (var scope = app.Services.CreateScope())
 {

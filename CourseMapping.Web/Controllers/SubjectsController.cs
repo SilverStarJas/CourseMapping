@@ -1,4 +1,5 @@
 ﻿using CourseMapping.Domain;
+using CourseMapping.Domain.Exceptions;
 using CourseMapping.Infrastructure;
 using CourseMapping.Infrastructure.Persistence.Abstraction;
 using CourseMapping.Web.Extensions.Controller;
@@ -26,15 +27,15 @@ namespace CourseMapping.Web.Controllers
         {
             var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
-                return ValidationProblem(statusCode: 404);
+                throw new UniversityNotFoundException($"University with ID '{universityId}' not found.");
 
             var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
             if (course is null)
-                return ValidationProblem(statusCode: 404);
+                throw new CourseNotFoundException($"Course with code '{courseCode}' not found in university '{universityId}'.");
 
             var subject = course.Subjects.FirstOrDefault(s => s.Code == subjectCode);
             if (subject is null)
-                return ValidationProblem(statusCode: 404);
+                throw new SubjectNotFoundException($"Subject with code '{subjectCode}' not found in course '{courseCode}'.");
 
             var response = subject.MapSubjectToResponse();
 
@@ -74,12 +75,6 @@ namespace CourseMapping.Web.Controllers
             if (course is null)
                 return ValidationProblem(statusCode: 404);
             
-            if (newSubjectRequest.Level is < 1 or > 5)
-            {
-                ModelState.AddModelError("Level", "Subject level must be between 1 and 5 (inclusive).");
-                return ValidationProblem(statusCode: 422);
-            }
-
             var subjectCode = _universityRepository.GetNextSubjectCode();
             var newSubject = new Subject(subjectCode, newSubjectRequest.Name, newSubjectRequest.Description, newSubjectRequest.Level);
 
@@ -115,12 +110,6 @@ namespace CourseMapping.Web.Controllers
             if (subject is null)
                 return ValidationProblem(statusCode: 404);
 
-            if (updateSubjectRequest.Level is < 1 or > 5)
-            {
-                ModelState.AddModelError("Level", "Subject level must be between 1 and 5 (inclusive).");
-                return ValidationProblem(statusCode: 422);
-            }
-            
             subject.UpdateSubject(updateSubjectRequest.Name, updateSubjectRequest.Description, updateSubjectRequest.Level);
             await _universityRepository.SaveChangesAsync(cancellationToken);
 

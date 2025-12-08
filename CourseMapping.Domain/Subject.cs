@@ -1,4 +1,6 @@
-﻿namespace CourseMapping.Domain
+﻿using CourseMapping.Domain.Exceptions;
+
+namespace CourseMapping.Domain
 {
     public class Subject
     {
@@ -11,6 +13,8 @@
         // Constructor
         public Subject(string code, string name, string description, int level)
         {
+            if (level is < 1 or > 5)
+                throw new SubjectLevelException($"Invalid subject level: {level}. Level must be between 1 and 5.");
             Code = code;
             Name = name;
             Description = description;
@@ -25,8 +29,10 @@
             if (description != null)
                 Description = description;
             
-            if (level is >= 1 and <= 5)
+            if (level != null)
             {
+                if (level is < 1 or > 5)
+                    throw new SubjectLevelException($"Invalid subject level: {level}. Level must be between 1 and 5.");
                 Level = (int)level;
             }
         }

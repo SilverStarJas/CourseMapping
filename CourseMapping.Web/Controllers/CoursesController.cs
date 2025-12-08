@@ -1,4 +1,5 @@
 ﻿using CourseMapping.Domain;
+using CourseMapping.Domain.Exceptions;
 using CourseMapping.Infrastructure;
 using CourseMapping.Infrastructure.Persistence.Abstraction;
 using CourseMapping.Web.Extensions.Controller;
@@ -26,11 +27,11 @@ namespace CourseMapping.Web.Controllers
         {
             var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
-                return ValidationProblem(statusCode: 404);
+                throw new UniversityNotFoundException($"University with ID '{universityId}' not found.");
 
             var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
             if (course is null)
-                return ValidationProblem(statusCode: 404);
+                throw new CourseNotFoundException($"Course with code '{courseCode}' not found in university '{universityId}'.");
 
             var response = course.MapCourseToResponse();
 
@@ -42,12 +43,10 @@ namespace CourseMapping.Web.Controllers
         {
             var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
-                return ValidationProblem(statusCode: 404);
+                throw new UniversityNotFoundException($"University with ID '{universityId}' not found.");
 
             var courses = university.Courses.ToList();
-
             var response = courses.MapAllCoursesToResponse();
-
             return Ok(response);
         }
 
@@ -59,7 +58,7 @@ namespace CourseMapping.Web.Controllers
         {
             var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
-                return ValidationProblem(statusCode: 404);
+                throw new UniversityNotFoundException($"University with ID '{universityId}' not found.");
 
             var courseCode = _universityRepository.GetNextCourseCode();
             var newCourse = new Course(courseCode, newCourseRequest.Name, newCourseRequest.Description);
@@ -87,11 +86,11 @@ namespace CourseMapping.Web.Controllers
         {
             var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
-                return ValidationProblem(statusCode: 404);
+                throw new UniversityNotFoundException($"University with ID '{universityId}' not found.");
 
             var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
             if (course is null)
-                return ValidationProblem(statusCode: 404);
+                throw new CourseNotFoundException($"Course with code '{courseCode}' not found in university '{universityId}'.");
 
             course.UpdateCourse(updateCourseRequest.Name, updateCourseRequest.Description);
             await _universityRepository.SaveChangesAsync(cancellationToken);
@@ -104,11 +103,11 @@ namespace CourseMapping.Web.Controllers
         {
             var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
             if (university is null)
-                return ValidationProblem(statusCode: 404);
+                throw new UniversityNotFoundException($"University with ID '{universityId}' not found.");
             
             var course = university.Courses.FirstOrDefault(c => c.Code == courseCode);
             if (course is null)
-                return ValidationProblem(statusCode: 404);
+                throw new CourseNotFoundException($"Course with code '{courseCode}' not found in university '{universityId}'.");
             
             if (course.Subjects.Count > 0)
             {
@@ -122,7 +121,7 @@ namespace CourseMapping.Web.Controllers
             }
             catch (KeyNotFoundException)
             {
-                return ValidationProblem(statusCode: 404);
+                throw new CourseNotFoundException($"Course with code '{courseCode}' not found in university '{universityId}'.");
             }
         }
     }
