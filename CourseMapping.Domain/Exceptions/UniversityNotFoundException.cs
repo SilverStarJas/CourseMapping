@@ -1,5 +1,3 @@
-using System;
-
 namespace CourseMapping.Domain.Exceptions
 {
     public class UniversityNotFoundException : Exception
