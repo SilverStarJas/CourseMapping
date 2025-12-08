@@ -6,96 +6,95 @@ using CourseMapping.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
 
-namespace CourseMapping.Web.Controllers
+namespace CourseMapping.Web.Controllers;
+
+[ApiController]
+[Route("v1/universities")]
+[OutputCache(PolicyName = "Expire1Minutes")]
+public class UniversitiesController : ControllerBase
 {
-    [ApiController]
-    [Route("v1/universities")]
-    [OutputCache(PolicyName = "Expire1Minutes")]
-    public class UniversitiesController : ControllerBase
+    private readonly IUniversityRepository _universityRepository;
+
+    public UniversitiesController(IUniversityRepository universityRepository)
     {
-        private readonly IUniversityRepository _universityRepository;
+        _universityRepository = universityRepository;
+    }
 
-        public UniversitiesController(IUniversityRepository universityRepository)
-        {
-            _universityRepository = universityRepository;
-        }
+    [HttpGet("{universityId}", Name = "GetUniversity")]
+    public async Task<ActionResult<University>> GetUniversityAsync(Guid universityId, CancellationToken cancellationToken)
+    {
+        var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
+        if (university is null)
+            throw new UniversityNotFoundException($"University with ID '{universityId}' not found.");
 
-        [HttpGet("{universityId}", Name = "GetUniversity")]
-        public async Task<ActionResult<University>> GetUniversityAsync(Guid universityId, CancellationToken cancellationToken)
-        {
-            var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
-            if (university is null)
-                throw new UniversityNotFoundException($"University with ID '{universityId}' not found.");
+        var response = university.MapUniversityToResponse();
 
-            var response = university.MapUniversityToResponse();
+        return Ok(response);
+    }
 
-            return Ok(response);
-        }
+    [HttpGet(Name = "GetAllUniversities")]
+    public async Task<ActionResult<List<UniversityResponse>>> GetAllUniversitiesAsync(CancellationToken cancellationToken)
+    {
+        var universities = await _universityRepository.GetAllUniversitiesAsync(cancellationToken);
 
-        [HttpGet(Name = "GetAllUniversities")]
-        public async Task<ActionResult<List<UniversityResponse>>> GetAllUniversitiesAsync(CancellationToken cancellationToken)
-        {
-            var universities = await _universityRepository.GetAllUniversitiesAsync(cancellationToken);
+        var response = universities.MapAllUniversitiesToResponse();
 
-            var response = universities.MapAllUniversitiesToResponse();
+        return Ok(response);
+    }
 
-            return Ok(response);
-        }
+    [HttpPost(Name = "AddUniversity")]
+    public async Task<IActionResult> CreateUniversityAsync(
+        [FromBody] CreateNewUniversityRequest newUniversityRequest, 
+        CancellationToken cancellationToken)
+    {
+        var universityId = Guid.CreateVersion7();
 
-        [HttpPost(Name = "AddUniversity")]
-        public async Task<IActionResult> CreateUniversityAsync(
-            [FromBody] CreateNewUniversityRequest newUniversityRequest, 
-            CancellationToken cancellationToken)
-        {
-            var universityId = Guid.CreateVersion7();
+        var newUniversity = new University(universityId, newUniversityRequest.Name, newUniversityRequest.Country);
 
-            var newUniversity = new University(universityId, newUniversityRequest.Name, newUniversityRequest.Country);
+        await _universityRepository.AddAsync(newUniversity, cancellationToken);
+        await _universityRepository.SaveChangesAsync(cancellationToken);
 
-            await _universityRepository.AddAsync(newUniversity, cancellationToken);
-            await _universityRepository.SaveChangesAsync(cancellationToken);
+        var response = newUniversity.MapUniversityToResponse();
 
-            var response = newUniversity.MapUniversityToResponse();
+        return CreatedAtRoute("GetUniversity", new { universityId = newUniversity.Id }, response);
+    }
 
-            return CreatedAtRoute("GetUniversity", new { universityId = newUniversity.Id }, response);
-        }
-
-        [HttpPut("{universityId}", Name = "UpdateUniversity")]
-        public async Task<ActionResult<UniversityResponse>> UpdateUniversityAsync(
-            Guid universityId, 
-            [FromBody] UpdateUniversityRequest updateUniversityRequest, 
-            CancellationToken cancellationToken)
-        {
-            var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
-            if (university is null)
-                throw new UniversityNotFoundException($"University with ID '{universityId}' not found.");
+    [HttpPut("{universityId}", Name = "UpdateUniversity")]
+    public async Task<ActionResult<UniversityResponse>> UpdateUniversityAsync(
+        Guid universityId, 
+        [FromBody] UpdateUniversityRequest updateUniversityRequest, 
+        CancellationToken cancellationToken)
+    {
+        var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
+        if (university is null)
+            throw new UniversityNotFoundException($"University with ID '{universityId}' not found.");
             
-            university.UpdateUniversity(updateUniversityRequest.Name, updateUniversityRequest.Country);
-            await _universityRepository.SaveChangesAsync(cancellationToken);
+        university.UpdateUniversity(updateUniversityRequest.Name, updateUniversityRequest.Country);
+        await _universityRepository.SaveChangesAsync(cancellationToken);
 
+        return NoContent();
+    }
+
+    [HttpDelete("{universityId}", Name = "DeleteUniversity")]
+    public async Task<IActionResult> DeleteUniversityAsync(Guid universityId, CancellationToken cancellationToken)
+    {
+        var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
+        if (university is null)
+            throw new UniversityNotFoundException($"University with ID '{universityId}' not found.");
+            
+        if (university.Courses.Count > 0)
+        {
+            ModelState.AddModelError("Courses", "Cannot delete university with linked courses.");
+            return ValidationProblem(statusCode: 422);
+        }
+        try
+        {
+            await _universityRepository.DeleteUniversityByIdAsync(universityId, cancellationToken);
             return NoContent();
         }
-
-        [HttpDelete("{universityId}", Name = "DeleteUniversity")]
-        public async Task<IActionResult> DeleteUniversityAsync(Guid universityId, CancellationToken cancellationToken)
+        catch (KeyNotFoundException)
         {
-            var university = await _universityRepository.GetUniversityByIdAsync(universityId, cancellationToken);
-            if (university is null)
-                throw new UniversityNotFoundException($"University with ID '{universityId}' not found.");
-            
-            if (university.Courses.Count > 0)
-            {
-                ModelState.AddModelError("Courses", "Cannot delete university with linked courses.");
-                return ValidationProblem(statusCode: 422);
-            }
-            try
-            {
-                await _universityRepository.DeleteUniversityByIdAsync(universityId, cancellationToken);
-                return NoContent();
-            }
-            catch (KeyNotFoundException)
-            {
-                return ValidationProblem(statusCode: 404);
-            }
+            return ValidationProblem(statusCode: 404);
         }
     }
 }
