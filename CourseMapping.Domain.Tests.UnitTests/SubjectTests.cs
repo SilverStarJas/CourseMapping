@@ -1,4 +1,6 @@
-﻿namespace CourseMapping.Domain.Tests.UnitTests
+﻿using CourseMapping.Domain.Exceptions;
+
+namespace CourseMapping.Domain.Tests.UnitTests
 {
     public class SubjectTests
     {
@@ -25,24 +27,25 @@
         [Fact]
         public void CreateSubject_WhenGivenLevelTooHigh_ThrowExceptioon()
         {
-            var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            var level = 6;
+            var exception = Assert.Throws<SubjectLevelException>(() =>
             {
-                var subject = new Subject("GHI", "GHI9012", "Higher than level 5", 6);
+                var subject = new Subject("GHI", "GHI9012", "Higher than level 5", level);
             });
 
-            Assert.Equal("Subject level must be between 1 and 5.", exception.ParamName);
+            Assert.Equal($"Invalid subject level: {level}. Level must be between 1 and 5.", exception.Message);
         }
 
         [Fact]
         public void CreateSubject_WhenGivenLevelTooLow_ThrowExceptioon()
         {
-            var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            var level = 0;
+            var exception = Assert.Throws<SubjectLevelException>(() =>
             {
-                var subject = new Subject("JKL", "JKL3456", "Level is less than 1", 0);
+                var subject = new Subject("JKL", "JKL3456", "Level is less than 1", level);
             });
 
-            Assert.Equal("Subject level must be between 1 and 5.", exception.ParamName);
+            Assert.Equal($"Invalid subject level: {level}. Level must be between 1 and 5.", exception.Message);
         }
     }
 }
-

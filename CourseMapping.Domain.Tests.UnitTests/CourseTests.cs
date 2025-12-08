@@ -1,3 +1,5 @@
+using CourseMapping.Domain.Exceptions;
+
 namespace CourseMapping.Domain.Tests.UnitTests
 {
     public class CourseTests
@@ -49,7 +51,7 @@ namespace CourseMapping.Domain.Tests.UnitTests
             engineering.AddSubject(databases);
 
             // Act and Assert
-            var exception = Assert.Throws<InvalidOperationException>(() => engineering.AddSubject(fourth));
+            var exception = Assert.Throws<CourseSubjectException>(() => engineering.AddSubject(fourth));
 
             Assert.Equal("Up to three subjects allowed.", exception.Message);
 
