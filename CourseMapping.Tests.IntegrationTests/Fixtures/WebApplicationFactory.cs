@@ -26,8 +26,16 @@ public class WebApplicationFactory : WebApplicationFactory<Program>
     
     private static string? GetConnectionString()
     {
+        // Check environment variable first (for CI/CD)
+        var envConnectionString = Environment.GetEnvironmentVariable("ConnectionStrings__CourseMappingDb");
+        if (!string.IsNullOrEmpty(envConnectionString))
+        {
+            return envConnectionString;
+        }
+        
+        // Fall back to appsettings.json (for local development)
         var configuration = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json")
+            .AddJsonFile("appsettings.json", optional: true)
             .Build();
         
         var connectionString = configuration.GetConnectionString("CourseMappingDb");

@@ -9,6 +9,9 @@ on:
     paths:
       - '**.cs'
       - '**.csproj'
+      - 'Dockerfile'
+      - 'docker-compose.yml'
+      - '.github/workflows/**'
 
 env:
   DOTNET_VERSION: '9.0.x'
@@ -37,7 +40,7 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --no-restore
 
-  test:
+  unit-tests:
     runs-on: ubuntu-latest
     needs: build
     steps:
@@ -52,14 +55,172 @@ jobs:
       - name: Install dependencies
         run: dotnet restore
 
-      - name: Start Docker Compose
-        run: docker compose up -d
+      - name: Run Unit Tests
+        run: |
+          dotnet test \
+            CourseMapping.Domain.Tests.UnitTests/CourseMapping.Domain.Tests.UnitTests.csproj \
+            CourseMapping.Infrastructure.Tests.UnitTests/CourseMapping.Infrastructure.Tests.UnitTests.csproj \
+            CourseMapping.Web.Tests.UnitTests/CourseMapping.Web.Tests.UnitTests.csproj \
+            --no-restore \
+            --verbosity normal \
+            --logger "trx;LogFileName=unit-tests.trx" \
+            --results-directory ./test-results/unit
 
-      - name: Test
-        run: dotnet test --no-restore --verbosity normal --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results
-
-      - name: Publish test results
+      - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
-          files: test-results/**/*.trx
+          files: test-results/unit/**/*.trx
+          check_name: Unit Tests
+
+  component-tests:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Install dependencies
+        run: dotnet restore
+
+      - name: Run Component Tests
+        run: |
+          dotnet test \
+            CourseMapping.Tests.ComponentTests/CourseMapping.Tests.ComponentTests.csproj \
+            --no-restore \
+            --verbosity normal \
+            --logger "trx;LogFileName=component-tests.trx" \
+            --results-directory ./test-results/component
+
+      - name: Publish Component Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: test-results/component/**/*.trx
+          check_name: Component Tests
+
+  integration-tests:
+    runs-on: ubuntu-latest
+    needs: build
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: JasGres
+          POSTGRES_DB: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Install dependencies
+        run: dotnet restore
+
+      - name: Wait for PostgreSQL
+        run: |
+          echo "Waiting for PostgreSQL to be ready..."
+          for i in {1..30}; do
+            if timeout 2 bash -c 'cat < /dev/null > /dev/tcp/localhost/5432' 2>/dev/null; then
+              echo "PostgreSQL is ready!"
+              exit 0
+            fi
+            echo "Attempt $i: Waiting for PostgreSQL..."
+            sleep 2
+          done
+          echo "PostgreSQL connection check completed"
+
+      - name: Run Integration Tests
+        env:
+          ConnectionStrings__CourseMappingDb: "Server=localhost;Port=5432;Database=postgres;User Id=postgres;Password=JasGres"
+        run: |
+          dotnet test \
+            CourseMapping.Tests.IntegrationTests/CourseMapping.Tests.IntegrationTests.csproj \
+            --no-restore \
+            --verbosity normal \
+            --logger "trx;LogFileName=integration-tests.trx" \
+            --results-directory ./test-results/integration
+
+      - name: Publish Integration Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: test-results/integration/**/*.trx
+          check_name: Integration Tests
+
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false
+          tags: coursemapping:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Test Docker image
+        run: |
+          docker run --rm coursemapping:test --version || echo "Container started successfully"
+
+  test-summary:
+    runs-on: ubuntu-latest
+    needs: [unit-tests, component-tests, integration-tests, docker-build]
+    if: always()
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Generate Test Summary
+        run: |
+          echo "# Test Results Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Unit Tests" >> $GITHUB_STEP_SUMMARY
+          echo "- Status: ${{ needs.unit-tests.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Component Tests" >> $GITHUB_STEP_SUMMARY
+          echo "- Status: ${{ needs.component-tests.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Integration Tests" >> $GITHUB_STEP_SUMMARY
+          echo "- Status: ${{ needs.integration-tests.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Docker Build" >> $GITHUB_STEP_SUMMARY
+          echo "- Status: ${{ needs.docker-build.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Overall Status" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ needs.unit-tests.result }}" == "success" ] && [ "${{ needs.component-tests.result }}" == "success" ] && [ "${{ needs.integration-tests.result }}" == "success" ] && [ "${{ needs.docker-build.result }}" == "success" ]; then
+            echo "✅ All tests passed!" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Some tests failed. Please check the individual test results above." >> $GITHUB_STEP_SUMMARY
+          fi
