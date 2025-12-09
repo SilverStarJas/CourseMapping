@@ -33,7 +33,7 @@ namespace CourseMapping.Domain.Tests.UnitTests
                 var subject = new Subject("GHI", "GHI9012", "Higher than level 5", level);
             });
 
-            Assert.Equal($"Invalid subject level: {level}. Level must be betwen 1 and 5.", exception.Message);
+            Assert.Equal($"Invalid subject level: {level}. Level must be between 1 and 5.", exception.Message);
         }
 
         [Fact]
